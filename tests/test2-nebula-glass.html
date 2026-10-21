@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nebula — 你的团队第二大脑</title>
+<style>
+  :root{
+    --bg:#0B0E14; --ink:#F2F4F8; --ink-2:#9AA3B2;
+    --glass:rgba(255,255,255,.07); --glass-line:rgba(255,255,255,.14);
+    --c1:#6E56CF; --c2:#2FA8FF; --c3:#B14EFF;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Code",Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 48px;position:relative;z-index:2}
+  /* 背景氛围色斑（大而柔和，不抢内容） */
+  .blob{position:fixed;border-radius:50%;filter:blur(110px);opacity:.5;z-index:0;pointer-events:none}
+  .blob.a{width:640px;height:640px;background:var(--c1);top:-180px;left:-120px}
+  .blob.b{width:560px;height:560px;background:var(--c2);bottom:-200px;right:-140px;opacity:.34}
+  .blob.c{width:420px;height:420px;background:var(--c3);top:44%;left:56%;opacity:.22}
+  /* 玻璃面板 */
+  .glass{background:var(--glass);border:1px solid var(--glass-line);border-radius:20px;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 12px 40px rgba(0,0,0,.35)}
+  /* 导航 */
+  nav{position:sticky;top:16px;z-index:50;margin:16px auto 0;max-width:1130px}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 24px;border-radius:16px}
+  .logo{font-weight:700;font-size:19px;letter-spacing:-.01em;text-decoration:none;color:var(--ink)}
+  .logo em{font-style:normal;background:linear-gradient(90deg,var(--c2),var(--c1));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .nav-links{display:flex;gap:28px;align-items:center}
+  .nav-links a{color:var(--ink-2);text-decoration:none;font-size:14.5px;transition:color .2s}
+  .nav-links a:hover{color:var(--ink)}
+  .btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:600;font-size:15px;padding:11px 24px;border-radius:12px;cursor:pointer;transition:transform .25s ease,box-shadow .25s ease;background:#F2F4F8;color:#0B0E14;border:none}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(47,168,255,.35)}
+  .btn:active{transform:scale(.97)}
+  .btn-glass{background:var(--glass);color:var(--ink);border:1px solid var(--glass-line)}
+  .btn-glass:hover{box-shadow:0 10px 32px rgba(110,86,207,.35)}
+  /* Hero */
+  .hero{padding:120px 0 100px;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+  .eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.16em;color:var(--c2);margin-bottom:22px;text-transform:uppercase}
+  h1{font-size:clamp(42px,5.4vw,78px);line-height:1.05;letter-spacing:-.035em;font-weight:750}
+  h1 .grad{background:linear-gradient(90deg,var(--c2),var(--c1),var(--c3));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.sub{margin:26px 0 38px;font-size:19px;color:var(--ink-2);max-width:44ch}
+  .hero-cta{display:flex;gap:14px;align-items:center}
+  .hero-note{margin-top:22px;font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+  /* 3D 主视觉：CSS 立体球 + 环 */
+  .orb-stage{position:relative;height:440px;display:flex;align-items:center;justify-content:center}
+  .orb{width:260px;height:260px;border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, rgba(255,255,255,.85), rgba(255,255,255,0) 38%),
+               conic-gradient(from 210deg, var(--c1), var(--c2), var(--c3), var(--c1));
+    box-shadow:0 40px 120px rgba(110,86,207,.45), inset 0 0 80px rgba(11,14,20,.55);
+    animation:float 7s ease-in-out infinite}
+  .ring{position:absolute;border:1px solid var(--glass-line);border-radius:50%}
+  .ring.r1{width:380px;height:380px;transform:rotateX(72deg);border-color:rgba(47,168,255,.4)}
+  .ring.r2{width:460px;height:460px;transform:rotateX(66deg) rotateY(14deg);border-color:rgba(177,78,255,.28)}
+  .chip{position:absolute;padding:9px 16px;border-radius:12px;font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+  .chip small{display:block;font-weight:400;font-size:11.5px;color:var(--ink-2);margin-top:2px}
+  .chip.c1{top:12%;left:2%}
+  .chip.c2{bottom:16%;right:0}
+  .chip.c3{bottom:4%;left:12%}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+  /* 特性区：玻璃卡片 */
+  .features{padding:110px 0}
+  .sec-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:64px}
+  h2{font-size:clamp(30px,3.2vw,48px);letter-spacing:-.03em;line-height:1.12;font-weight:700;max-width:22ch}
+  .sec-index{font-family:var(--mono);font-size:13px;color:var(--ink-2)}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .card{padding:32px 28px;transition:transform .3s ease,border-color .3s ease}
+  .card:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.28)}
+  .card .icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;background:rgba(47,168,255,.14);border:1px solid rgba(47,168,255,.3)}
+  .card h3{font-size:19px;font-weight:650;margin-bottom:10px;letter-spacing:-.01em}
+  .card p{color:var(--ink-2);font-size:15px}
+  .card .meta{margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--c2)}
+  /* CTA */
+  .cta{padding:120px 0;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .cta h2{max-width:20ch}
+  .cta p{color:var(--ink-2);margin:20px 0 40px;font-size:18px;max-width:46ch}
+  footer{border-top:1px solid var(--glass-line);padding:36px 0;font-size:13px;color:var(--ink-2);font-family:var(--mono)}
+  .foot-in{display:flex;justify-content:space-between}
+  footer a{color:var(--ink-2);text-decoration:none;margin-left:24px}
+  footer a:hover{color:var(--ink)}
+  .js-anim .anim{opacity:0}
+  @media (prefers-reduced-motion:reduce){.js-anim .anim{opacity:1}.orb{animation:none}}
+  @media (max-width:900px){
+    .wrap{padding:0 24px}
+    .hero{grid-template-columns:1fr;padding:80px 0 64px}
+    .orb-stage{height:340px}
+    .grid3{grid-template-columns:1fr}
+    .nav-links a:not(.btn){display:none}
+    .blob{filter:blur(80px)}
+    .chip.c3{display:none}
+  }
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js-anim')</script>
+<div class="blob a"></div><div class="blob b"></div><div class="blob c"></div>
+
+<nav>
+  <div class="glass nav-in">
+    <a class="logo" href="#">Nebula<em>AI</em></a>
+    <div class="nav-links">
+      <a href="#features">能力</a>
+      <a href="#cta">价格</a>
+      <a href="#cta">文档</a>
+      <a class="btn" href="#cta">免费试用</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div>
+    <p class="eyebrow anim">TEAM KNOWLEDGE / AI NATIVE</p>
+    <h1 class="anim">你的团队<br><span class="grad">第二大脑</span></h1>
+    <p class="sub anim">把散落在文档、会议、聊天里的知识接进 Nebula。提问，得到带出处的答案——不是一段猜出来的话。</p>
+    <div class="hero-cta anim">
+      <a class="btn" href="#cta">免费开始</a>
+      <a class="btn btn-glass" href="#features">看 2 分钟演示</a>
+    </div>
+    <p class="hero-note anim">SOC 2 Type II · 数据不出境 · 14 天试用无需信用卡</p>
+  </div>
+  <div class="orb-stage anim" aria-hidden="true">
+    <div class="ring r1"></div><div class="ring r2"></div>
+    <div class="orb"></div>
+    <div class="glass chip c1">Q3 定价策略<small>来自 3 份文档 · 2 场会议</small></div>
+    <div class="glass chip c2">竞品功能对比<small>来自飞书知识库</small></div>
+    <div class="glass chip c3">上周周会结论<small>来自会议纪要</small></div>
+  </div>
+</header>
+
+<section class="features wrap" id="features">
+  <div class="sec-head">
+    <h2 class="anim">三件事，<br>做到比说得好听。</h2>
+    <span class="sec-index anim">01 — 03 / CAPABILITIES</span>
+  </div>
+  <div class="grid3">
+    <div class="glass card anim">
+      <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2FA8FF" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div>
+      <h3>每个答案都带出处</h3>
+      <p>回答旁永远挂着原文链接和段落位置。没有出处的答案，Nebula 不生成。</p>
+      <div class="meta">citation_required = true</div>
+    </div>
+    <div class="glass card anim">
+      <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B14EFF" stroke-width="1.8" stroke-linecap="round"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 7.7l5.4-.8z"/></svg></div>
+      <h3>接上你已有的工具</h3>
+      <p>飞书、Notion、Confluence、GitHub、Google Drive。同步一次，持续增量更新。</p>
+      <div class="meta">12+ connectors</div>
+    </div>
+    <div class="glass card anim">
+      <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E56CF" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <h3>权限跟着人走</h3>
+      <p>继承源系统的文档权限。看不到的文档，AI 也看不到——回答前先过权限。</p>
+      <div class="meta">inherit_permissions</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta wrap" id="cta">
+  <h2 class="anim">让知识开始回答问题。</h2>
+  <p class="anim">14 天免费试用，全功能，不需要信用卡。5 分钟接完第一个数据源。</p>
+  <div class="anim">
+    <a class="btn" href="#">创建团队空间</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>© 2026 Nebula AI · 保留所有权利</span>
+    <span><a href="#">安全白皮书</a><a href="#">服务状态</a><a href="#">隐私政策</a></span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!window.gsap || reduced) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.timeline({ defaults:{ ease:"power3.out", duration:.9 } })
+    .from(".hero .anim", { y:48, autoAlpha:0, stagger:.12 }, .15);
+
+  gsap.utils.toArray(".features .anim, .cta .anim").forEach(function(el){
+    gsap.from(el, {
+      y:44, autoAlpha:0, duration:.7, ease:"power3.out",
+      scrollTrigger:{ trigger:el, start:"top 86%", toggleActions:"play none none none" }
+    });
+  });
+
+  /* 环境氛围：chip 微漂移（唯一允许的循环动画） */
+  gsap.to([".chip.c1",".chip.c3"], { y:-10, duration:3.2, ease:"sine.inOut", yoyo:true, repeat:-1, stagger:.6 });
+  gsap.to(".chip.c2", { y:-8, duration:2.8, ease:"sine.inOut", yoyo:true, repeat:-1 });
+})();
+</script>
+</body>
+</html>

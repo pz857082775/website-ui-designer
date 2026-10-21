@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>半亩咖啡 — 每月一烘，烘完为止</title>
+<style>
+  :root{
+    --bg:#F5F2EC; --ink:#33322E; --ink-2:#7A766C;
+    --sage:#A9B7A4; --sage-deep:#5F7057;
+    --pink:#DFC8C2; --pink-deep:#A9705F;
+    --sand:#E7DCC9;
+    --font:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,sans-serif;
+    --serif:"Songti SC","STSong","Noto Serif SC",Georgia,serif;
+    --mono:ui-monospace,"SF Mono",Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 48px;position:relative;z-index:2}
+  /* 导航 */
+  nav{position:sticky;top:0;z-index:50;background:rgba(245,242,236,.9);backdrop-filter:blur(10px)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:72px}
+  .logo{font-family:var(--serif);font-size:22px;font-weight:700;letter-spacing:.06em;text-decoration:none;color:var(--ink)}
+  .nav-links{display:flex;gap:32px;align-items:center}
+  .nav-links a{color:var(--ink-2);text-decoration:none;font-size:15px;transition:color .2s}
+  .nav-links a:hover{color:var(--sage-deep)}
+  .btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:600;font-size:15px;padding:11px 26px;border-radius:999px;transition:transform .25s ease,box-shadow .25s ease;background:var(--sage-deep);color:#FBF9F4;border:none;cursor:pointer}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(95,112,87,.3)}
+  .btn:active{transform:scale(.97)}
+  /* Hero：超大背景字 + 手写体标题 */
+  .hero{position:relative;padding:130px 0 90px;overflow:hidden}
+  .bigword{position:absolute;top:4%;left:50%;transform:translateX(-50%);font-family:var(--serif);font-size:clamp(180px,26vw,380px);font-weight:700;color:var(--sage);opacity:.16;line-height:1;user-select:none;white-space:nowrap;z-index:1}
+  .hero-in{position:relative;z-index:2;max-width:760px}
+  .eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:var(--pink-deep);margin-bottom:26px}
+  .script{font-family:var(--serif);font-style:italic;font-size:clamp(30px,3.4vw,46px);color:var(--sage-deep);letter-spacing:.02em;margin-bottom:8px}
+  h1{font-size:clamp(40px,5vw,68px);line-height:1.12;letter-spacing:.01em;font-weight:700;font-family:var(--serif)}
+  .hero p.lead{margin:30px 0 42px;font-size:19px;color:var(--ink-2);max-width:44ch}
+  .hero-meta{display:flex;gap:36px;font-family:var(--mono);font-size:13px;color:var(--ink-2)}
+  .hero-meta b{display:block;color:var(--ink);font-size:15px;font-weight:600}
+  /* 故事区：米色大场 + 编号主张 */
+  .story{background:var(--sand);padding:110px 0;border-radius:48px 48px 0 0}
+  .sec-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:64px}
+  h2{font-family:var(--serif);font-size:clamp(30px,3.2vw,46px);letter-spacing:.01em;line-height:1.2;font-weight:700;max-width:24ch}
+  .sec-index{font-family:var(--mono);font-size:13px;color:var(--ink-2)}
+  .claim{display:grid;grid-template-columns:110px 1fr;gap:40px;padding:40px 0;border-top:1px solid rgba(51,50,46,.14)}
+  .claim:last-of-type{border-bottom:1px solid rgba(51,50,46,.14)}
+  .claim-num{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--pink-deep);padding-top:4px}
+  .claim h3{font-size:22px;font-weight:700;font-family:var(--serif);margin-bottom:8px}
+  .claim p{color:var(--ink-2);max-width:56ch}
+  /* 本月豆单：卡片索引式 */
+  .beans{padding:110px 0}
+  .bean-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .bean{background:#FBF9F4;border-radius:24px;padding:30px 28px;border:1px solid rgba(51,50,46,.08);transition:transform .3s ease,box-shadow .3s ease}
+  .bean:hover{transform:translateY(-6px);box-shadow:0 18px 44px rgba(51,50,46,.10)}
+  .bean .roast{display:inline-block;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;padding:4px 12px;border-radius:999px;margin-bottom:18px}
+  .roast.light{background:var(--pink);color:#6E4A3F}
+  .roast.med{background:var(--sage);color:#3E4B38}
+  .roast.dark{background:#D8CFC0;color:#4A4034}
+  .bean h3{font-family:var(--serif);font-size:20px;font-weight:700;margin-bottom:6px}
+  .bean .origin{font-size:13px;color:var(--ink-2);margin-bottom:16px}
+  .bean .notes{font-size:14.5px;color:var(--ink);line-height:1.8}
+  .bean .price{margin-top:18px;font-family:var(--mono);font-size:14px;color:var(--pink-deep);font-weight:600}
+  .bean .limited{font-size:12px;color:var(--ink-2);font-family:var(--mono);margin-top:2px}
+  /* 引言 */
+  .quote{padding:100px 0;text-align:center}
+  .quote p{font-family:var(--serif);font-size:clamp(22px,2.6vw,32px);line-height:1.6;max-width:26ch;margin:0 auto 24px;font-weight:700}
+  .quote cite{font-style:normal;font-family:var(--mono);font-size:13px;color:var(--ink-2)}
+  /* CTA */
+  .cta{background:var(--sage-deep);color:#FBF9F4;border-radius:48px;padding:100px 56px;margin-bottom:90px;display:flex;justify-content:space-between;align-items:center;gap:48px}
+  .cta h2{color:#FBF9F4;max-width:14ch}
+  .cta p{color:rgba(251,249,244,.82);margin-top:16px;max-width:38ch}
+  .btn-cream{background:#FBF9F4;color:var(--sage-deep)}
+  .btn-cream:hover{box-shadow:0 10px 26px rgba(0,0,0,.22)}
+  footer{padding:36px 0;border-top:1px solid rgba(51,50,46,.14);font-size:13px;color:var(--ink-2);font-family:var(--mono)}
+  .foot-in{display:flex;justify-content:space-between}
+  footer a{color:var(--ink-2);text-decoration:none;margin-left:24px}
+  footer a:hover{color:var(--sage-deep)}
+  .js-anim .anim{opacity:0}
+  @media (prefers-reduced-motion:reduce){.js-anim .anim{opacity:1}}
+  @media (max-width:900px){
+    .wrap{padding:0 24px}
+    .hero{padding:90px 0 64px}
+    .nav-links a:not(.btn){display:none}
+    .claim{grid-template-columns:1fr;gap:10px}
+    .bean-grid{grid-template-columns:1fr}
+    .cta{flex-direction:column;align-items:flex-start;padding:64px 32px;border-radius:32px}
+  }
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js-anim')</script>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="#">半亩咖啡</a>
+    <div class="nav-links">
+      <a href="#story">我们的做法</a>
+      <a href="#beans">本月豆单</a>
+      <a href="#visit">到店</a>
+      <a class="btn" href="#visit">预约杯测</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="bigword" aria-hidden="true">半亩</div>
+  <div class="wrap hero-in">
+    <p class="eyebrow anim">SINCE 2019 · 杭州 · 大关路 179 号</p>
+    <p class="script anim">Brewed slowly, sold monthly.</p>
+    <h1 class="anim">每月一烘，<br>烘完为止。</h1>
+    <p class="lead anim">半亩只有一台 3kg 的烘焙机。每个月 1 号开烘，卖完这一个月的量就收摊，下个月再烘。不囤豆，不返场。</p>
+    <div class="hero-meta anim">
+      <span><b>每月 1 号</b>开烘日</span>
+      <span><b>3 kg / 锅</b>小批量</span>
+      <span><b>7 年</b>只做这一件事</span>
+    </div>
+  </div>
+</header>
+
+<section class="story" id="story">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="anim">为什么是"每月一烘"</h2>
+      <span class="sec-index anim">WHY / 01 — 03</span>
+    </div>
+    <div class="claim">
+      <span class="claim-num anim">一</span>
+      <div class="anim">
+        <h3>咖啡豆是农产品，不是罐头</h3>
+        <p>烘好后第 4 到 18 天是风味窗口。囤一个月的豆子，后半月只剩"能喝"。我们宁可月中缺货，不卖过季豆。</p>
+      </div>
+    </div>
+    <div class="claim">
+      <span class="claim-num anim">二</span>
+      <div class="anim">
+        <h3>一台机器，看得过来的火</h3>
+        <p>3kg 的锅，一锅一锅看着曲线烘。批次表就挂在吧台墙上，哪一锅偏浅了半度，客人自己看得见。</p>
+      </div>
+    </div>
+    <div class="claim">
+      <span class="claim-num anim">三</span>
+      <div class="anim">
+        <h3>临期不折价，直接送</h3>
+        <p>第 19 天没卖完的豆子不促销、不折价——送给老街坊和夜班出租车司机。这是我们的规矩，也是我们的止损线。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="beans" id="beans">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="anim">本月豆单<br>2026 年 10 月</h2>
+      <span class="sec-index anim">THIS MONTH / 03 BEANS</span>
+    </div>
+    <div class="bean-grid">
+      <div class="bean anim">
+        <span class="roast light">浅烘 LIGHT</span>
+        <h3>秋山</h3>
+        <p class="origin">埃塞俄比亚 · 耶加雪菲 · 水洗 G1</p>
+        <p class="notes">茉莉、柠檬皮、蜂蜜。手冲建议 92℃ 水温，1:15，三段注水。</p>
+        <p class="price">¥88 / 100g</p>
+        <p class="limited">本月 40 袋 · 剩 11 袋</p>
+      </div>
+      <div class="bean anim">
+        <span class="roast med">中烘 MEDIUM</span>
+        <h3>晚渡</h3>
+        <p class="origin">哥伦比亚 · 慧兰 · 厌氧日晒</p>
+        <p class="notes">红酒、黑布林、可可尾韵。适合做冷萃基底，浸泡 14 小时。</p>
+        <p class="price">¥78 / 100g</p>
+        <p class="limited">本月 55 袋 · 剩 23 袋</p>
+      </div>
+      <div class="bean anim">
+        <span class="roast dark">深烘 DARK</span>
+        <h3>老灶</h3>
+        <p class="origin">巴西 · 喜拉多 · 半日晒</p>
+        <p class="notes">烤榛子、黑巧、烟熏。加奶不散，做拿铁的老客指定用它。</p>
+        <p class="price">¥68 / 100g</p>
+        <p class="limited">本月 60 袋 · 剩 31 袋</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="quote">
+  <div class="wrap">
+    <p class="anim">"豆子卖完的那天，<br>我就知道下个月该烘什么了。"</p>
+    <cite class="anim">—— 老周，半亩主理人，烘焙第 7 年</cite>
+  </div>
+</section>
+
+<section class="cta wrap" id="visit">
+  <div class="anim">
+    <h2>来大关路 179 号，<br>喝一杯当月的豆子。</h2>
+    <p>周二到周日 8:30—18:30，周一烘豆日闭店。每月 1 号开烘，通常 5 号后到店能喝到新豆。</p>
+  </div>
+  <div class="anim">
+    <a class="btn btn-cream" href="#">预约周六杯测</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>© 2026 半亩咖啡 · 杭州市拱墅区大关路 179 号</span>
+    <span><a href="#">批次记录</a><a href="#">订阅每月豆单</a><a href="#">联系我们</a></span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!window.gsap || reduced) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.timeline({ defaults:{ ease:"power3.out", duration:.9 } })
+    .from(".hero .anim", { y:44, autoAlpha:0, stagger:.11 }, .12);
+
+  gsap.utils.toArray(".story .anim, .beans .anim, .quote .anim, .cta .anim").forEach(function(el){
+    gsap.from(el, {
+      y:40, autoAlpha:0, duration:.75, ease:"power3.out",
+      scrollTrigger:{ trigger:el, start:"top 86%", toggleActions:"play none none none" }
+    });
+  });
+
+  /* 背景大字微视差：唯一的环境动效 */
+  gsap.to(".bigword", {
+    yPercent:-14, ease:"none",
+    scrollTrigger:{ trigger:".hero", start:"top top", end:"bottom top", scrub:.6 }
+  });
+})();
+</script>
+</body>
+</html>
