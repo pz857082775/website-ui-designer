@@ -1,13 +1,13 @@
 ---
 name: website-ui-designer
-version: 1.0.1
+version: 1.1.0
 updated: 2026-10-22
 description: 专业网站UI提示词工程师。三种入口模式：A 根据开发需求文档生成UI提示词；B 根据参考图/目标网站像素级复刻UI提示词；C 根据已开发界面输出审计+美化提示词。内置页面类型路由：营销落地页（5 行式风格提示词）与 B 端数据工作台/仪表盘（KPI 卡/表格/图表规范）两套语言。覆盖 PC网站、H5、小程序、APP 四端。触发词：网站UI、美化页面、UI设计、复刻界面、仿写页面、仪表盘、后台、工作台、B端、design.md、GSAP、landing page、H5、小程序、APP UI、页面太丑、AI感太重。
 ---
 
 # Website UI Designer — 专业UI提示词工程师
 
-> **版本 1.0.1** · 2026-10-22 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
+> **版本 1.1.0** · 2026-10-22 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
 > 新用户先看 [README.md](./README.md) 的「三分钟上手」；本文件是执行规范。
 
 给大模型写"能产出好界面"的提示词，是本技能的唯一产品。
@@ -37,6 +37,32 @@ description: 专业网站UI提示词工程师。三种入口模式：A 根据开
 
 产品官网里展示的界面片段（hero 截图、功能预览）按工作台规则建造内部，
 外壳按营销页规则——两个灵魂共用一套令牌。
+
+---
+
+## 视觉与交互硬标准（三层，全部可验收）
+
+完整参数与代码配方见 `references/visual-interaction-spec.md`，本节只列不可协商的部分。
+
+### 第一层 · 可读性（Contrast）
+- 正文 **≥4.5:1**；大字 **≥3:1**；UI 元素（边框/图标/焦点环）**≥3:1**
+- 禁止同色系低差（同色相且亮度差 <15%）；渐变/图片上的文字必须加 scrim 且最亮处仍达标
+- 必须成对定义浅色 + 深色令牌；深色下强调色要提亮，表面越"高"越亮
+- 软底徽章的文字用该色 800 档（深），不用 400 档
+- **交付前必跑** `python scripts/audit_contrast.py <页面>`，0 违规
+
+### 第二层 · 美观（Aesthetics）
+- 配色 **60-30-10**；强调色每屏 3-5 处；中性阶带轻微色相，不用纯灰
+- **一屏一个视觉焦点**（眯眼测试可辨认）；字号比例 1.25、跨度 ≥2.4 倍；字重 ≤3 种
+- 区块间距 96/120/160；每 2-3 个区块换一次底色；圆角分级、阴影两级
+- 禁止：彩虹渐变、满屏发光、装饰噪点、假玻璃
+
+### 第三层 · 交互反馈（Feedback）
+- 每个可交互元素 **8 态齐全**：default / hover / active / focus-visible / disabled / loading / success / error
+- **点击成功动画**：按下 scale(.97) → 加载 → 语义色 + 勾线绘制 220ms → 停留 → 还原；动画期间宽度锁定（CLS<0.1）；`aria-live` 宣告
+- **模块聚焦**：查看时该模块 `scale(1.03)` + 阴影升级 + 展开内容，其余 `scale(.98)` + 透明度 .6；Esc 恢复；键盘 `:focus-within` 同样触发；移动端改点击切换
+- **呼吸感**：AI/实时/紧急元素 6-8s 循环，一屏 ≤2 个；同时动画 ≤3 个
+- 只动 `transform/opacity/filter`；`prefers-reduced-motion` 全量降级但仍保留静态反馈
 
 ---
 
@@ -95,10 +121,12 @@ python scripts/rag.py query "<用户原话或需求要点>" --top 5 --format pro
 单文件 `index.html`，内联 CSS/JS，GSAP CDN + CSS 兜底，375/768/1440 三档。
 **硬性：内容默认可见**——禁止 CSS 预隐藏 `.anim{opacity:0}`，初始态交给 `gsap.from()`；
 脚本守卫 `if(!window.gsap || reduced) return;`，CDN 挂掉页面仍完整。
+**视觉与交互**：浅/深双模式令牌；按钮 8 态 + 成功动画；模块聚焦（放大展开/其余退后）；一屏 ≤2 个呼吸元素。
 
 ### A8 验收与自检修复循环
 1. 过 **10 项验收条**（`references/review-rubric.md`）——任一项不过不算完成
 2. 跑 `python scripts/preflight.py <页面>.html`（E1 预隐藏 / E2 reduced-motion / E4 图表库 / W1 emoji / W5 布局属性动画等），必须 0 ERROR
+2.5 跑 `python scripts/audit_contrast.py <页面>.html`（浅色 + 深色全部配色组合），必须 0 违规
 3. 用**最坏数据**打一遍页面（超长姓名、六位数金额、0 条列表、20 字标签）
 4. 修最严重 3 个问题 → 再查一轮，最多 3 轮
 **核心警告：只删装饰不补实质 = 单薄页面。删卡片的同时必须补更大的字号、整片色彩、真实图片、完整内容。**
@@ -188,6 +216,9 @@ python scripts/rag.py query "<用户原话或需求要点>" --top 5 --format pro
 - [ ] 动效有降级路径；平台特性已按 platform-matrix 落实
 - [ ] 工作台页面：KPI 数字等宽可扫读、涨红跌绿正确、徽章软底、表格规范（dashboard-style.md 第七节全清单）
 - [ ] **10 项验收条全过**（`review-rubric.md`）；`preflight.py` 0 ERROR；最坏数据不溢出
+- [ ] `audit_contrast.py` 0 违规（浅色 + 深色）；无同色系低差；渐变上文字有 scrim
+- [ ] 一屏一个焦点；强调色 3-5 处；字号跨度 ≥2.4 倍
+- [ ] 按钮 8 态 + 成功动画；模块聚焦可 Esc 恢复；呼吸元素 ≤2；reduced-motion 有降级
 
 ## 参考文件索引
 
@@ -200,6 +231,7 @@ python scripts/rag.py query "<用户原话或需求要点>" --top 5 --format pro
 | 写工作台/仪表盘提示词 | `dashboard-style.md` |
 | 参数表（配色/字号/间距/动效） | `design-system-spec.md` |
 | 验收与评分 | `review-rubric.md` |
+| 可读性 / 美观 / 交互的硬标准 | `visual-interaction-spec.md` + `scripts/audit_contrast.py` |
 | 生成前查依据（RAG） | `rag-retrieval.md` + `scripts/rag.py`（输入/范围/输出 + 防编造三道闸） |
 | 找灵感 / 查参考资源 | `inspiration-sources.md`（按"要解决什么"分类，含 2026 状态） |
 | 持续提升自己的提示词水平 | `learning-loop.md`（六步闭环 + 三库 + 30 天计划） |

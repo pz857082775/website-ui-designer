@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>交互实验室 — 可读性 / 美观 / 反馈</title>
+<style>
+  :root{
+    --bg:#F6F7FB; --surface:#FFFFFF; --surface-2:#F1F3F8;
+    --ink:#1A1D26; --ink-2:#5A6172; --ink-3:#5F6A7D;
+    --border:#E3E7EF; --accent:#2E6BE6; --accent-ink:#FFFFFF;
+    --success:#17845B; --success-ink:#FFFFFF;
+    --warning:#A85B00; --warning-ink:#FFFFFF;
+    --danger:#C0342B; --danger-ink:#FFFFFF;
+    --focus:#1F5BC4;
+    --shadow-1:0 1px 2px rgba(16,24,40,.04), 0 2px 8px rgba(16,24,40,.06);
+    --shadow-2:0 8px 28px rgba(16,24,40,.12);
+    --fs-1:13px; --fs-2:15px; --fs-3:17px; --fs-4:21px; --fs-5:26px; --fs-6:34px; --fs-7:44px;
+    --ease:cubic-bezier(.22,1,.36,1);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  [data-theme="dark"]{
+    --bg:#0E1116; --surface:#151A22; --surface-2:#1C222C;
+    --ink:#F2F4F8; --ink-2:#B7BECB; --ink-3:#98A1B0;
+    --border:#2A323F; --accent:#7EA6FF; --accent-ink:#0B0E13;
+    --success:#4FD1A5; --success-ink:#06231A;
+    --warning:#FFC46B; --warning-ink:#241704;
+    --danger:#FF8A80; --danger-ink:#2A0B08;
+    --focus:#9DBBFF;
+    --shadow-1:0 1px 2px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.3);
+    --shadow-2:0 10px 30px rgba(0,0,0,.5);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--font);
+    font-size:var(--fs-2); line-height:1.65; font-variant-numeric:tabular-nums;
+    -webkit-font-smoothing:antialiased;
+    transition:background .25s ease, color .25s ease;
+  }
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  /* ============ 顶栏 ============ */
+  .top{position:sticky;top:0;z-index:40;background:color-mix(in srgb, var(--bg) 88%, transparent);
+       backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+  .top-in{display:flex;align-items:center;gap:12px;height:62px}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:var(--fs-3)}
+  .brand .mark{width:30px;height:30px;border-radius:9px;background:var(--accent);color:var(--accent-ink);
+       display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+  .ai-badge{
+    display:inline-flex;align-items:center;gap:6px;margin-left:6px;
+    font-size:11.5px;font-weight:600;color:var(--accent);
+    background:color-mix(in srgb, var(--accent) 12%, var(--surface));
+    border:1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+    padding:3px 10px;border-radius:999px;
+    animation:breathe 7s ease-in-out infinite;
+  }
+  .ai-badge svg{width:12px;height:12px}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+  .theme-toggle{margin-left:auto;display:inline-flex;align-items:center;gap:8px;
+    height:36px;padding:0 14px;border-radius:10px;border:1px solid var(--border);
+    background:var(--surface);font-size:var(--fs-1);color:var(--ink-2);
+    transition:background .16s ease,border-color .16s ease,transform .16s ease}
+  .theme-toggle:hover{border-color:var(--ink-3);color:var(--ink);transform:translateY(-1px)}
+  .theme-toggle:active{transform:scale(.97)}
+  .theme-toggle:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+  /* ============ 页头 ============ */
+  .hero{padding:56px 0 40px}
+  .eyebrow{font-size:12px;letter-spacing:.14em;color:var(--ink-3);margin-bottom:14px}
+  h1{font-size:var(--fs-7);line-height:1.15;letter-spacing:-.025em;max-width:16ch}
+  .hero p{margin-top:16px;color:var(--ink-2);font-size:var(--fs-3);max-width:52ch}
+  .hero-stats{display:flex;gap:40px;margin-top:32px;flex-wrap:wrap}
+  .stat b{display:block;font-size:var(--fs-5);font-weight:750;letter-spacing:-.02em}
+  .stat span{font-size:12px;color:var(--ink-3)}
+
+  /* ============ 模块网格（聚焦放大） ============ */
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;margin:8px 0 16px}
+  .section-head h2{font-size:var(--fs-4);letter-spacing:-.01em}
+  .section-head span{font-size:12.5px;color:var(--ink-3)}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-items:start;padding:6px}
+  .card{
+    background:var(--surface);border:1px solid var(--border);border-radius:16px;
+    padding:22px;box-shadow:var(--shadow-1);cursor:pointer;position:relative;
+    transition:transform .38s var(--ease), box-shadow .38s ease, opacity .28s ease,
+               border-color .28s ease, background .25s ease;
+    will-change:transform;
+  }
+  .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-2)}
+  .card:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .card .ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    background:color-mix(in srgb, var(--accent) 12%, var(--surface));color:var(--accent);margin-bottom:14px}
+  .card h3{font-size:var(--fs-3);letter-spacing:-.01em}
+  .card .desc{font-size:13px;color:var(--ink-2);margin-top:4px}
+  .card .detail{display:grid;grid-template-rows:0fr;transition:grid-template-rows .26s ease}
+  .card .detail>div{overflow:hidden}
+  .card .detail ul{list-style:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+  .card .detail li{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;
+    color:var(--ink-2);padding:5px 0}
+  .card .detail li b{color:var(--ink);font-weight:600}
+  .grid[data-focus="on"] .card{transform:scale(.98);opacity:.6}
+  .grid[data-focus="on"] .card.is-focus{
+    transform:scale(1.03);opacity:1;box-shadow:var(--shadow-2);
+    border-color:var(--accent);z-index:3;background:var(--surface);
+  }
+  .card.is-focus .detail{grid-template-rows:1fr}
+  .card .hint{position:absolute;top:14px;right:16px;font-size:10.5px;color:var(--ink-3);opacity:0;
+    transition:opacity .2s}
+  .grid[data-focus="on"] .card.is-focus .hint{opacity:1}
+
+  /* ============ 操作区（成功动画） ============ */
+  .actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+    background:var(--surface);border:1px solid var(--border);border-radius:16px;
+    padding:20px;margin:22px 0 8px;box-shadow:var(--shadow-1)}
+  .actions .note{font-size:12.5px;color:var(--ink-3);margin-left:auto}
+  .btn{
+    position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    min-width:170px;height:44px;padding:0 20px;border-radius:10px;
+    font-size:var(--fs-1);font-weight:600;overflow:hidden;
+    transition:background .2s ease,color .2s ease,transform .12s ease,box-shadow .2s ease,border-color .2s ease;
+  }
+  .btn:active{transform:scale(.97)}
+  .btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .btn-primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 2px 8px color-mix(in srgb, var(--accent) 30%, transparent)}
+  .btn-primary:hover{background:color-mix(in srgb, var(--accent) 88%, var(--ink));box-shadow:0 6px 18px color-mix(in srgb, var(--accent) 34%, transparent)}
+  .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--border)}
+  .btn-ghost:hover{border-color:var(--ink-3);background:var(--surface-2)}
+  .btn-danger{background:transparent;color:var(--danger);border:1px solid color-mix(in srgb, var(--danger) 45%, var(--border))}
+  .btn-danger:hover{background:color-mix(in srgb, var(--danger) 8%, var(--surface))}
+
+  /* 状态层 */
+  .btn .label,.btn .done{transition:opacity .12s ease}
+  .btn .done{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;opacity:0}
+  .btn .spinner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0}
+  .btn .spinner i{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;
+    border-top-color:transparent;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .btn.is-loading{pointer-events:none}
+  .btn.is-loading .label{opacity:0}
+  .btn.is-loading .spinner{opacity:1}
+  .btn.is-success{background:var(--success);color:var(--success-ink);border-color:var(--success)}
+  .btn.is-success .label,.btn.is-success .spinner{opacity:0}
+  .btn.is-success .done{opacity:1}
+  .btn .check{width:18px;height:18px}
+  .btn .check path{stroke-dasharray:26;stroke-dashoffset:26}
+  .btn.is-success .check path{animation:draw .22s ease-out forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .btn.is-error{border-color:var(--danger);color:var(--danger);animation:shake .3s ease}
+  @keyframes shake{25%{transform:translateX(-3px)}50%{transform:translateX(3px)}75%{transform:translateX(-2px)}}
+
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  footer{padding:36px 0 56px;color:var(--ink-3);font-size:12.5px}
+
+  /* 深色下阴影不可见，用亮边框补层级 */
+  [data-theme="dark"] .card,[data-theme="dark"] .actions{border-color:var(--border)}
+
+  @media (max-width:1080px){.grid{grid-template-columns:repeat(2,1fr)}h1{font-size:var(--fs-6)}}
+  @media (max-width:720px){
+    .grid{grid-template-columns:1fr}
+    .hero{padding:36px 0 28px}
+    h1{font-size:32px}
+    .actions .note{margin-left:0;width:100%}
+    .grid[data-focus="on"] .card{transform:none;opacity:1}
+    .grid[data-focus="on"] .card.is-focus{transform:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+      transition-duration:.001ms !important}
+    .card,.grid[data-focus="on"] .card{transform:none !important}
+    .card .detail{grid-template-rows:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <span class="brand"><span class="mark">M</span>米乐实验室</span>
+    <span class="ai-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z"/></svg>
+      AI 辅助
+    </span>
+    <button class="theme-toggle" id="themeBtn" type="button" aria-pressed="false">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <span id="themeLabel">深色模式</span>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">交互与视觉规范 · 实测页</p>
+    <h1>看得清，也看得下去。</h1>
+    <p>这一页把三条硬标准做成了可直接体验的样本：任何文字都过 4.5:1、一屏只有一个焦点、每个操作都有回应。</p>
+    <div class="hero-stats">
+      <div class="stat"><b><span class="cnt" data-to="21">0</span>:1</b><span>最低对比度目标</span></div>
+      <div class="stat"><b><span class="cnt" data-to="8">0</span> 态</b><span>按钮状态覆盖</span></div>
+      <div class="stat"><b><span class="cnt" data-to="380">0</span>ms</b><span>模块聚焦时长</span></div>
+    </div>
+  </section>
+
+  <div class="section-head">
+    <h2>选择要看的模块</h2>
+    <span>点击或按 Tab 聚焦，Esc 恢复</span>
+  </div>
+
+  <section class="grid" id="grid" data-focus="off">
+    <article class="card" tabindex="0" role="button" aria-expanded="false">
+      <span class="hint">Esc 收起</span>
+      <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div>
+      <h3>数据概览</h3>
+      <p class="desc">今日关键指标与趋势</p>
+      <div class="detail"><div><ul>
+        <li><span>访问量</span><b>12,480</b></li>
+        <li><span>转化率</span><b>4.6%</b></li>
+        <li><span>客单价</span><b>¥103</b></li>
+      </ul></div></div>
+    </article>
+
+    <article class="card" tabindex="0" role="button" aria-expanded="false">
+      <span class="hint">Esc 收起</span>
+      <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></div>
+      <h3>内容生成</h3>
+      <p class="desc">标题、口播稿与封面文案</p>
+      <div class="detail"><div><ul>
+        <li><span>待审核</span><b>3 篇</b></li>
+        <li><span>本周产出</span><b>12 篇</b></li>
+        <li><span>采纳率</span><b>78%</b></li>
+      </ul></div></div>
+    </article>
+
+    <article class="card" tabindex="0" role="button" aria-expanded="false">
+      <span class="hint">Esc 收起</span>
+      <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <h3>素材库</h3>
+      <p class="desc">图片、脚本与历史作品</p>
+      <div class="detail"><div><ul>
+        <li><span>素材总数</span><b>268</b></li>
+        <li><span>本月新增</span><b>34</b></li>
+        <li><span>待整理</span><b>12</b></li>
+      </ul></div></div>
+    </article>
+
+    <article class="card" tabindex="0" role="button" aria-expanded="false">
+      <span class="hint">Esc 收起</span>
+      <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div>
+      <h3>发布计划</h3>
+      <p class="desc">排期、平台与状态</p>
+      <div class="detail"><div><ul>
+        <li><span>本周待发</span><b>5 条</b></li>
+        <li><span>已完成</span><b>3 条</b></li>
+        <li><span>待复盘</span><b>2 条</b></li>
+      </ul></div></div>
+    </article>
+  </section>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="saveBtn" type="button">
+      <span class="label">保存并发布</span>
+      <span class="spinner"><i></i></span>
+      <span class="done">
+        <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>
+        已发布
+      </span>
+    </button>
+
+    <button class="btn btn-ghost" id="draftBtn" type="button">
+      <span class="label">生成草稿</span>
+      <span class="spinner"><i></i></span>
+      <span class="done">
+        <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>
+        已保存
+      </span>
+    </button>
+
+    <button class="btn btn-danger" id="failBtn" type="button">
+      <span class="label">模拟失败</span>
+    </button>
+
+    <span class="note">宽度锁定，动画期间不跳动</span>
+  </div>
+
+  <p class="sr-only" id="live" role="status" aria-live="polite"></p>
+</main>
+
+<footer class="wrap">© 2026 米乐 · 视觉与交互规范实测页</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script>
+(function(){
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- 主题切换（双模式令牌） ---------- */
+  var root = document.documentElement;
+  var btn = document.getElementById("themeBtn");
+  var label = document.getElementById("themeLabel");
+  btn.addEventListener("click", function(){
+    var dark = root.dataset.theme !== "dark";
+    root.dataset.theme = dark ? "dark" : "light";
+    btn.setAttribute("aria-pressed", String(dark));
+    label.textContent = dark ? "浅色模式" : "深色模式";
+  });
+
+  /* ---------- 模块聚焦：放大 + 展开，其余退后 ---------- */
+  var grid = document.getElementById("grid");
+  var cards = Array.prototype.slice.call(grid.querySelectorAll(".card"));
+  var live = document.getElementById("live");
+
+  function clearFocus(){
+    cards.forEach(function(c){ c.classList.remove("is-focus"); c.setAttribute("aria-expanded","false"); });
+    grid.setAttribute("data-focus","off");
+  }
+  function focusCard(card){
+    var already = card.classList.contains("is-focus");
+    clearFocus();
+    if (already) { live.textContent = "已收起"; return; }
+    card.classList.add("is-focus");
+    card.setAttribute("aria-expanded","true");
+    grid.setAttribute("data-focus","on");
+    live.textContent = card.querySelector("h3").textContent + " 已展开";
+  }
+
+  grid.addEventListener("click", function(e){
+    var card = e.target.closest(".card");
+    if (card) focusCard(card);
+  });
+  grid.addEventListener("focusin", function(e){
+    var card = e.target.closest(".card");
+    if (card) focusCard(card);
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape") { clearFocus(); live.textContent = "已恢复"; }
+  });
+
+  /* ---------- 按钮：加载 → 成功（勾线） ---------- */
+  function successFlow(button, doneText){
+    if (button.dataset.state) return;
+    button.dataset.state = "loading";
+    button.classList.add("is-loading");
+    button.setAttribute("aria-busy","true");
+    setTimeout(function(){
+      button.classList.remove("is-loading");
+      button.classList.add("is-success");
+      button.dataset.state = "success";
+      button.removeAttribute("aria-busy");
+      live.textContent = doneText;
+      setTimeout(function(){
+        button.classList.remove("is-success");
+        button.dataset.state = "";
+      }, 1600);
+    }, 600);
+  }
+
+  document.getElementById("saveBtn").addEventListener("click", function(){
+    successFlow(this, "已发布");
+  });
+  document.getElementById("draftBtn").addEventListener("click", function(){
+    successFlow(this, "草稿已保存");
+  });
+  document.getElementById("failBtn").addEventListener("click", function(){
+    var b = this;
+    if (b.dataset.state) return;
+    b.classList.add("is-error");
+    live.textContent = "保存失败，请重试";
+    setTimeout(function(){ b.classList.remove("is-error"); }, 700);
+  });
+
+  /* ---------- 数字滚动（只播一次） ---------- */
+  if (window.gsap && !reduced) {
+    document.querySelectorAll(".cnt").forEach(function(el){
+      var to = parseFloat(el.dataset.to), obj = {v:0};
+      gsap.to(obj, { v:to, duration:1.1, ease:"power2.out", snap:{v:1},
+        onUpdate:function(){ el.textContent = Math.round(obj.v).toLocaleString("zh-CN"); } });
+    });
+  } else {
+    document.querySelectorAll(".cnt").forEach(function(el){ el.textContent = el.dataset.to; });
+  }
+})();
+</script>
+</body>
+</html>

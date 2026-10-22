@@ -2,7 +2,7 @@
 
 **让 AI 生成的界面，不再长得像 AI 生成的。**
 
-![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-1.0.1-2E7CF6?style=flat-square)
+![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-1.1.0-2E7CF6?style=flat-square)
 ![许可](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-%E5%BC%80%E6%BA%90-34A853?style=flat-square)
 ![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20H5%E9%A1%B5%E9%9D%A2%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20APP-8A90A2?style=flat-square)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
@@ -141,6 +141,47 @@ python scripts/rag.py query "入场动画" --type A --format prompt   # 直接�
 
 ---
 
+## 三层标准：看得清 · 看得下去 · 有回应
+
+任何页面交付前必须过这三层，全部可自动或半自动检验。
+
+### 第一层 · 可读性（不达标就是坏设计）
+
+| 对象 | 最低对比度 |
+|---|---|
+| 正文 | **4.5:1** |
+| 大字（≥24px 或 ≥18.66px 粗体） | 3:1 |
+| 图标 / 边框 / 焦点环 | 3:1 |
+
+```bash
+python scripts/audit_contrast.py tests/*.html       # 浅色 + 深色全组合，0 违规才交付
+```
+
+硬规则：禁止同色系低差；渐变/照片上的文字必须加 scrim；必须成对定义浅色与深色令牌；
+深色下强调色提亮、表面越"高"越亮；软底徽章文字用 800 档深色。
+
+### 第二层 · 美观（一屏一个焦点）
+
+- 配色 60-30-10；强调色每屏 3-5 处；中性阶带轻微色相（纯灰显廉价）
+- 字号比例 1.25、跨度 ≥2.4 倍、字重 ≤3 种
+- 区块间距 96/120/160；每 2-3 个区块换一次底色
+- **眯眼测试**：模糊后仍能看出一个焦点，否则返工
+
+### 第三层 · 交互（每个操作都要有回应）
+
+| 项目 | 标准 |
+|---|---|
+| 按钮状态 | 8 态齐全：default / hover / active / focus / disabled / loading / success / error |
+| 点击成功 | 按下缩放 → 加载 → 语义色 + 勾线 220ms → 展示"已保存" → 还原；宽度锁定不跳动 |
+| 模块聚焦 | 查看时放大到 1.03 并展开内容，其余缩到 0.98 且降透明度；Esc 恢复；键盘同样可触发 |
+| 呼吸感 | 只给 AI/实时/紧急元素，6-8s 循环，一屏 ≤2 个 |
+| 降级 | `prefers-reduced-motion` 下取消位移缩放，但保留静态反馈 |
+
+可直接体验的样例：[`tests/test9-interaction-lab.html`](./tests/test9-interaction-lab.html)（浅深切换 / 四模块聚焦 / 成功与失败反馈）。
+完整参数与代码配方见 [`references/visual-interaction-spec.md`](./references/visual-interaction-spec.md)。
+
+---
+
 ## 核心规则速览
 
 **四个旋钮**（写在提示词最前面，决定"做到什么程度算完成"）
@@ -185,12 +226,14 @@ website-ui-designer/
 │   ├── platform-matrix.md          # 四端差异 + 移动端原生化七项
 │   ├── inspiration-sources.md      # 灵感资源库（10 类，含 2026 状态）
 │   ├── learning-loop.md            # 持续提升方法：六步闭环 + 三库
+│   ├── visual-interaction-spec.md  # 三层硬标准：可读性 / 美观 / 交互（含代码配方与验收）
 │   ├── rag-retrieval.md            # 知识检索：输入 / 检索范围 / 输出 / 防编造
 │   ├── design-md-template.md       # DESIGN.md 令牌模板
 │   └── open-source-integration.md  # 开源方法论映射 + 12 条新规则
 ├── scripts/
 │   ├── preflight.py                # 交付前自检（7 类硬伤，0 ERROR 才交付）
-│   └── rag.py                      # 知识检索：生成前查依据，避免随意发挥
+│   ├── rag.py                      # 知识检索：生成前查依据，避免随意发挥
+│   └── audit_contrast.py           # 配色可读性审计：浅色 + 深色全部组合，0 违规才交付
 └── tests/                          # 8 个实测页
     ├── test1-lumen-minimal.html         极简留白 · 编辑器官网
     ├── test2-nebula-glass.html          玻璃美学 · AI 工具
@@ -199,18 +242,20 @@ website-ui-designer/
     ├── test5-clone-prompt-glass.md      复刻提示词样例
     ├── test6-yunshang-dashboard.html    数据工作台 · 经营总览
     ├── test7-workbuddy-creator-home.html 创作工作台 · 自媒体首页
-    └── test8-medical-workbench-home.html 服务型工作台 · 医疗首页
+    ├── test8-medical-workbench-home.html 服务型工作台 · 医疗首页
+    └── test9-interaction-lab.html        交互实验室 · 浅深双模式 / 模块聚焦 / 成功动画
 ```
 
 ---
 
 ## 版本历史
 
-当前版本 **v1.0.1**（2026-10-22），首个正式发布版本。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
+当前版本 **v1.1.0**（2026-10-22）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
-| **v1.0.1** | 2026-10-22 | 徽章调整：平台改用「H5页面 / APP」，新增版权徽章「米乐」 |
+| **v1.1.0** | 2026-10-22 | 三层标准：对比度审计、视觉焦点、交互反馈（8 态 / 成功动画 / 模块聚焦） |
+| v1.0.1 | 2026-10-22 | 徽章调整：平台改用「H5页面 / APP」，新增版权徽章「米乐」 |
 | v1.0.0 | 2026-10-22 | 首个正式版：三入口模式、四类页面、四端平台、知识检索、自检与验收体系 |
 
 **版本约定**：修订号（1.0.x）修 bug 与文档；次版本号（1.x.0）加能力；主版本号（2.0.0）仅在不兼容变更时使用。
@@ -232,6 +277,9 @@ website-ui-designer/
 
 **它会不会只是套模板？**
 不会。每次任务都要求先盘点"只属于这个客户的素材"（名字含义、街道、数字、约束），创意从这些素材里长出来，而不是从"科技感"这类通用概念。
+
+**支持深色模式吗？**
+支持。规范要求设计令牌成对定义浅色与深色两套，并用 `audit_contrast.py` 分别校验；深色下强调色提亮、用亮边框代替阴影表达层级。
 
 **它会不会凭印象编设计参数？**
 不会。生成前会先跑知识检索（`rag.py`），把库里的依据以"必须遵守 / 明确禁止"的形式注入提示词；查不到依据时会明确标注为推断。
