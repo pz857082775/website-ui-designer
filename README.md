@@ -44,14 +44,15 @@ website-ui-designer/
 │   ├── clone-mode.md               # 模式 B：复刻完整流程（浏览器/截图/设计系统三路径）
 │   ├── redesign-mode.md            # 模式 C：审计 + 定向修复句式库
 │   ├── platform-matrix.md          # PC/H5/小程序/APP 四端提示词差异
-│   └── dashboard-style.md          # B 端工作台/仪表盘规范（KPI卡/表格/图表 + 完整模板）
+│   └── dashboard-style.md          # B 端工作台规范（数据工作台 + 创作工作台进阶：KPI卡/表格/图表/待办/素材库/发布日历 + 完整模板）
 └── tests/
     ├── test1-lumen-minimal.html    # 模式A · 极简留白 · 编辑器官网
     ├── test2-nebula-glass.html     # 模式A · 玻璃美学 · AI 知识库
     ├── test3-banmu-morandi.html    # 模式A · 莫兰迪柔和 · 咖啡品牌页
     ├── test4-banmu-h5.html         # 模式A · H5 移动端 · 吸底操作栏 + 安全区
     ├── test5-clone-prompt-glass.md # 模式B · 复刻提示词真实样例
-    └── test6-yunshang-dashboard.html # 工作台 · 经营总览仪表盘（侧边栏/KPI/图表/表格/待办/AI卡）
+    ├── test6-yunshang-dashboard.html # 数据工作台 · 经营总览仪表盘（侧边栏/KPI/图表/表格/待办/AI卡）
+    └── test7-workbuddy-creator-home.html # 创作工作台 · 自媒体首页（待办C位/爆款列表/sparkline/快捷入口/策划流）
 ```
 
 ## 风格库

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkBuddy 自媒体工作台 — 首页总览</title>
+<style>
+  :root{
+    --bg:#F6F7FB; --card:#FFFFFF; --line:#ECEEF3;
+    --ink:#1A1D26; --ink-2:#8A90A2; --ink-3:#B6BCCB;
+    --primary:#4E6EF2; --primary-soft:rgba(78,110,242,.10);
+    --ai-a:#7B5CFA; --ai-b:#5B8DEF;
+    --green:#22B07D; --green-soft:rgba(34,176,125,.12);
+    --orange:#FF9A3D; --orange-soft:rgba(255,154,61,.14);
+    --red:#F04438; --red-soft:rgba(240,68,56,.12);
+    --teal:#0FB5A6; --teal-soft:rgba(15,181,166,.12);
+    --dy:#161823; --xhs:#FF2442; --bili:#FB7299; --wxh:#07C160;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    --shadow:0 1px 2px rgba(26,29,38,.03),0 4px 16px rgba(26,29,38,.05);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .num{font-variant-numeric:tabular-nums}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .app{display:grid;grid-template-columns:212px 1fr;min-height:100vh}
+  /* ===== 侧边栏 ===== */
+  .side{background:var(--card);border-right:1px solid var(--line);position:sticky;top:0;height:100vh;padding:18px 12px;display:flex;flex-direction:column}
+  .logo{display:flex;align-items:center;gap:10px;padding:2px 10px 20px}
+  .logo .mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--ai-a),var(--ai-b));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px}
+  .logo b{font-size:15.5px;letter-spacing:-.01em}
+  .logo small{display:block;font-size:10.5px;color:var(--ink-3);font-weight:400}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:8.5px 11px;border-radius:10px;color:var(--ink-2);font-size:13.5px;text-decoration:none;margin-bottom:2px;transition:background .15s,color .15s}
+  .nav-item svg{width:17px;height:17px;flex:none}
+  .nav-item:hover{background:#F5F6FA;color:var(--ink)}
+  .nav-item.active{background:var(--primary-soft);color:var(--primary);font-weight:600}
+  /* ===== 顶栏 ===== */
+  .main{min-width:0}
+  .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:14px;height:56px;padding:0 24px;background:rgba(246,247,251,.9);backdrop-filter:blur(10px)}
+  .search{flex:1;max-width:520px;margin:0 auto;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7.5px 16px;color:var(--ink-3)}
+  .search input{border:none;outline:none;background:none;font-size:13px;width:100%;color:var(--ink)}
+  .bell{position:relative;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--ink-2)}
+  .bell:hover{background:var(--card)}
+  .bell i{position:absolute;top:7px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg)}
+  .me{display:flex;align-items:center;gap:8px}
+  .me .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#8EC5FC,#E0C3FC);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#3D5A80}
+  .me b{font-size:13px;font-weight:600}
+  /* ===== 内容 ===== */
+  .content{padding:8px 24px 32px}
+  .hello{display:flex;justify-content:space-between;align-items:flex-end;margin:8px 0 18px}
+  .hello h1{font-size:23px;font-weight:750;letter-spacing:-.01em}
+  .hello p{color:var(--ink-2);font-size:13px;margin-top:3px}
+  .hello .date{color:var(--ink-2);font-size:13px}
+  .row{display:grid;gap:16px;margin-bottom:16px}
+  .row.r1{grid-template-columns:352px 1fr}
+  .row.r4{grid-template-columns:2fr 1fr}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:18px 20px}
+  .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .card-head h3{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .card-head .more{font-size:12px;color:var(--ink-2);text-decoration:none}
+  .card-head .more:hover{color:var(--primary)}
+  .count-pill{font-size:11.5px;color:var(--ink-2);background:#F3F4F8;border-radius:999px;padding:2px 9px;font-weight:500;margin-left:6px}
+  /* 待办卡 */
+  .todo{display:flex;align-items:center;gap:11px;padding:10.5px 2px;border-bottom:1px dashed #F0F1F5}
+  .todo:last-child{border-bottom:none}
+  .cbx{width:17px;height:17px;border-radius:5px;border:1.5px solid #D4D8E2;flex:none;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .todo.done .cbx{background:var(--primary);border-color:var(--primary)}
+  .todo.done .cbx::after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+  .todo .t{font-size:13.5px;flex:1}
+  .todo.done .t{color:var(--ink-3);text-decoration:line-through}
+  .todo .frac{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+  /* 数据概览 KPI */
+  .kpis4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .kpi{padding:16px 18px}
+  .kpi .k-label{font-size:12.5px;color:var(--ink-2);display:flex;align-items:center;gap:5px}
+  .kpi .k-label i{width:6px;height:6px;border-radius:2px;background:var(--primary)}
+  .kpi .k-val{font-size:23px;font-weight:750;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums}
+  .kpi .k-foot{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+  .kpi .k-trend{font-size:12px;color:var(--teal);font-weight:600}
+  .sel{font-size:11.5px;color:var(--ink-2);background:#F3F4F8;border-radius:8px;padding:4px 10px;display:inline-flex;align-items:center;gap:4px}
+  /* 爆款视频列表 */
+  .vlist{display:flex;flex-direction:column;gap:4px}
+  .vrow{display:flex;align-items:center;gap:13px;padding:9px 6px;border-radius:10px}
+  .vrow:hover{background:#F8F9FC}
+  .vthumb{position:relative;width:62px;height:44px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff}
+  .vthumb .dur{position:absolute;right:3px;bottom:3px;background:rgba(0,0,0,.72);color:#fff;font-size:9.5px;font-weight:500;padding:1px 4px;border-radius:4px;font-variant-numeric:tabular-nums}
+  .vrow .v-info{flex:1;min-width:0}
+  .vrow .v-title{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vrow .v-meta{font-size:11.5px;color:var(--ink-2);display:flex;gap:12px;margin-top:2px;font-variant-numeric:tabular-nums}
+  .vrow .v-date{font-size:11.5px;color:var(--ink-3);flex:none}
+  /* 平台标签 */
+  .pt{display:inline-flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:600;color:#fff;border-radius:5px;padding:1.5px 7px;flex:none}
+  .pt.dy{background:var(--dy)} .pt.xhs{background:var(--xhs)} .pt.bili{background:var(--bili)} .pt.wxh{background:var(--wxh)}
+  .tag{font-size:10.5px;color:var(--ink-2);background:#F3F4F8;border-radius:5px;padding:1.5px 7px}
+  /* 快捷入口 */
+  .quick4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .qcard{border-radius:16px;padding:18px;color:#fff;text-decoration:none;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;display:block}
+  .qcard:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(26,29,38,.16)}
+  .qcard .q-ic{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+  .qcard b{font-size:14.5px;font-weight:700;display:block}
+  .qcard span{font-size:11.5px;opacity:.82;display:block;margin-top:2px}
+  .qcard::after{content:"";position:absolute;right:-24px;top:-24px;width:88px;height:88px;border-radius:50%;background:rgba(255,255,255,.1)}
+  .g-blue{background:linear-gradient(135deg,#5B8DEF,#4E6EF2)}
+  .g-purple{background:linear-gradient(135deg,#9A6BFF,#7B5CFA)}
+  .g-green{background:linear-gradient(135deg,#2FD3A5,#22B07D)}
+  .g-orange{background:linear-gradient(135deg,#FFB259,#FF8A3D)}
+  /* 策划列表 */
+  .prow{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid #F0F1F5}
+  .prow:last-child{border-bottom:none}
+  .prow .p-ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+  .prow .p-info{flex:1;min-width:0}
+  .prow .p-t{font-size:13.5px;font-weight:600}
+  .prow .p-d{font-size:11.5px;color:var(--ink-2)}
+  .badge{display:inline-flex;align-items:center;font-size:11px;padding:2px 9px;border-radius:6px;font-weight:600;flex:none}
+  .b-blue{background:var(--primary-soft);color:#3D55C8}
+  .b-orange{background:var(--orange-soft);color:#C96A12}
+  .b-green{background:var(--green-soft);color:#158A5F}
+  .b-gray{background:#F0F1F5;color:var(--ink-2)}
+  .b-purple{background:rgba(123,92,250,.12);color:#6A48D8}
+  /* 最近生成 */
+  .grow{display:flex;align-items:center;gap:11px;padding:10px 2px;border-bottom:1px solid #F0F1F5}
+  .grow:last-child{border-bottom:none}
+  .grow .g-ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none;font-size:13px;font-weight:700}
+  .grow .g-info{flex:1;min-width:0}
+  .grow .g-t{font-size:13px;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .grow .g-d{font-size:11px;color:var(--ink-3)}
+  .js-anim .anim{opacity:0}
+  @media (prefers-reduced-motion:reduce){.js-anim .anim{opacity:1}}
+  @media (max-width:1200px){.row.r1{grid-template-columns:1fr}.kpis4{grid-template-columns:repeat(2,1fr)}.quick4{grid-template-columns:repeat(2,1fr)}.row.r4{grid-template-columns:1fr}}
+  @media (max-width:900px){.app{grid-template-columns:1fr}.side{display:none}.kpis4{grid-template-columns:1fr}.quick4{grid-template-columns:1fr}.content{padding:8px 16px 24px}}
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js-anim')</script>
+<div class="app">
+
+  <!-- ===== 侧边栏 ===== -->
+  <aside class="side">
+    <div class="logo">
+      <span class="mark">W</span>
+      <span><b>WorkBuddy</b><small>自媒体工作台</small></span>
+    </div>
+    <nav>
+      <a class="nav-item active" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg>首页总览</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="#FF7A45" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3-1.5 4-2 6.5C9.2 11 11 12 12 12c-3.5.5-6-1.5-6.5-4.5C4 6 2.5 6.5 2 8c2.5 7 6 11 10 11 5 0 8-3.5 8-8 0-3-1.5-5-4-5-1.5 0-2.5.5-3 1.5-.4-2.5-1-4-1-5.5z"/></svg>爆款研究</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 9.5h7M8.5 13h7M8.5 16.5h4"/></svg>AI拆解</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>内容生产</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>素材库</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>发布计划</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>数据复盘</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.55V21a2 2 0 11-4 0v-.09a1.7 1.7 0 00-1.11-1.56 1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.7 1.7 0 00.34-1.87 1.7 1.7 0 00-1.55-1H3a2 2 0 110-4h.09a1.7 1.7 0 001.56-1.11 1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06a1.7 1.7 0 001.87.34h.08a1.7 1.7 0 001-1.55V3a2 2 0 114 0v.09a1.7 1.7 0 001 1.55h.08a1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06a1.7 1.7 0 00-.34 1.87v.08a1.7 1.7 0 001.55 1H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.56 1z"/></svg>设置</a>
+    </nav>
+  </aside>
+
+  <!-- ===== 主区 ===== -->
+  <div class="main">
+    <header class="topbar">
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input placeholder="搜索内容、视频、素材或功能...">
+      </div>
+      <button class="bell" aria-label="通知"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg><i></i></button>
+      <div class="me"><span class="avatar">海</span><b>小海</b></div>
+    </header>
+
+    <main class="content">
+      <div class="hello">
+        <div>
+          <h1>首页总览：</h1>
+          <p>你好！今天也是创作的好日子，继续加油！</p>
+        </div>
+        <span class="date">2024年11月20日 周三</span>
+      </div>
+
+      <!-- 行 1：待办 + 爆款视频 -->
+      <div class="row r1">
+        <section class="card anim">
+          <div class="card-head"><h3>今日待办<span class="count-pill">3/6</span></h3></div>
+          <div class="todo done"><span class="cbx"></span><span class="t">拆解3条对标视频</span><span class="frac">3/3</span></div>
+          <div class="todo done"><span class="cbx"></span><span class="t">完成1篇口播稿</span><span class="frac">1/1</span></div>
+          <div class="todo"><span class="cbx"></span><span class="t">设计2张封面</span><span class="frac">0/2</span></div>
+          <div class="todo"><span class="cbx"></span><span class="t">发1条视频</span><span class="frac">0/1</span></div>
+          <div class="todo"><span class="cbx"></span><span class="t">整理本周数据复盘</span><span class="frac">0/1</span></div>
+          <div class="todo"><span class="cbx"></span><span class="t">收集5个新选题</span><span class="frac">0/5</span></div>
+        </section>
+
+        <section class="card anim">
+          <div class="card-head"><h3>近期爆款视频研究</h3><a class="more" href="#">查看更多 ›</a></div>
+          <div class="vlist">
+            <div class="vrow">
+              <span class="vthumb" style="background:linear-gradient(135deg,#3A3F51,#161823)">普<span class="dur">02:34</span></span>
+              <div class="v-info"><div class="v-title">普通人如何从0开始做自媒体？</div><div class="v-meta"><span class="pt dy">抖音</span><span>播放 328.6万</span><span>点赞 6.8万</span><span>评论 4210</span></div></div>
+              <span class="v-date">11-19</span>
+            </div>
+            <div class="vrow">
+              <span class="vthumb" style="background:linear-gradient(135deg,#5B8DEF,#4E6EF2)">AI<span class="dur">01:52</span></span>
+              <div class="v-info"><div class="v-title">3个提升效率的AI工具，真的太好用了！</div><div class="v-meta"><span class="pt xhs">小红书</span><span>播放 216.4万</span><span>点赞 4.1万</span><span>评论 3208</span></div></div>
+              <span class="v-date">11-18</span>
+            </div>
+            <div class="vrow">
+              <span class="vthumb" style="background:linear-gradient(135deg,#FF9A3D,#FF7A45)">24<span class="dur">03:17</span></span>
+              <div class="v-info"><div class="v-title">2024年还能做哪些自媒体赛道？</div><div class="v-meta"><span class="pt bili">B站</span><span>播放 158.9万</span><span>点赞 2.9万</span><span>评论 1764</span></div></div>
+              <span class="v-date">11-16</span>
+            </div>
+            <div class="vrow">
+              <span class="vthumb" style="background:linear-gradient(135deg,#2FD3A5,#22B07D)">10<span class="dur">04:21</span></span>
+              <div class="v-info"><div class="v-title">用AI 10分钟生成高质量图文内容</div><div class="v-meta"><span class="pt wxh">视频号</span><span>播放 112.3万</span><span>点赞 1.8万</span><span>评论 952</span></div></div>
+              <span class="v-date">11-15</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- 行 2：数据概览 -->
+      <div class="row">
+        <section class="card anim">
+          <div class="card-head"><h3>数据概览</h3><button class="sel" type="button">近7天 ▾</button></div>
+          <div class="kpis4">
+            <div class="kpi">
+              <div class="k-label"><i></i>播放量</div>
+              <div class="k-val">86.4万</div>
+              <div class="k-foot"><span class="k-trend">↑ 12.5%</span>
+                <svg width="60" height="24" viewBox="0 0 60 24"><path d="M0,18 C8,17 12,10 20,12 C28,14 34,6 42,7 C50,8 56,4 60,3" fill="none" stroke="#0FB5A6" stroke-width="2" stroke-linecap="round"/><circle cx="60" cy="3" r="2.6" fill="#0FB5A6"/></svg>
+              </div>
+            </div>
+            <div class="kpi">
+              <div class="k-label"><i style="background:#FF7A45"></i>点赞量</div>
+              <div class="k-val">4.8万</div>
+              <div class="k-foot"><span class="k-trend">↑ 8.3%</span>
+                <svg width="60" height="24" viewBox="0 0 60 24"><path d="M0,16 C8,15 14,17 20,12 C28,6 34,10 42,8 C50,6 56,5 60,4" fill="none" stroke="#0FB5A6" stroke-width="2" stroke-linecap="round"/><circle cx="60" cy="4" r="2.6" fill="#0FB5A6"/></svg>
+              </div>
+            </div>
+            <div class="kpi">
+              <div class="k-label"><i style="background:#7B5CFA"></i>评论量</div>
+              <div class="k-val">6821</div>
+              <div class="k-foot"><span class="k-trend">↑ 15.6%</span>
+                <svg width="60" height="24" viewBox="0 0 60 24"><path d="M0,20 C8,19 12,14 20,15 C28,16 34,9 42,10 C50,11 56,6 60,5" fill="none" stroke="#0FB5A6" stroke-width="2" stroke-linecap="round"/><circle cx="60" cy="5" r="2.6" fill="#0FB5A6"/></svg>
+              </div>
+            </div>
+            <div class="kpi">
+              <div class="k-label"><i style="background:#FFB259"></i>收藏量</div>
+              <div class="k-val">1.9万</div>
+              <div class="k-foot"><span class="k-trend">↑ 11.2%</span>
+                <svg width="60" height="24" viewBox="0 0 60 24"><path d="M0,15 C8,14 14,16 20,11 C28,5 34,9 42,7 C50,5 56,5 60,3" fill="none" stroke="#0FB5A6" stroke-width="2" stroke-linecap="round"/><circle cx="60" cy="3" r="2.6" fill="#0FB5A6"/></svg>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- 行 3：快捷入口 -->
+      <div class="row quick4">
+        <a class="qcard g-blue anim" href="#"><span class="q-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><b>搜索爆款</b><span>发现最新热门内容</span></a>
+        <a class="qcard g-purple anim" href="#"><span class="q-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.7-1.7"/></svg></span><b>导入视频链接</b><span>支持多平台链接</span></a>
+        <a class="qcard g-green anim" href="#"><span class="q-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z"/><path d="M19 15l.7 1.4 1.6.2-1.1 1.1.3 1.6-1.5-.8-1.5.8.3-1.6-1.1-1.1 1.6-.2z"/></svg></span><b>AI拆解视频</b><span>快速拆解爆款结构</span></a>
+        <a class="qcard g-orange anim" href="#"><span class="q-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v3M15 4v3"/><path d="M8 15l2 2 4-4"/></svg></span><b>生成封面文案</b><span>吸引眼球的标题与封面</span></a>
+      </div>
+
+      <!-- 行 4：策划 + 最近生成 -->
+      <div class="row r4">
+        <section class="card anim">
+          <div class="card-head"><h3>正在制作的策划</h3><a class="more" href="#">查看全部 ›</a></div>
+          <div class="prow">
+            <span class="p-ic" style="background:var(--primary-soft);color:var(--primary)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z"/></svg></span>
+            <div class="p-info"><div class="p-t">AI工具提升工作效率的5个实用技巧</div><div class="p-d">创建于 2024-11-19</div></div>
+            <span class="badge b-blue">撰写中</span>
+          </div>
+          <div class="prow">
+            <span class="p-ic" style="background:var(--orange-soft);color:#C96A12"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></span>
+            <div class="p-info"><div class="p-t">普通人做自媒体的10个关键步骤</div><div class="p-d">创建于 2024-11-18</div></div>
+            <span class="badge b-orange">资料收集</span>
+          </div>
+          <div class="prow">
+            <span class="p-ic" style="background:var(--green-soft);color:#158A5F"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>
+            <div class="p-info"><div class="p-t">2024年值得关注的自媒体新趋势</div><div class="p-d">创建于 2024-11-17</div></div>
+            <span class="badge b-gray">框架搭建</span>
+          </div>
+          <div class="prow">
+            <span class="p-ic" style="background:rgba(123,92,250,.12);color:#6A48D8"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span>
+            <div class="p-info"><div class="p-t">3个爆款标题的万能公式</div><div class="p-d">创建于 2024-11-16</div></div>
+            <span class="badge b-green">开始</span>
+          </div>
+        </section>
+
+        <section class="card anim">
+          <div class="card-head"><h3>最近生成内容</h3><a class="more" href="#">查看更多 ›</a></div>
+          <div class="grow">
+            <span class="g-ic" style="background:var(--primary-soft);color:var(--primary)">稿</span>
+            <div class="g-info"><div class="g-t">自媒体新手必看的3个建议</div><div class="g-d">口播稿 · 今天 10:24</div></div>
+          </div>
+          <div class="grow">
+            <span class="g-ic" style="background:rgba(123,92,250,.12);color:#6A48D8">封</span>
+            <div class="g-info"><div class="g-t">AI工具让创作更高效</div><div class="g-d">封面文案 · 今天 09:56</div></div>
+          </div>
+          <div class="grow">
+            <span class="g-ic" style="background:var(--orange-soft);color:#C96A12">播</span>
+            <div class="g-info"><div class="g-t">2024自媒体趋势分析</div><div class="g-d">口播稿 · 昨天 20:31</div></div>
+          </div>
+          <div class="grow">
+            <span class="g-ic" style="background:var(--green-soft);color:#158A5F">选</span>
+            <div class="g-info"><div class="g-t">爆款视频的5个共同点</div><div class="g-d">选题方案 · 昨天 14:06</div></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script>
+(function(){
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!window.gsap || reduced) return;
+  /* 创作工作台纪律：克制的入场，无循环漂浮 */
+  gsap.from(".row .anim", { y:14, autoAlpha:0, duration:.45, ease:"power3.out", stagger:.06 });
+})();
+</script>
+</body>
+</html>
