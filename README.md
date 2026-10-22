@@ -1,128 +1,239 @@
 # website-ui-designer
 
-> 专业 UI 提示词工程师：让 AI 生成"不像 AI 生成"的界面。三种入口模式 × 四端平台（PC/H5/小程序/APP）。
+**让 AI 生成的界面，不再长得像 AI 生成的。**
 
-[English](#english) · 中文
+![version](https://img.shields.io/badge/version-5.2.0-2E7CF6?style=flat-square)
+![license](https://img.shields.io/badge/license-MIT-34A853?style=flat-square)
+![platform](https://img.shields.io/badge/platform-PC%20%7C%20H5%20%7C%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%7C%20APP-8A90A2?style=flat-square)
+![lang](https://img.shields.io/badge/lang-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
+
+> 一个"UI 提示词工程师"技能。它不直接画图，而是把你的需求翻译成 AI 能严格执行的设计指令——包含版式、配色、字号、间距、动效，全部是精确数值。
+>
+> **你不需要懂设计，也能让它做出好看的界面。**
+
+[快速上手](#三分钟上手) · [四种用法](#四种用法) · [版本历史](#版本历史) · [English](#english)
+
+---
 
 ## 它解决什么问题
 
-让大模型直接写页面，产出的是"所有页面的平均值"：居中大标题 + 小标签 + 图标卡片 + 柔和渐变。没有错，也没有任何**决定**。
-本技能的产品是**提示词**——把 UI 需求翻译成大模型能执行的指令。三种入口，一套底层纪律。
+让大模型直接写页面，产出的是"所有页面的平均值"：居中大标题 + 上方小标签 + 一行图标卡片 + 柔和渐变。
+一处都不算错，但没有一处是**决定**过的。
 
-## 三种入口模式
+本技能做三件事：
 
-| 模式 | 输入 | 产出 |
+| 能力 | 说明 |
+|---|---|
+| **写提示词** | 把"高级一点""干净一点"翻译成精确参数：字号 28/16/13.5、留白 96px、强调色出现 4 次 |
+| **给方向** | 一次给 3 个完全不同的设计方向，你挑一个，而不是被动接受第一个结果 |
+| **做验收** | 交付前自动检查 10 项硬指标（对比度、字号跨度、状态齐全、无 emoji 图标……） |
+
+---
+
+## 三分钟上手
+
+### 第 1 步 · 安装（30 秒）
+
+```bash
+# 方式一：用 skills CLI
+npx skills add https://github.com/pz857082775/website-ui-designer --skill website-ui-designer
+
+# 方式二：直接拷贝目录到你的 Agent 技能目录
+#   WorkBuddy: ~/.workbuddy/skills/
+#   Claude Code: ~/.claude/skills/
+```
+
+### 第 2 步 · 说一句话（重点：不用懂术语）
+
+装好之后，直接对它说人话就行。它会被这些说法自动触发：
+
+| 你想做的事 | 你可以直接这么说 |
+|---|---|
+| 从零做一个页面 | "帮我做一个卖手冲咖啡的品牌官网，要干净一点" |
+| 参考别人的页面 | "照这张截图的感觉做一个定价页"（附图） |
+| 觉得自己页面丑 | "我这个后台看着很土，帮我看看哪里有问题" |
+| 只要提示词 | "给我一段能生成 dashboard 的提示词，我要喂给别的 AI" |
+| 出多套方案 | "给我 3 个不同风格的方向，我先看看再定" |
+| 改一个细节 | "这个页面太挤了，帮我松一点，其他别动" |
+
+> **不知道要什么风格？** 就说"你定，我不懂设计"。它会先给你 3 个方向 + 每个方向的一句话理由，由你挑。
+
+### 第 3 步 · 拿结果（并知道怎么继续）
+
+一次完整任务，你会拿到三样东西：
+
+```
+DESIGN.md      设计系统：颜色 / 字号 / 圆角 / 间距的精确值
+主提示词.md     可复用的提示词（想换模型生成时直接粘）
+index.html     成品页面（双击就能看，含动效）
+```
+
+不满意时，不用重新描述一遍。按这四种说法提要求最有效：
+
+```
+"整体太挤了"        → 它调密度旋钮 + 内边距 + 行高
+"颜色有点土"        → 它降低饱和度、收敛色相家族
+"看不出重点"        → 它拉开字号跨度、减少强调色数量
+"太像 AI 做的"      → 它逐条排查 5 类 AI 视觉套路并替换
+```
+
+---
+
+## 四种用法（按你的处境选）
+
+| 你的处境 | 输入 | 它会做什么 | 详细规则 |
+|---|---|---|---|
+| **A · 从需求做** | 需求文档 / 一句话想法 | 盘点独有素材 → 定主张 → 3 方向 → 设计系统 → 提示词 → 生成 → 验收 | `SKILL.md` 模式 A |
+| **B · 照着做** | 截图 / 参考网站 | 5 行式风格解剖 + 取样色值字体 → 复刻提示词；有浏览器时用 getComputedStyle 取真值 + 像素比对 | `references/clone-mode.md` |
+| **C · 改现有的** | 已开发页面的截图 | 五类病诊断（配色/间距/层级/动效/组件）+ 逐类定向修复，最小改动 | `references/redesign-mode.md` |
+| **D · 只要提示词** | 一句话描述 | 直接产出可复制的提示词，不生成代码 | `references/prompt-master.md` |
+
+**页面类型也要先分清**，因为两种页面的"好看"标准相反：
+
+| 类型 | 卖什么 | 提示词语言 |
 |---|---|---|
-| **A · 需求 → UI** | 开发需求文档/一句话想法 | 七步流水线：独有素材盘点 → 主张先行 → 三方向选型 → DESIGN.md → 七段式提示词 → 单文件 HTML → 自检修复 |
-| **B · 参考图/目标站 → 复刻** | 截图、参考网站、竞品页面 | 5 行式风格解剖 + token 取样表 + 复刻提示词；有浏览器时走 getComputedStyle + 像素 Diff 迭代 |
-| **C · 已开发界面 → 美化** | 线上/本地页面截图 | 五类病诊断（配色/间距/层级/动效/组件）+ 定向修复句式库，最小改动 |
+| 营销页（官网 / 落地页） | 卖感受 | 5 行式风格提示词 + 大标题 + 留白 |
+| 数据工作台（后台 / 仪表盘） | 卖效率 | KPI 卡 / 表格 / 图表规范 + 高密度 |
+| 创作工作台（内容平台） | 卖流程 | 待办卡放首位 + 素材库 + 发布日历 |
+| 服务型工作台（医疗 / 教育） | 卖信任 | 问候横幅 + 时间轴 + 主从双栏 |
 
-## 七步流水线（模式 A）
+---
 
-1. **读需求** — 盘点 8-12 条"只属于这个客户"的素材（名字含义、街道、数字、约束、材料、仪式）。创意从这里长出来
-2. **先写论证** — 页面 = 主张 + 证据，无主张的区块删掉
-3. **三个方向选一个** — 3 个版式/字体/配色完全不同的方向各配一句理由
-4. **设计系统先行** — DESIGN.md：YAML 精确令牌 + 设计理由，WCAG AA 自检
-5. **组装提示词** — 5 行式风格段 + 令牌 + 结构 + 排版硬规则 + 平台段 + GSAP 动效
-6. **生成** — 单文件 HTML，GSAP CDN + CSS 兜底，375/768/1440 三档
-7. **自检修复** — 质量清单 → 修 top 3 → 再查一轮（≤3 轮）。警告：只删装饰不补实质 = 单薄页面
+## 小白话术对照表
 
-## 目录
+你说的话，它实际做了什么（这就是"专业提示词"的价值）：
+
+| 你说 | 它翻译成 |
+|---|---|
+| "高级感" | 低饱和配色 + 大留白 120px + 衬线标题 + 字距 -0.02em + 强调色只留 1 个 |
+| "干净一点" | 密度降到 3、圆角收敛到 3 种、去掉渐变、分隔线最多 2 条 |
+| "太挤了" | 卡内边距 20→28、列表行高 +8px、区块间距 +30% |
+| "字看不清" | 正文 ≥15px（移动 ≥16px）、对比度提到 4.5:1、次要文字提亮一档 |
+| "太像 AI 做的" | 排查 5 类 AI 套路：暖奶油+陶土、近黑+荧光、报纸风、SaaS 卡片套装、模板外壳 |
+| "要有科技感" | 深色底 + 冷色主色 + 1px 发丝线 + 仅 1 处发光（不是满屏玻璃） |
+
+---
+
+## 核心规则速览
+
+**四个旋钮**（写在提示词最前面，决定"做到什么程度算完成"）
+
+```
+CRAFT_LEVEL      = 7    精修深度    3 快出 · 9 像素级
+MOTION_INTENSITY = 5    动效强度    1 只 hover · 10 滚动叙事
+VISUAL_DENSITY   = 5    信息密度    1 编辑式留白 · 10 仪表盘密集
+DESIGN_VARIANCE  = 7    版式胆量    1 对称安全 · 10 实验构图
+```
+
+**10 项验收条**（任一不过 = 不算完成）
+
+```
+1 层级  3 秒能看出主信息        6 字体  1 正文族（可选 1 展示族）
+2 令牌  全部来自令牌，无 magic  7 动效  出场 ≈75% 入场时长
+3 配色  90% 中性 + 1 强调色     8 状态  hover/focus/active/disabled/empty/error
+4 圆角  分级 6/10/14/20         9 无障碍 对比 4.5:1 + 键盘可达 + reduced-motion
+5 阴影  环境光 + 直射光双层    10 独特  有一个签名细节
+```
+
+---
+
+## 目录结构
 
 ```
 website-ui-designer/
-├── SKILL.md                        # 技能主文件（三模式 + 通用纪律）
-├── README.md
+├── SKILL.md                        # 技能主文件：三模式 + 页面路由 + 通用纪律
+├── README.md                       # 本文件
+├── CHANGELOG.md                    # 版本记录
 ├── LICENSE                         # MIT
-├── references/
-│   ├── design-system-spec.md       # 主规范：八要素 + 九段提示词 + 意图→参数 + 四个旋钮
-│   ├── review-rubric.md            # 交付闸门：10 项验收条 + 评分卡（Nielsen×6法则×业务影响）+ 最坏数据测试
-│   ├── inspiration-sources.md      # 灵感资源库：按"要解决什么"分 10 类，含 2026 状态与可借鉴要点
-│   ├── learning-loop.md            # 持续迭代方法：六步闭环 + 三库建设 + A/B 法 + 30 天计划
-│   ├── open-source-integration.md  # 9 个开源技能的核心贡献映射 + 12 条新规则 + 四端差异
-│   ├── prompt-anatomy.md           # 参考图 5 行式提示词解剖（含 4 张原图 prompt 存档）
-│   ├── style-library.md            # 6+ 风格提示词模板（填空即用）
-│   ├── design-md-template.md       # DESIGN.md 设计系统模板（Google 规范）
-│   ├── prompt-master.md            # 七段式主提示词 + 三方向选型模板
-│   ├── gsap-prompts.md             # GSAP 动效提示词库（8 场景 + 翻车点自查表）
-│   ├── anti-slop.md                # 反 AI 脸清单（默认病黑名单）
-│   ├── clone-mode.md               # 模式 B：复刻完整流程（浏览器/截图/设计系统三路径）
-│   ├── redesign-mode.md            # 模式 C：审计 + 定向修复句式库
-│   ├── platform-matrix.md          # PC/H5/小程序/APP 四端提示词差异
-│   └── dashboard-style.md          # B 端工作台规范（数据工作台 + 创作工作台进阶：KPI卡/表格/图表/待办/素材库/发布日历 + 完整模板）
+├── references/                     # 15 份规范，按需查
+│   ├── design-system-spec.md       # 主规范：八要素 + 九段提示词 + 意图→参数 + 旋钮
+│   ├── review-rubric.md            # 交付闸门：10 项验收条 + 评分卡 + 最坏数据
+│   ├── anti-slop.md                # 反 AI 脸：5 类套路 + 8 条排版禁忌
+│   ├── prompt-anatomy.md           # 5 行式风格提示词解剖（含原图 prompt 存档）
+│   ├── style-library.md            # 6 种风格模板 + 11 个具名动效配方
+│   ├── prompt-master.md            # 九段式主提示词 + 两遍法
+│   ├── dashboard-style.md          # 数据/创作/服务型工作台规范
+│   ├── clone-mode.md               # 复刻：浏览器 / 截图 / 设计系统三路径
+│   ├── redesign-mode.md            # 审计 + 五类病修复句式库
+│   ├── platform-matrix.md          # 四端差异 + 移动端原生化七项
+│   ├── inspiration-sources.md      # 灵感资源库（10 类，含 2026 状态）
+│   ├── learning-loop.md            # 持续提升方法：六步闭环 + 三库
+│   ├── design-md-template.md       # DESIGN.md 令牌模板
+│   └── open-source-integration.md  # 开源方法论映射 + 12 条新规则
 ├── scripts/
-│   └── preflight.py                # 交付前自检：预隐藏致空白 / reduced-motion / emoji / 图表库 / 布局属性动画
-└── tests/
-    ├── test1-lumen-minimal.html    # 模式A · 极简留白 · 编辑器官网
-    ├── test2-nebula-glass.html     # 模式A · 玻璃美学 · AI 知识库
-    ├── test3-banmu-morandi.html    # 模式A · 莫兰迪柔和 · 咖啡品牌页
-    ├── test4-banmu-h5.html         # 模式A · H5 移动端 · 吸底操作栏 + 安全区
-    ├── test5-clone-prompt-glass.md # 模式B · 复刻提示词真实样例
-    ├── test6-yunshang-dashboard.html # 数据工作台 · 经营总览仪表盘（侧边栏/KPI/图表/表格/待办/AI卡）
-    ├── test7-workbuddy-creator-home.html # 创作工作台 · 自媒体首页（待办C位/爆款列表/sparkline/快捷入口/策划流）
-    └── test8-medical-workbench-home.html # 服务型工作台 · 医疗首页（Hero问候横幅/3D吉祥物/时间轴预约/待办/趋势图）
+│   └── preflight.py                # 交付前自检（7 类硬伤，0 ERROR 才交付）
+└── tests/                          # 8 个实测页
+    ├── test1-lumen-minimal.html         极简留白 · 编辑器官网
+    ├── test2-nebula-glass.html          玻璃美学 · AI 工具
+    ├── test3-banmu-morandi.html         莫兰迪柔和 · 咖啡品牌
+    ├── test4-banmu-h5.html              H5 · 吸底栏 + 安全区
+    ├── test5-clone-prompt-glass.md      复刻提示词样例
+    ├── test6-yunshang-dashboard.html    数据工作台 · 经营总览
+    ├── test7-workbuddy-creator-home.html 创作工作台 · 自媒体首页
+    └── test8-medical-workbench-home.html 服务型工作台 · 医疗首页
 ```
 
-## 风格库
+---
 
-极简留白 / 莫兰迪柔和 / 玻璃美学 / 极简 3D 空间 / 暗色杂志 / 柔和新粗野（+ 组合建议）
+## 版本历史
 
-## 页面类型路由
+当前版本 **v5.2.0**（2026-10-22）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
-| 类型 | 提示词语言 |
-|---|---|
-| 营销页（落地页/官网） | style-library + prompt-anatomy（5 行式） |
-| 工作台（仪表盘/后台/B 端） | dashboard-style（KPI 卡解剖、涨红跌绿、软底徽章、表格规范、完整模板） |
-
-## 平台矩阵
-
-| 维度 | PC | H5 | 小程序 | APP |
-|---|---|---|---|---|
-| 布局 | 12 列网格 | 单列 | 单列 rpx | 单列 + 平台导航 |
-| 热区 | 32px+ | 44px+ | 44px+ | 44pt+ |
-| 动效 | 可 scrub 叙事 | ≤0.4s 轻 | 原生为主 | 跟手手势 |
-| 暗色 | 建议 | 建议 | 建议 | 必须 |
-| 旋钮默认 | 8/6/5/7 | 7/3/4/4 | 7/3/5/3 | 8/6/4/3 |
-
-移动端三条铁律：hover 包进 `@media (hover:hover)`、高度用 `100dvh`、输入字号 ≥16px。
-完整七项见 `platform-matrix.md`「移动端原生化七项」。
-
-## 方法论来源（均为真实开源项目，已核实）
-
-| 项目 | 贡献 | 落点 |
+| 版本 | 日期 | 关键变化 |
 |---|---|---|
-| [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 反 slop：独有素材盘点、主张先行、3 方向、截图修复循环 | 模式 A + anti-slop |
-| [anthropics/skills · frontend-design](https://github.com/anthropics/skills/tree/main/skills/frontend-design) | 5 类 AI 视觉集群、8 条排版 tell、结构即信息、两遍法、Chanel 法则、文案规范 | anti-slop + prompt-master |
-| [emilkowalski/skills](https://github.com/emilkowalski/skills) | 缓动选择、出场快于入场、移动端原生化七项、最坏数据测试、性能 | gsap-prompts + platform-matrix + preflight |
-| [educlopez/ui-craft](https://github.com/educlopez/ui-craft) | 四个旋钮、Top-12 工艺规则、10 项验收条、Nielsen×6法则评分 | review-rubric + spec |
-| [Owl-Listener/designer-skills](https://github.com/Owl-Listener/designer-skills) | 情境索引、优先级修复清单、token/color/hierarchy 知识、认知法则 | redesign-mode + design-md |
-| [magicuidesign/magicui](https://github.com/magicuidesign/magicui) | 具名动效组件词汇（number ticker / bento grid / border beam…） | style-library 动效配方 |
-| [kokonut-labs/kokonutui](https://github.com/kokonut-labs/kokonutui) | Tailwind+shadcn+Motion 的柔和渐变与微交互范式 | style-library |
-| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 设计系统先行、色板/字体组合、可访问性校验 | 模式 A |
-| [JCodesMore/ai-website-cloner-template](https://github.com/JCodesMore/ai-website-cloner-template) | Map → Observe → Build → Compare；getComputedStyle + 像素 Diff | clone-mode |
-| [google-labs-code/design.md](https://github.com/google-labs-code/design.md) | DESIGN.md 设计令牌规范 | design-md-template |
+| **v5.2.0** | 2026-10-22 | 文档重构：版本号体系、小白上手路径、话术对照表 |
+| v5.1.0 | 2026-10-22 | 灵感资源库（10 类）+ 六步学习闭环 |
+| v5.0.0 | 2026-10-22 | 整合 9 个开源技能：四旋钮、10 项验收条、AI 五类套路、移动端原生化 |
+| v4.1.0 | 2026-10-22 | 修复"CDN 失败整页空白"致命 bug；新增 preflight 自检脚本 |
+| v4.0.0 | 2026-10-22 | 主规范 design-system-spec；新增服务型工作台；test8 |
+| v3.2.0 | 2026-10-22 | 创作工作台模式：待办 C 位、素材库、发布日历 |
+| v3.1.0 | 2026-10-22 | 数据工作台模式：KPI 卡 / 表格 / 图表规范 |
+| v3.0.0 | 2026-10-21 | 三入口模式 + 5 行式提示词解剖 + 四端平台矩阵 |
+| v2.0.0 | 2026-10-21 | 首个可用版本：七步流水线、6 种风格、DESIGN.md、GSAP |
+
+---
+
+## 常见问题
+
+**我不懂设计，能用吗？**
+能。你只需要说清"给谁做、做什么、想要什么感觉"，风格、配色、字体、间距由技能决定；它会给 3 个方向让你挑。
+
+**生成的效果不满意怎么办？**
+不要重新描述全部需求。用四种精准抱怨法："太挤了 / 颜色土 / 看不出重点 / 太像 AI 做的"，每一种都对应明确的修复动作。
+
+**需要什么技术栈？**
+不需要。默认产出单文件 HTML（双击可看）。要 React / Vue / 小程序代码时，直接说"给我 React 版本"或"给我小程序 rpx 版本"。
+
+**支持手机端吗？**
+支持 PC、H5、微信小程序、APP 四端。四端的差异（热区、安全区、rpx、导航模式）已写进 `platform-matrix.md`。
+
+**它会不会只是套模板？**
+不会。每次任务都要求先盘点"只属于这个客户的素材"（名字含义、街道、数字、约束），创意从这些素材里长出来，而不是从"科技感"这类通用概念。
+
+**preflight.py 是干什么的？**
+交付前的自动体检，扫 7 类硬伤：内容被预隐藏（会导致空白页）、缺 reduced-motion、引用第三方图表库、emoji 图标、缺等宽数字、动画动布局属性、滚动劫持。0 ERROR 才算可交付。
+
+---
+
+## 方法论来源
+
+均为真实开源项目（2026-10 核实）：
+
+| 项目 | 贡献 |
+|---|---|
+| [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 反 slop：独有素材盘点、主张先行、3 方向、截图修复循环 |
+| [anthropics/skills · frontend-design](https://github.com/anthropics/skills/tree/main/skills/frontend-design) | 5 类 AI 视觉套路、8 条排版禁忌、结构即信息、两遍法 |
+| [emilkowalski/skills](https://github.com/emilkowalski/skills) | 缓动选择、出场快于入场、移动端原生化七项、最坏数据测试 |
+| [educlopez/ui-craft](https://github.com/educlopez/ui-craft) | 四个旋钮、Top-12 工艺规则、10 项验收条、评分卡 |
+| [Owl-Listener/designer-skills](https://github.com/Owl-Listener/designer-skills) | 优先级修复清单、token 分层、认知法则 |
+| [magicuidesign/magicui](https://github.com/magicuidesign/magicui) | 具名动效组件词汇 |
 | [greensock/gsap-skills](https://github.com/greensock/gsap-skills) | GSAP 3 官方规范 |
+| [google-labs-code/design.md](https://github.com/google-labs-code/design.md) | DESIGN.md 令牌规范 |
+| [JCodesMore/ai-website-cloner-template](https://github.com/JCodesMore/ai-website-cloner-template) | 复刻四步：Map → Observe → Build → Compare |
 
-## 安装
+配套技能：[ui-taste-engine](https://github.com/pz857082775/ui-taste-engine) —— 负责积累经验、让规则按证据自我晋升。
 
-```bash
-npx skills add https://github.com/pz857082775/website-ui-designer --skill website-ui-designer
-```
-
-或拷贝目录到 agent 的 skills 目录（`~/.workbuddy/skills/`、`~/.claude/skills/` 等）。
-
-## 交付前自检
-
-```bash
-python scripts/preflight.py tests/*.html
-```
-
-检查 7 类硬伤：内容预隐藏导致 CDN 失败时整页空白、缺 reduced-motion 降级、缺 viewport、
-第三方图表库、emoji 图标、缺 tabular-nums、动画动布局属性。**0 ERROR 才算可交付。**
-
-> 血泪教训：本仓库 v3 曾用 `.js-anim .anim{opacity:0}` 做入场前置状态，
-> 在 GSAP CDN 不可达的环境下整页只剩外壳。现已改为"内容默认可见 + gsap.from 设初始态"，
-> 并把这个坑写进 preflight E1 检查项。
+---
 
 ## License
 
@@ -131,4 +242,13 @@ MIT
 ---
 
 <a id="english"></a>
-**English:** A skill whose product is *prompts* — it turns UI requirements into instructions LLMs can execute. Three entry modes: (A) requirements doc → designed UI via a 7-step anti-slop pipeline; (B) reference screenshot/site → pixel-faithful clone prompts (getComputedStyle tokens + pixel-diff loop when a browser is available); (C) existing built UI → audit + minimal targeted fixes. Outputs DESIGN.md token systems, 5-line style prompts distilled from award-winning reference images, GSAP motion specs, and platform-specific guidance for PC web, H5, WeChat mini-programs, and apps.
+
+### English
+
+A UI prompt-engineering skill. It does not draw — it turns requirements into instructions an LLM can execute precisely (type scale, spacing, color, motion, all numeric).
+
+**Three entry modes:** (A) requirement doc → designed page; (B) screenshot or live site → pixel-faithful clone prompts; (C) existing page → audit + minimal targeted fixes.
+
+**Four knobs first:** CRAFT_LEVEL / MOTION_INTENSITY / VISUAL_DENSITY / DESIGN_VARIANCE. **Ten acceptance checks** gate every delivery. Outputs a DESIGN.md token system, a reusable prompt, and a single-file HTML page with GSAP motion and a graceful no-CDN fallback.
+
+Supports PC web, mobile H5, WeChat mini-programs, and apps.
