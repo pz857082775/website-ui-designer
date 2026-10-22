@@ -35,7 +35,15 @@ description: 专业网站UI提示词工程师。三种入口模式：A 根据开
 
 ---
 
-## 模式 A：需求文档 → UI 提示词（七步）
+## 模式 A：需求文档 → UI 提示词（八步）
+
+### A0 先定四个旋钮（30 秒，决定后面一切）
+在提示词开头声明（规则与行为带见 `references/open-source-integration.md`）：
+```
+CRAFT_LEVEL={1-10} MOTION_INTENSITY={1-10} VISUAL_DENSITY={1-10} DESIGN_VARIANCE={1-10}
+```
+默认：落地页 7/6/5/7 ｜ 后台 8/4/5/4 ｜ H5 7/3/4/4 ｜ 小程序 7/3/5/3 ｜ APP 8/6/4/3。
+用户说了"更克制 / 更密 / 更大胆"就改旋钮值，不要用形容词。
 
 ### A1 读需求，盘点"只属于这个客户的东西"
 提取：产品、受众、页面唯一目标、既有品牌资产、**真实存在的图像素材**。
@@ -50,7 +58,12 @@ description: 专业网站UI提示词工程师。三种入口模式：A 根据开
 ### A4 设计系统先行
 产出 DESIGN.md（模板 `references/design-md-template.md`）：YAML 精确令牌 + Markdown 理由。WCAG AA 对比度自检；全页一种高强调按钮；最多 2 种字体。
 
-### A5 组装提示词
+### A5 两遍法：先出设计计划，再审一遍，再写码
+第一遍只出**计划**（不写代码）：4-6 个命名 hex 的色板 + 字体与角色 + ASCII 线框布局 + 一句"这页凭什么独特"。
+然后对照 brief 自审：哪一部分像"给任何同类页面都会产出的默认值"？改掉并说明改了什么、为什么。
+通过后才进入 A6。
+
+### A6 组装提示词
 结构（骨架 `references/prompt-master.md`，风格措辞 `references/prompt-anatomy.md`）：
 1. 角色（艺术指导 + 前端专家，已通读反 slop 规则）
 2. **风格段**：按参考图解剖的 5 行式写——改风格→背景配色→布局留白→强调按钮→目标感受
@@ -62,15 +75,16 @@ description: 专业网站UI提示词工程师。三种入口模式：A 根据开
 7. GSAP 动效脚本 + 降级要求（`references/gsap-prompts.md`）
 8. 输出要求（单文件 HTML，三档响应式，禁编造 API）
 
-### A6 生成
+### A7 生成
 单文件 `index.html`，内联 CSS/JS，GSAP CDN + CSS 兜底，375/768/1440 三档。
 **硬性：内容默认可见**——禁止 CSS 预隐藏 `.anim{opacity:0}`，初始态交给 `gsap.from()`；
 脚本守卫 `if(!window.gsap || reduced) return;`，CDN 挂掉页面仍完整。
 
-### A7 自检修复循环
-1. 跑 `python scripts/preflight.py <页面>.html`（E1 预隐藏/ E2 reduced-motion / E4 图表库 / W1 emoji / W5 布局属性动画等）
-2. 过质量清单（文末）→ 修最严重 3 个问题 → 再查一轮，最多 3 轮
-3. 必须做到 0 ERROR；警告逐条评估
+### A8 验收与自检修复循环
+1. 过 **10 项验收条**（`references/review-rubric.md`）——任一项不过不算完成
+2. 跑 `python scripts/preflight.py <页面>.html`（E1 预隐藏 / E2 reduced-motion / E4 图表库 / W1 emoji / W5 布局属性动画等），必须 0 ERROR
+3. 用**最坏数据**打一遍页面（超长姓名、六位数金额、0 条列表、20 字标签）
+4. 修最严重 3 个问题 → 再查一轮，最多 3 轮
 **核心警告：只删装饰不补实质 = 单薄页面。删卡片的同时必须补更大的字号、整片色彩、真实图片、完整内容。**
 
 ---
@@ -110,7 +124,17 @@ description: 专业网站UI提示词工程师。三种入口模式：A 根据开
 
 **反 AI 脸（`references/anti-slop.md` 全文必读）**
 - 黑名单：居中三件套（小标签+居中标题+副标题）、图标卡片阵、紫蓝渐变、1px 分隔线满屏、 vanity 数字
+- 5 类 AI 视觉集群 + 8 条排版 tell + 结构即信息（整合自 Anthropic frontend-design）
 - 创意自检：把页面标题换成竞品名，依然成立 = 通用创意，重做
+
+**工艺硬指标（整合自 ui-craft / emilkowalski）**
+- 90% 中性 + 1 强调色；强调色每屏 3-5 次（Hick 定律），超 5 次焦点被稀释
+- 圆角分级：输入 6 / 卡片 10 / 弹层 14 / 大容器 20，不用全站一个值
+- 阴影双层（环境光 + 直射光），不用单层黑影或纯描边
+- 正文句首大写（sentence case），全大写只用于 11-13px 宽字距分类标签
+- >24px 标题字距 ≤-0.02em；正文行宽 <80 字符
+- 出场 ≈75% 入场时长；入场 ease-out、出场 ease-in
+- **每页一个签名细节**（自定义 marker / 一处破格 / 独特 hover），其余全部安静
 
 **设计系统**
 - 令牌精确到 hex/px；标题字号跨度 ≥3 倍；区块留白 ≥96px；正文对比度 ≥4.5:1
@@ -126,6 +150,12 @@ description: 专业网站UI提示词工程师。三种入口模式：A 根据开
 - H5：单列、拇指热区 ≥44px、底部吸底操作、懒加载
 - 小程序：rpx 适配、自定义导航栏预留、分包意识、微信设计规范基线
 - APP：安全区、原生导航模式（Tab/Stack）、手势返回、暗色模式
+- **移动端原生化七项**（H5/小程序/APP 必查）：粘滞 hover、点击高亮、100vh、输入缩放、点击延迟、安全区、滚动链
+
+**文案（整合自 Anthropic）**
+- 用用户语言命名（"管理通知"而非"Webhook 配置"）；CTA 说清结果（"保存修改"而非"提交"）
+- 动作名全流程一致：按钮"发布"→提示"已发布"
+- 报错不道歉不含糊：说清发生了什么 + 怎么修；空状态是行动邀请，不是抒情
 
 **工作台专项（`references/dashboard-style.md`）**
 - 数字 tabular-nums + 千分位；趋势涨红跌绿（中国惯例，全站一种约定）
@@ -141,6 +171,20 @@ description: 专业网站UI提示词工程师。三种入口模式：A 根据开
 - [ ] 令牌精确、对比度达标、主按钮唯一
 - [ ] 动效有降级路径；平台特性已按 platform-matrix 落实
 - [ ] 工作台页面：KPI 数字等宽可扫读、涨红跌绿正确、徽章软底、表格规范（dashboard-style.md 第七节全清单）
+- [ ] **10 项验收条全过**（`review-rubric.md`）；`preflight.py` 0 ERROR；最坏数据不溢出
+
+## 参考文件索引
+
+| 要做什么 | 看哪个文件 |
+|---|---|
+| 从需求到提示词全流程 | 本文件 模式 A（A0 旋钮 → A1 素材 → A8 验收） |
+| 从截图/URL 复刻 | `clone-mode.md` |
+| 美化已开发界面 | `redesign-mode.md` |
+| 写风格提示词（5 行式） | `prompt-anatomy.md` + `style-library.md` |
+| 写工作台/仪表盘提示词 | `dashboard-style.md` |
+| 参数表（配色/字号/间距/动效） | `design-system-spec.md` |
+| 验收与评分 | `review-rubric.md` |
+| 开源方法论来源与整合说明 | `open-source-integration.md` |
 
 ## 交付物
 1. `DESIGN.md`（模式 A/C）

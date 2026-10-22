@@ -65,3 +65,29 @@
 | 适配单位 | px + 断点 | vw/rem + 断点 | rpx | pt + 安全区 |
 | 暗色模式 | 建议 | 建议 | 建议 | 必须 |
 | 空/错状态 | 必须有 | 必须有 | 必须有 | 必须有 |
+| 旋钮默认 | CRAFT 8 / MOTION 6 / DENSITY 5 / VARIANCE 7 | 7 / 3 / 4 / 4 | 7 / 3 / 5 / 3 | 8 / 6 / 4 / 3 |
+
+---
+
+## 移动端原生化七项（H5 / 小程序 / APP 必查）
+
+来自 `emilkowalski/skills` 的 mobile-native。缺任何一条都会"像网页不像应用"：
+
+```
+1. 粘滞 hover —— 触屏上 hover 会残留：所有 hover 规则包进 @media (hover:hover)
+2. 点击高亮 —— -webkit-tap-highlight-color: transparent（配 :active 反馈）
+3. 100vh 陷阱 —— 地址栏吃掉高度：用 100dvh / svh，不用 100vh
+4. 输入缩放 —— iOS 焦点放大页面：输入框字号 ≥16px
+5. 点击延迟 —— 用 pointerdown 做即时反馈，不等 click
+6. 安全区 —— env(safe-area-inset-top/bottom) 全量预留（吸底栏必须）
+7. 滚动链 —— 弹层/横向滑动加 overscroll-behavior: contain，防穿透
+```
+
+对应提示词写法（直接贴进第 7 段平台段）：
+```
+移动端原生化：hover 规则全部包在 @media (hover:hover) 内；
+-webkit-tap-highlight-color: transparent；高度用 100dvh；
+输入框字号 ≥16px；点击反馈用 pointerdown；吸底栏预留 safe-area-inset-bottom；
+弹层 overscroll-behavior: contain。禁止 <16px 输入字号、禁止裸 100vh。
+```
+

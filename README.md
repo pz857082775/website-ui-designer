@@ -35,7 +35,9 @@ website-ui-designer/
 ├── README.md
 ├── LICENSE                         # MIT
 ├── references/
-│   ├── design-system-spec.md       # 主规范：八要素分析框架 + 九段式提示词框架 + 视觉意图→技术参数对照表
+│   ├── design-system-spec.md       # 主规范：八要素 + 九段提示词 + 意图→参数 + 四个旋钮
+│   ├── review-rubric.md            # 交付闸门：10 项验收条 + 评分卡（Nielsen×6法则×业务影响）+ 最坏数据测试
+│   ├── open-source-integration.md  # 9 个开源技能的核心贡献映射 + 12 条新规则 + 四端差异
 │   ├── prompt-anatomy.md           # 参考图 5 行式提示词解剖（含 4 张原图 prompt 存档）
 │   ├── style-library.md            # 6+ 风格提示词模板（填空即用）
 │   ├── design-md-template.md       # DESIGN.md 设计系统模板（Google 规范）
@@ -78,15 +80,25 @@ website-ui-designer/
 | 热区 | 32px+ | 44px+ | 44px+ | 44pt+ |
 | 动效 | 可 scrub 叙事 | ≤0.4s 轻 | 原生为主 | 跟手手势 |
 | 暗色 | 建议 | 建议 | 建议 | 必须 |
+| 旋钮默认 | 8/6/5/7 | 7/3/4/4 | 7/3/5/3 | 8/6/4/3 |
 
-## 方法论来源（均为真实开源项目）
+移动端三条铁律：hover 包进 `@media (hover:hover)`、高度用 `100dvh`、输入字号 ≥16px。
+完整七项见 `platform-matrix.md`「移动端原生化七项」。
 
-| 项目 | 贡献 |
-|---|---|
-| [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 反 slop 体系：247 站点研究、独有素材盘点、主张先行 |
-| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 设计系统先行、色板/字体组合、可访问性校验 |
-| [JCodesMore/ai-website-cloner-template](https://github.com/JCodesMore/ai-website-cloner-template) | 复刻四步：Map → Observe → Build → Compare；getComputedStyle + 像素 Diff |
-| [google-labs-code/design.md](https://github.com/google-labs-code/design.md) | DESIGN.md 设计令牌规范 |
+## 方法论来源（均为真实开源项目，已核实）
+
+| 项目 | 贡献 | 落点 |
+|---|---|---|
+| [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | 反 slop：独有素材盘点、主张先行、3 方向、截图修复循环 | 模式 A + anti-slop |
+| [anthropics/skills · frontend-design](https://github.com/anthropics/skills/tree/main/skills/frontend-design) | 5 类 AI 视觉集群、8 条排版 tell、结构即信息、两遍法、Chanel 法则、文案规范 | anti-slop + prompt-master |
+| [emilkowalski/skills](https://github.com/emilkowalski/skills) | 缓动选择、出场快于入场、移动端原生化七项、最坏数据测试、性能 | gsap-prompts + platform-matrix + preflight |
+| [educlopez/ui-craft](https://github.com/educlopez/ui-craft) | 四个旋钮、Top-12 工艺规则、10 项验收条、Nielsen×6法则评分 | review-rubric + spec |
+| [Owl-Listener/designer-skills](https://github.com/Owl-Listener/designer-skills) | 情境索引、优先级修复清单、token/color/hierarchy 知识、认知法则 | redesign-mode + design-md |
+| [magicuidesign/magicui](https://github.com/magicuidesign/magicui) | 具名动效组件词汇（number ticker / bento grid / border beam…） | style-library 动效配方 |
+| [kokonut-labs/kokonutui](https://github.com/kokonut-labs/kokonutui) | Tailwind+shadcn+Motion 的柔和渐变与微交互范式 | style-library |
+| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 设计系统先行、色板/字体组合、可访问性校验 | 模式 A |
+| [JCodesMore/ai-website-cloner-template](https://github.com/JCodesMore/ai-website-cloner-template) | Map → Observe → Build → Compare；getComputedStyle + 像素 Diff | clone-mode |
+| [google-labs-code/design.md](https://github.com/google-labs-code/design.md) | DESIGN.md 设计令牌规范 | design-md-template |
 | [greensock/gsap-skills](https://github.com/greensock/gsap-skills) | GSAP 3 官方规范 |
 
 ## 安装

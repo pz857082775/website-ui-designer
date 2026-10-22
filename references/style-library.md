@@ -99,3 +99,31 @@
 | 高端硬件发布 | 极简3D空间 + 暗色杂志 |
 | 教育/生活方式 | 莫兰迪柔和 + 极简留白 |
 | 活动营销页 | 柔和新粗野 + 莫兰迪柔和 |
+
+---
+
+## 动效配方词汇表（营销页专用）
+
+来自 `magicuidesign/magicui` 与 `kokonut-labs/kokonutui` 的具名组件词汇。
+**在提示词里写具名配方，比写"加点动效"精确一个数量级。**
+
+| 具名配方 | 效果 | 适用位置 | 实现要点 |
+|---|---|---|---|
+| Number Ticker | 数字滚动到目标值 | 数据带、KPI | 进入视口触发一次，1.2s，等宽数字 |
+| Text Reveal / Word Rotate | 逐行揭示 / 轮播关键词 | Hero 标题 | 行内 clip 遮罩上推，stagger 0.1 |
+| Marquee | 无限滚动 logo 墙 / 标签流 | 信任区、技能条 | CSS animation，`prefers-reduced-motion` 时停止 |
+| Bento Grid | 大小不等的卡片拼图 | 特性区 | 不等宽网格，1 张主卡 + 2-3 张辅卡 |
+| Border Beam / Shine Border | 边框流光 / 扫光 | 主卡片、CTA | conic-gradient 旋转，仅 1 处使用 |
+| Animated Beam | 卡片之间的连线光束 | 流程/集成图 | SVG path + dashoffset |
+| Dot / Grid Pattern | 点阵/网格底纹 | Hero 背景 | 极低对比（≤4% 透明度），不抢内容 |
+| Spotlight / Glow Card | 鼠标跟随光斑 | 特性卡 | 跟随 pointer，移动端关闭 |
+| Dock | 底部悬浮图标栏 | H5/APP 底部导航 | 44px 热区 + 安全区 |
+| Orbit / Icon Cloud | 环绕动效 | 生态/集成展示 | 仅 3D 风格，注意性能 |
+| Confetti | 成功撒花 | 支付成功、完成页 | 一次性，≤2s |
+
+**使用纪律**：
+1. 一页最多 **2 个**具名配方 + 1 个签名细节——超过就是马戏团
+2. 优先选能解释信息的（Number Ticker 讲数据、Animated Beam 讲流程），不选纯装饰的
+3. 所有循环动画在 `prefers-reduced-motion` 下停止；所有入场只播一次
+4. 后端工作台**禁用** Border Beam / Spotlight / Confetti 这类营销配方
+
