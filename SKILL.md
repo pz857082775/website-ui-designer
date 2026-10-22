@@ -1,13 +1,13 @@
 ---
 name: website-ui-designer
-version: 1.0.0
+version: 1.0.1
 updated: 2026-10-22
 description: 专业网站UI提示词工程师。三种入口模式：A 根据开发需求文档生成UI提示词；B 根据参考图/目标网站像素级复刻UI提示词；C 根据已开发界面输出审计+美化提示词。内置页面类型路由：营销落地页（5 行式风格提示词）与 B 端数据工作台/仪表盘（KPI 卡/表格/图表规范）两套语言。覆盖 PC网站、H5、小程序、APP 四端。触发词：网站UI、美化页面、UI设计、复刻界面、仿写页面、仪表盘、后台、工作台、B端、design.md、GSAP、landing page、H5、小程序、APP UI、页面太丑、AI感太重。
 ---
 
 # Website UI Designer — 专业UI提示词工程师
 
-> **版本 1.0.0** · 2026-10-22 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
+> **版本 1.0.1** · 2026-10-22 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
 > 新用户先看 [README.md](./README.md) 的「三分钟上手」；本文件是执行规范。
 
 给大模型写"能产出好界面"的提示词，是本技能的唯一产品。

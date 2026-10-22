@@ -2,10 +2,11 @@
 
 **让 AI 生成的界面，不再长得像 AI 生成的。**
 
-![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-1.0.0-2E7CF6?style=flat-square)
+![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-1.0.1-2E7CF6?style=flat-square)
 ![许可](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-%E5%BC%80%E6%BA%90-34A853?style=flat-square)
-![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20%E6%89%8B%E6%9C%BA%E7%BD%91%E9%A1%B5%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20%E5%BA%94%E7%94%A8-8A90A2?style=flat-square)
+![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20H5%E9%A1%B5%E9%9D%A2%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20APP-8A90A2?style=flat-square)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
+![版权](https://img.shields.io/badge/%E7%89%88%E6%9D%83-%E7%B1%B3%E4%B9%90-7B5CFA?style=flat-square)
 
 > 一个"UI 提示词工程师"技能。它不直接画图，而是把你的需求翻译成 AI 能严格执行的设计指令——包含版式、配色、字号、间距、动效，全部是精确数值。
 >
@@ -205,11 +206,12 @@ website-ui-designer/
 
 ## 版本历史
 
-当前版本 **v1.0.0**（2026-10-22），首个正式发布版本。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
+当前版本 **v1.0.1**（2026-10-22），首个正式发布版本。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
-| **v1.0.0** | 2026-10-22 | 首个正式版：三入口模式、四类页面、四端平台、知识检索、自检与验收体系 |
+| **v1.0.1** | 2026-10-22 | 徽章调整：平台改用「H5页面 / APP」，新增版权徽章「米乐」 |
+| v1.0.0 | 2026-10-22 | 首个正式版：三入口模式、四类页面、四端平台、知识检索、自检与验收体系 |
 
 **版本约定**：修订号（1.0.x）修 bug 与文档；次版本号（1.x.0）加能力；主版本号（2.0.0）仅在不兼容变更时使用。
 
@@ -262,5 +264,7 @@ website-ui-designer/
 ## License
 
 MIT
+
+© 2026 米乐（版权归米乐所有）
 
 ---
