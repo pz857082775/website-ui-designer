@@ -15,7 +15,7 @@
     --mono:ui-monospace,"SF Mono",Consolas,monospace;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body{font-variant-numeric:tabular-nums;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   .wrap{max-width:1180px;margin:0 auto;padding:0 48px;position:relative;z-index:2}
   /* 导航 */
   nav{position:sticky;top:0;z-index:50;background:rgba(245,242,236,.9);backdrop-filter:blur(10px)}
@@ -75,8 +75,7 @@
   .foot-in{display:flex;justify-content:space-between}
   footer a{color:var(--ink-2);text-decoration:none;margin-left:24px}
   footer a:hover{color:var(--sage-deep)}
-  .js-anim .anim{opacity:0}
-  @media (prefers-reduced-motion:reduce){.js-anim .anim{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.anim{opacity:1}}
   @media (max-width:900px){
     .wrap{padding:0 24px}
     .hero{padding:90px 0 64px}
@@ -88,8 +87,6 @@
 </style>
 </head>
 <body>
-<script>document.documentElement.classList.add('js-anim')</script>
-
 <nav>
   <div class="wrap nav-in">
     <a class="logo" href="#">半亩咖啡</a>

@@ -34,8 +34,9 @@
   .side-foot{margin-top:auto}
   /* ===== 顶栏 ===== */
   .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:16px;height:60px;padding:0 24px;background:var(--card);border-bottom:1px solid var(--line)}
-  .search{flex:1;max-width:560px;display:flex;align-items:center;gap:9px;background:#F5F7FB;border-radius:999px;padding:9px 16px;color:var(--ink-2)}
+  .search{flex:1;max-width:600px;display:flex;align-items:center;gap:9px;background:#F5F7FB;border-radius:999px;padding:9px 16px;color:var(--ink-2)}
   .search input{border:none;outline:none;background:none;font-size:13px;width:100%;color:var(--ink)}
+  .spacer{flex:1}
   .bell{position:relative;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--ink-2)}
   .bell:hover{background:#F5F7FB}
   .bell i{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #fff}
@@ -49,6 +50,7 @@
   .hero{position:relative;border-radius:20px;padding:26px 28px;min-height:186px;overflow:hidden;
     background:linear-gradient(120deg,#F0F6FF 0%,#E6F0FF 55%,#E9F4FF 100%);display:flex;align-items:center;gap:24px}
   .hero::after{content:"";position:absolute;right:-60px;bottom:-90px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(46,124,246,.12),transparent 70%)}
+  .leaves{position:absolute;right:96px;bottom:-6px;width:250px;height:200px;z-index:1;pointer-events:none}
   .hero-left{position:relative;z-index:2;max-width:560px}
   .hero h1{font-size:28px;font-weight:750;letter-spacing:-.015em;line-height:1.3}
   .hero p.sub{color:#5A6C88;font-size:13.5px;margin-top:4px}
@@ -129,14 +131,12 @@
   .cf .cf-ic{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center}
   .cf b{font-size:18px;font-weight:750;font-variant-numeric:tabular-nums;display:block;line-height:1.2}
   .cf span{font-size:11px;opacity:.78}
-  .js-anim .anim{opacity:0}
-  @media (prefers-reduced-motion:reduce){.js-anim .anim{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.anim{opacity:1}}
   @media (max-width:1240px){.row.main,.row.bottom{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
   @media (max-width:900px){.app{grid-template-columns:1fr}.side{display:none}.kpis{grid-template-columns:1fr}.hero-art{display:none}.content{padding:16px}}
 </style>
 </head>
 <body>
-<script>document.documentElement.classList.add('js-anim')</script>
 <div class="app">
 
   <!-- 侧栏 -->
@@ -163,6 +163,7 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
         <input placeholder="搜索患者、病历、预约、疾病或医学知识...">
       </div>
+      <span class="spacer"></span>
       <button class="bell" aria-label="通知"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg><i></i></button>
       <div class="me">
         <span class="av">张</span>
@@ -173,6 +174,11 @@
     <main class="content">
       <!-- Hero 问候横幅 -->
       <section class="hero anim">
+        <svg class="leaves" viewBox="0 0 250 200" aria-hidden="true">
+          <path d="M232 196c-30-10-52-34-58-68 28 6 52 26 58 68z" fill="#CFE4FF" opacity=".75"/>
+          <path d="M244 168c-22-4-40-20-46-44 22 4 40 18 46 44z" fill="#DDEBFF" opacity=".9"/>
+          <path d="M196 198c-20-2-36-14-43-34 19 2 35 12 43 34z" fill="#BFD9FF" opacity=".6"/>
+        </svg>
         <div class="hero-left">
           <h1>上午好，张医生！</h1>
           <p class="sub">新的一天，从关爱每一位患者开始。</p>

@@ -14,7 +14,7 @@
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html{-webkit-text-size-adjust:100%}
-  body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.7;padding-bottom:calc(84px + var(--safe-b))}
+  body{font-variant-numeric:tabular-nums;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.7;padding-bottom:calc(84px + var(--safe-b))}
   .wrap{padding:0 20px}
   /* 顶部导航（小程序风格自定义头） */
   .nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;height:52px;padding:0 16px;background:rgba(245,242,236,.92);backdrop-filter:blur(10px)}
@@ -57,13 +57,10 @@
   .bottombar .btn{min-height:44px;padding:0 24px;border-radius:999px;background:var(--sage-deep);color:#FBF9F4;font-weight:600;font-size:15px;border:none;display:flex;align-items:center}
   .bottombar .btn:active{transform:scale(.96)}
   footer{padding:24px 20px 8px;font-size:11px;color:var(--ink-2);text-align:center}
-  .js-anim .anim{opacity:0}
-  @media (prefers-reduced-motion:reduce){.js-anim .anim{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.anim{opacity:1}}
 </style>
 </head>
 <body>
-<script>document.documentElement.classList.add('js-anim')</script>
-
 <nav class="nav">
   <span class="logo">半亩咖啡</span>
   <div class="more" aria-label="菜单"><span></span></div>

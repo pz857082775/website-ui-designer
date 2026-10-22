@@ -13,7 +13,7 @@
     --mono:ui-monospace,"SF Mono","Cascadia Code",Consolas,monospace;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  body{font-variant-numeric:tabular-nums;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
   .wrap{max-width:1200px;margin:0 auto;padding:0 48px;position:relative;z-index:2}
   /* 背景氛围色斑（大而柔和，不抢内容） */
   .blob{position:fixed;border-radius:50%;filter:blur(110px);opacity:.5;z-index:0;pointer-events:none}
@@ -79,8 +79,7 @@
   .foot-in{display:flex;justify-content:space-between}
   footer a{color:var(--ink-2);text-decoration:none;margin-left:24px}
   footer a:hover{color:var(--ink)}
-  .js-anim .anim{opacity:0}
-  @media (prefers-reduced-motion:reduce){.js-anim .anim{opacity:1}.orb{animation:none}}
+  @media (prefers-reduced-motion:reduce){.anim{opacity:1}.orb{animation:none}}
   @media (max-width:900px){
     .wrap{padding:0 24px}
     .hero{grid-template-columns:1fr;padding:80px 0 64px}
@@ -93,7 +92,6 @@
 </style>
 </head>
 <body>
-<script>document.documentElement.classList.add('js-anim')</script>
 <div class="blob a"></div><div class="blob b"></div><div class="blob c"></div>
 
 <nav>

@@ -79,8 +79,7 @@
   footer a{color:var(--ink-2);text-decoration:none;margin-left:24px}
   footer a:hover{color:var(--ink)}
   /* ---------- 动效初始态（JS 加载后才隐藏，CDN 失败兜底） ---------- */
-  .js-anim .anim{opacity:0}
-  @media (prefers-reduced-motion:reduce){.js-anim .anim{opacity:1}.cursor{animation:none}}
+  @media (prefers-reduced-motion:reduce){.anim{opacity:1}.cursor{animation:none}}
   @media (max-width:900px){
     .wrap{padding:0 24px}
     .hero{padding:88px 0 64px}
@@ -94,8 +93,6 @@
 </style>
 </head>
 <body>
-<script>document.documentElement.classList.add('js-anim')</script>
-
 <nav>
   <div class="wrap nav-in">
     <a class="logo" href="#">Lumen<em>.</em></a>

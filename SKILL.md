@@ -64,9 +64,13 @@ description: 专业网站UI提示词工程师。三种入口模式：A 根据开
 
 ### A6 生成
 单文件 `index.html`，内联 CSS/JS，GSAP CDN + CSS 兜底，375/768/1440 三档。
+**硬性：内容默认可见**——禁止 CSS 预隐藏 `.anim{opacity:0}`，初始态交给 `gsap.from()`；
+脚本守卫 `if(!window.gsap || reduced) return;`，CDN 挂掉页面仍完整。
 
 ### A7 自检修复循环
-过质量清单（文末）→ 修最严重 3 个问题 → 再查一轮，最多 3 轮。
+1. 跑 `python scripts/preflight.py <页面>.html`（E1 预隐藏/ E2 reduced-motion / E4 图表库 / W1 emoji / W5 布局属性动画等）
+2. 过质量清单（文末）→ 修最严重 3 个问题 → 再查一轮，最多 3 轮
+3. 必须做到 0 ERROR；警告逐条评估
 **核心警告：只删装饰不补实质 = 单薄页面。删卡片的同时必须补更大的字号、整片色彩、真实图片、完整内容。**
 
 ---
@@ -114,7 +118,8 @@ description: 专业网站UI提示词工程师。三种入口模式：A 根据开
 
 **动效（`references/gsap-prompts.md`）**
 - GSAP 3 语法（禁 TweenMax 等）；registerPlugin；只动 transform/opacity
-- UI 动效 0.2-0.6s；必须 prefers-reduced-motion 降级；CDN 失败 CSS 兜底
+- UI 动效 0.2-0.6s；必须 prefers-reduced-motion 降级
+- **兜底：内容默认可见，禁 CSS 预隐藏；CDN 失败 = 无动画但页面完整**（曾因预隐藏导致整页空白）
 
 **平台（`references/platform-matrix.md`）**
 - PC：宽屏叙事、hover 态、多列网格

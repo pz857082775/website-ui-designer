@@ -123,14 +123,12 @@
   .grow .g-info{flex:1;min-width:0}
   .grow .g-t{font-size:13px;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .grow .g-d{font-size:11px;color:var(--ink-3)}
-  .js-anim .anim{opacity:0}
-  @media (prefers-reduced-motion:reduce){.js-anim .anim{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.anim{opacity:1}}
   @media (max-width:1200px){.row.r1{grid-template-columns:1fr}.kpis4{grid-template-columns:repeat(2,1fr)}.quick4{grid-template-columns:repeat(2,1fr)}.row.r4{grid-template-columns:1fr}}
   @media (max-width:900px){.app{grid-template-columns:1fr}.side{display:none}.kpis4{grid-template-columns:1fr}.quick4{grid-template-columns:1fr}.content{padding:8px 16px 24px}}
 </style>
 </head>
 <body>
-<script>document.documentElement.classList.add('js-anim')</script>
 <div class="app">
 
   <!-- ===== 侧边栏 ===== -->

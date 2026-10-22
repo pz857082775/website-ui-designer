@@ -46,6 +46,8 @@ website-ui-designer/
 │   ├── redesign-mode.md            # 模式 C：审计 + 定向修复句式库
 │   ├── platform-matrix.md          # PC/H5/小程序/APP 四端提示词差异
 │   └── dashboard-style.md          # B 端工作台规范（数据工作台 + 创作工作台进阶：KPI卡/表格/图表/待办/素材库/发布日历 + 完整模板）
+├── scripts/
+│   └── preflight.py                # 交付前自检：预隐藏致空白 / reduced-motion / emoji / 图表库 / 布局属性动画
 └── tests/
     ├── test1-lumen-minimal.html    # 模式A · 极简留白 · 编辑器官网
     ├── test2-nebula-glass.html     # 模式A · 玻璃美学 · AI 知识库
@@ -94,6 +96,19 @@ npx skills add https://github.com/pz857082775/website-ui-designer --skill websit
 ```
 
 或拷贝目录到 agent 的 skills 目录（`~/.workbuddy/skills/`、`~/.claude/skills/` 等）。
+
+## 交付前自检
+
+```bash
+python scripts/preflight.py tests/*.html
+```
+
+检查 7 类硬伤：内容预隐藏导致 CDN 失败时整页空白、缺 reduced-motion 降级、缺 viewport、
+第三方图表库、emoji 图标、缺 tabular-nums、动画动布局属性。**0 ERROR 才算可交付。**
+
+> 血泪教训：本仓库 v3 曾用 `.js-anim .anim{opacity:0}` 做入场前置状态，
+> 在 GSAP CDN 不可达的环境下整页只剩外壳。现已改为"内容默认可见 + gsap.from 设初始态"，
+> 并把这个坑写进 preflight E1 检查项。
 
 ## License
 

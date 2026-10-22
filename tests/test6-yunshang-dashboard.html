@@ -140,14 +140,12 @@
   .ai-card .input{display:flex;gap:8px}
   .ai-card .input .box{flex:1;background:#fff;border:1px solid rgba(124,92,252,.25);border-radius:9px;padding:8px 12px;font-size:12.5px;color:var(--ink-3)}
   .ai-card .input button{background:linear-gradient(135deg,var(--ai-a),var(--ai-b));color:#fff;font-size:12.5px;font-weight:600;padding:0 16px;border-radius:9px}
-  .js-anim .anim{opacity:0}
-  @media (prefers-reduced-motion:reduce){.js-anim .anim{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.anim{opacity:1}}
   @media (max-width:1200px){.kpis{grid-template-columns:repeat(2,1fr)}.charts,.bottom{grid-template-columns:1fr}}
   @media (max-width:900px){.app{grid-template-columns:1fr}.side{display:none}.kpis{grid-template-columns:1fr}.todos{grid-template-columns:1fr}.content{padding:16px}}
 </style>
 </head>
 <body>
-<script>document.documentElement.classList.add('js-anim')</script>
 <div class="app">
 
   <!-- ========== 侧边栏 ========== -->
@@ -175,7 +173,7 @@
       <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 00-2-1.2L14 3h-4l-.5 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 002 1.2l.5 2.6h4l.5-2.6a7 7 0 002-1.2l2.4 1 2-3.4-2-1.6c.06-.4.1-.8.1-1.2z"/></svg>系统设置</a>
     </div>
     <div class="side-foot">
-      <span class="crown">★ 专业版</span>
+      <span class="crown"><svg width="11" height="11" viewBox="0 0 24 24" fill="#B8860B" stroke="none"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 7.7l5.4-.8z"/></svg>专业版</span>
       <div class="bar"><i></i></div>
       <div class="quota">AI 额度 6,000 / 10,000</div>
       <p>2026-12-31 到期 · 团队 6/10 席</p>
@@ -360,7 +358,7 @@
             <span class="beta">BETA</span>
           </div>
           <div class="bubble">你好，我是你的 AI 运营助手。我可以帮你分析数据、生成内容、制定计划，提升运营效率。</div>
-          <div class="quick"><span>📊 分析本周销售变化</span><span>✍️ 生成商品标题</span><span>📅 制定下周计划</span></div>
+          <div class="quick"><span>分析本周销售变化</span><span>生成商品标题</span><span>制定下周计划</span></div>
           <div class="input"><span class="box">输入你的问题…</span><button type="button">发送</button></div>
         </div>
       </section>

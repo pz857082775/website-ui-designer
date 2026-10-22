@@ -147,6 +147,11 @@ AI 专属 渐变 #7B5CFA → #5B8DEF + sparkle 图标（贯穿全部系统）
 - 必须提供 `prefers-reduced-motion: reduce` 全量降级（动画归零，内容直接可见）
 - 只动 `transform / opacity / filter`，禁止动 `width/height/top/left`
 
+**兜底铁律（血泪教训）**：内容默认可见。禁止用 CSS 预先 `.anim{opacity:0}` 隐藏，
+再靠 JS 显示——一旦 GSAP CDN 加载失败，整页会变成"只有外壳的空白页"。
+正确做法：不写预隐藏，交给 `gsap.from()` 自己设初始态，守卫 `if(!window.gsap) return;`。
+交付前用 `scripts/preflight.py` 检查 E1 项。
+
 ---
 
 # 第二部分 · 视觉意图 → 技术参数对照表
@@ -248,5 +253,6 @@ App Shell：侧栏 {200}px（Logo 区 + 导航 {N} 项 + 底部设置）+ 顶栏
 - [ ] 状态：default/hover/active/disabled/empty 五态
 - [ ] 动效：入场/悬停/数字/图表四类参数齐全
 - [ ] 呼吸：≤2 个元素，有 reduced-motion 降级
+- [ ] **兜底：内容默认可见，无 CSS 预隐藏；`preflight.py` 0 error**
 - [ ] 背景图：Hero 插画在右、文字在左、有 scrim
 - [ ] 数据：真实可加总，标注来源口径

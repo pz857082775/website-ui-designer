@@ -76,8 +76,42 @@ clip 遮罩不动、duration 0.7s，stagger 0.12s。
 
 | 症状 | 原因 | 修法 |
 |---|---|---|
-| 刷新后元素不见了 | gsap.from + autoAlpha:0 在动画前隐藏，JS 失败就永久隐藏 | CDN 失败兜底：CSS 类默认可见，JS 加载后才加 .js-anim 隐藏态 |
+| **整页空白，只有外壳** | CSS 预先 `.anim{opacity:0}` 隐藏内容 + GSAP CDN 加载失败 → 脚本 return，内容永久隐身 | 用下方「正确兜底模式」，禁止 CSS 预隐藏 |
+| 刷新后元素闪一下才出现 | 无预隐藏也无 gsap.set | 接受（内容优先）；或在 gsap 确认加载后再 set 初始态 |
 | ScrollTrigger 不触发 | trigger 元素高度为 0 或在 overflow 容器里 | 确保 trigger 有高度；嵌套滚动需 scroller 配置 |
 | 路由切换后动画重复/泄漏 | 没清理 | useGSAP scope 或 gsap.context().revert() |
 | 图片加载后位置错乱 | 布局变化未刷新 | 图片 onload 后 ScrollTrigger.refresh() |
 | 动画卡顿 | 动了布局属性 / 同时动画太多 | 只动 transform/opacity；减少并发层数 |
+
+## ⚠️ 正确兜底模式（本技能强制，踩过坑）
+
+**错误写法（会导致 CDN 失败时整页空白）**
+```html
+<style>.js-anim .anim{opacity:0}</style>          <!-- ① 一开始就隐藏 -->
+<script>document.documentElement.classList.add('js-anim')</script>  <!-- ② 同步加类 -->
+<script src="gsap-cdn"></script>
+<script>
+  if(!window.gsap) return;   // ③ CDN 挂了 → 永远不执行 → 内容永久隐藏
+</script>
+```
+
+**正确写法：默认可见，只让 gsap 自己设初始态**
+```html
+<!-- 不要写任何 .anim{opacity:0} -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!window.gsap || reduced) return;   // 直接返回 → 内容本来就可见，页面完整
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.from(".anim", { y:14, autoAlpha:0, duration:.4, ease:"power3.out", stagger:.055 });
+})();
+</script>
+```
+
+要点：
+1. `gsap.from()` 自己会在动画开始时设置初始态，**不需要 CSS 预隐藏**
+2. 判断放在**统一守卫**里，`return` 是安全出口（页面完整，只是没有动画）
+3. 若坚持零闪烁，只能在 `if (window.gsap)` 分支内才加隐藏类，绝不无条件加
+4. 交付前跑 `scripts/preflight.py`，E1 项就是查这个坑
