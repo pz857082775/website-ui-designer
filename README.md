@@ -37,6 +37,8 @@ website-ui-designer/
 ├── references/
 │   ├── design-system-spec.md       # 主规范：八要素 + 九段提示词 + 意图→参数 + 四个旋钮
 │   ├── review-rubric.md            # 交付闸门：10 项验收条 + 评分卡（Nielsen×6法则×业务影响）+ 最坏数据测试
+│   ├── inspiration-sources.md      # 灵感资源库：按"要解决什么"分 10 类，含 2026 状态与可借鉴要点
+│   ├── learning-loop.md            # 持续迭代方法：六步闭环 + 三库建设 + A/B 法 + 30 天计划
 │   ├── open-source-integration.md  # 9 个开源技能的核心贡献映射 + 12 条新规则 + 四端差异
 │   ├── prompt-anatomy.md           # 参考图 5 行式提示词解剖（含 4 张原图 prompt 存档）
 │   ├── style-library.md            # 6+ 风格提示词模板（填空即用）

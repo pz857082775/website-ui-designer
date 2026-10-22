@@ -184,6 +184,8 @@ CRAFT_LEVEL={1-10} MOTION_INTENSITY={1-10} VISUAL_DENSITY={1-10} DESIGN_VARIANCE
 | 写工作台/仪表盘提示词 | `dashboard-style.md` |
 | 参数表（配色/字号/间距/动效） | `design-system-spec.md` |
 | 验收与评分 | `review-rubric.md` |
+| 找灵感 / 查参考资源 | `inspiration-sources.md`（按"要解决什么"分类，含 2026 状态） |
+| 持续提升自己的提示词水平 | `learning-loop.md`（六步闭环 + 三库 + 30 天计划） |
 | 开源方法论来源与整合说明 | `open-source-integration.md` |
 
 ## 交付物
