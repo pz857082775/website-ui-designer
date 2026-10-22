@@ -1,13 +1,13 @@
 ---
 name: website-ui-designer
-version: 5.2.0
+version: 1.0.0
 updated: 2026-10-22
 description: 专业网站UI提示词工程师。三种入口模式：A 根据开发需求文档生成UI提示词；B 根据参考图/目标网站像素级复刻UI提示词；C 根据已开发界面输出审计+美化提示词。内置页面类型路由：营销落地页（5 行式风格提示词）与 B 端数据工作台/仪表盘（KPI 卡/表格/图表规范）两套语言。覆盖 PC网站、H5、小程序、APP 四端。触发词：网站UI、美化页面、UI设计、复刻界面、仿写页面、仪表盘、后台、工作台、B端、design.md、GSAP、landing page、H5、小程序、APP UI、页面太丑、AI感太重。
 ---
 
 # Website UI Designer — 专业UI提示词工程师
 
-> **版本 5.2.0** · 2026-10-22 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
+> **版本 1.0.0** · 2026-10-22 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
 > 新用户先看 [README.md](./README.md) 的「三分钟上手」；本文件是执行规范。
 
 给大模型写"能产出好界面"的提示词，是本技能的唯一产品。
@@ -40,7 +40,7 @@ description: 专业网站UI提示词工程师。三种入口模式：A 根据开
 
 ---
 
-## 模式 A：需求文档 → UI 提示词（八步）
+## 模式 A：需求文档 → UI 提示词（九步）
 
 ### A0 先定四个旋钮（30 秒，决定后面一切）
 在提示词开头声明（规则与行为带见 `references/open-source-integration.md`）：
@@ -49,6 +49,17 @@ CRAFT_LEVEL={1-10} MOTION_INTENSITY={1-10} VISUAL_DENSITY={1-10} DESIGN_VARIANCE
 ```
 默认：落地页 7/6/5/7 ｜ 后台 8/4/5/4 ｜ H5 7/3/4/4 ｜ 小程序 7/3/5/3 ｜ APP 8/6/4/3。
 用户说了"更克制 / 更密 / 更大胆"就改旋钮值，不要用形容词。
+
+### A0.5 知识检索（RAG，必做）
+生成前先查库，把依据写进提示词，禁止凭印象编造参数：
+
+```bash
+python scripts/rag.py query "<用户原话或需求要点>" --top 5 --format prompt
+```
+
+输出是一段可直接粘贴的「知识检索结果」块（必须遵守 / 明确禁止 / 参考依据 / 边界声明），
+粘到提示词第 3 段之后。若返回"无高置信命中"，必须在提示词里注明"以下为推断"。
+规则见 `references/rag-retrieval.md`。
 
 ### A1 读需求，盘点"只属于这个客户的东西"
 提取：产品、受众、页面唯一目标、既有品牌资产、**真实存在的图像素材**。
@@ -189,6 +200,7 @@ CRAFT_LEVEL={1-10} MOTION_INTENSITY={1-10} VISUAL_DENSITY={1-10} DESIGN_VARIANCE
 | 写工作台/仪表盘提示词 | `dashboard-style.md` |
 | 参数表（配色/字号/间距/动效） | `design-system-spec.md` |
 | 验收与评分 | `review-rubric.md` |
+| 生成前查依据（RAG） | `rag-retrieval.md` + `scripts/rag.py`（输入/范围/输出 + 防编造三道闸） |
 | 找灵感 / 查参考资源 | `inspiration-sources.md`（按"要解决什么"分类，含 2026 状态） |
 | 持续提升自己的提示词水平 | `learning-loop.md`（六步闭环 + 三库 + 30 天计划） |
 | 积累经验、让规则自我晋升 | 配套技能 `ui-taste-engine`（知识库 + 置信度 + 晋升闸门） |
@@ -199,3 +211,4 @@ CRAFT_LEVEL={1-10} MOTION_INTENSITY={1-10} VISUAL_DENSITY={1-10} DESIGN_VARIANCE
 2. `主提示词.md`（三种模式通用产出，可复用于任何 AI 工具）
 3. `index.html` 单文件成品（PC/H5 按需）
 4. 模式 B 附：token 表 + 组件规格 + 差异清单
+5. 知识检索块（`rag.py --format prompt` 的输出，证明每条参数有依据）

@@ -2,16 +2,16 @@
 
 **让 AI 生成的界面，不再长得像 AI 生成的。**
 
-![version](https://img.shields.io/badge/version-5.2.0-2E7CF6?style=flat-square)
-![license](https://img.shields.io/badge/license-MIT-34A853?style=flat-square)
-![platform](https://img.shields.io/badge/platform-PC%20%7C%20H5%20%7C%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%7C%20APP-8A90A2?style=flat-square)
-![lang](https://img.shields.io/badge/lang-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
+![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-1.0.0-2E7CF6?style=flat-square)
+![许可](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-%E5%BC%80%E6%BA%90-34A853?style=flat-square)
+![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20%E6%89%8B%E6%9C%BA%E7%BD%91%E9%A1%B5%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20%E5%BA%94%E7%94%A8-8A90A2?style=flat-square)
+![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
 
 > 一个"UI 提示词工程师"技能。它不直接画图，而是把你的需求翻译成 AI 能严格执行的设计指令——包含版式、配色、字号、间距、动效，全部是精确数值。
 >
 > **你不需要懂设计，也能让它做出好看的界面。**
 
-[快速上手](#三分钟上手) · [四种用法](#四种用法) · [版本历史](#版本历史) · [English](#english)
+[快速上手](#三分钟上手) · [四种用法](#四种用法) · [版本历史](#版本历史)
 
 ---
 
@@ -114,6 +114,32 @@ index.html     成品页面（双击就能看，含动效）
 
 ---
 
+## 知识检索：让提示词有据可依
+
+模型写提示词最容易犯的错是"凭印象给参数"。本技能自带一个本地检索引擎，生成前先查库：
+
+| 项目 | 说明 |
+|---|---|
+| **输入** | 一句自然语言（用户原话即可）+ 可选过滤：平台、条款类型、返回条数 |
+| **检索范围** | 15 份规范文件（217 个片段）+ 配套知识库的四类知识卡；不含测试页与说明文档 |
+| **输出** | 三段式注入块：**必须遵守**（知识卡）/ **明确禁止**（反例）/ **参考依据**（规范片段）+ 边界声明 |
+
+```bash
+python scripts/rag.py index                              # 首次或内容变更后建索引
+python scripts/rag.py query "后台首页 KPI 卡怎么排" --top 5
+python scripts/rag.py query "页面太挤了" --platform h5
+python scripts/rag.py query "入场动画" --type A --format prompt   # 直接注入提示词
+```
+
+**防随意发挥三道闸**：
+1. 最高分低于阈值 → 注入块自动改成"以下为推断，不得当作规范"
+2. 完全无命中 → 明确告知"无依据"，不编造条款
+3. 每条结论都带 ID 与来源文件，可回溯
+
+详细规则见 [`references/rag-retrieval.md`](./references/rag-retrieval.md)。
+
+---
+
 ## 核心规则速览
 
 **四个旋钮**（写在提示词最前面，决定"做到什么程度算完成"）
@@ -158,10 +184,12 @@ website-ui-designer/
 │   ├── platform-matrix.md          # 四端差异 + 移动端原生化七项
 │   ├── inspiration-sources.md      # 灵感资源库（10 类，含 2026 状态）
 │   ├── learning-loop.md            # 持续提升方法：六步闭环 + 三库
+│   ├── rag-retrieval.md            # 知识检索：输入 / 检索范围 / 输出 / 防编造
 │   ├── design-md-template.md       # DESIGN.md 令牌模板
 │   └── open-source-integration.md  # 开源方法论映射 + 12 条新规则
 ├── scripts/
-│   └── preflight.py                # 交付前自检（7 类硬伤，0 ERROR 才交付）
+│   ├── preflight.py                # 交付前自检（7 类硬伤，0 ERROR 才交付）
+│   └── rag.py                      # 知识检索：生成前查依据，避免随意发挥
 └── tests/                          # 8 个实测页
     ├── test1-lumen-minimal.html         极简留白 · 编辑器官网
     ├── test2-nebula-glass.html          玻璃美学 · AI 工具
@@ -177,21 +205,14 @@ website-ui-designer/
 
 ## 版本历史
 
-当前版本 **v5.2.0**（2026-10-22）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
+当前版本 **v1.0.0**（2026-10-22），首个正式发布版本。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
-| 版本 | 日期 | 关键变化 |
+| 版本 | 日期 | 说明 |
 |---|---|---|
-| **v5.2.0** | 2026-10-22 | 文档重构：版本号体系、小白上手路径、话术对照表 |
-| v5.1.0 | 2026-10-22 | 灵感资源库（10 类）+ 六步学习闭环 |
-| v5.0.0 | 2026-10-22 | 整合 9 个开源技能：四旋钮、10 项验收条、AI 五类套路、移动端原生化 |
-| v4.1.0 | 2026-10-22 | 修复"CDN 失败整页空白"致命 bug；新增 preflight 自检脚本 |
-| v4.0.0 | 2026-10-22 | 主规范 design-system-spec；新增服务型工作台；test8 |
-| v3.2.0 | 2026-10-22 | 创作工作台模式：待办 C 位、素材库、发布日历 |
-| v3.1.0 | 2026-10-22 | 数据工作台模式：KPI 卡 / 表格 / 图表规范 |
-| v3.0.0 | 2026-10-21 | 三入口模式 + 5 行式提示词解剖 + 四端平台矩阵 |
-| v2.0.0 | 2026-10-21 | 首个可用版本：七步流水线、6 种风格、DESIGN.md、GSAP |
+| **v1.0.0** | 2026-10-22 | 首个正式版：三入口模式、四类页面、四端平台、知识检索、自检与验收体系 |
 
----
+**版本约定**：修订号（1.0.x）修 bug 与文档；次版本号（1.x.0）加能力；主版本号（2.0.0）仅在不兼容变更时使用。
+
 
 ## 常见问题
 
@@ -209,6 +230,9 @@ website-ui-designer/
 
 **它会不会只是套模板？**
 不会。每次任务都要求先盘点"只属于这个客户的素材"（名字含义、街道、数字、约束），创意从这些素材里长出来，而不是从"科技感"这类通用概念。
+
+**它会不会凭印象编设计参数？**
+不会。生成前会先跑知识检索（`rag.py`），把库里的依据以"必须遵守 / 明确禁止"的形式注入提示词；查不到依据时会明确标注为推断。
 
 **preflight.py 是干什么的？**
 交付前的自动体检，扫 7 类硬伤：内容被预隐藏（会导致空白页）、缺 reduced-motion、引用第三方图表库、emoji 图标、缺等宽数字、动画动布局属性、滚动劫持。0 ERROR 才算可交付。
@@ -240,15 +264,3 @@ website-ui-designer/
 MIT
 
 ---
-
-<a id="english"></a>
-
-### English
-
-A UI prompt-engineering skill. It does not draw — it turns requirements into instructions an LLM can execute precisely (type scale, spacing, color, motion, all numeric).
-
-**Three entry modes:** (A) requirement doc → designed page; (B) screenshot or live site → pixel-faithful clone prompts; (C) existing page → audit + minimal targeted fixes.
-
-**Four knobs first:** CRAFT_LEVEL / MOTION_INTENSITY / VISUAL_DENSITY / DESIGN_VARIANCE. **Ten acceptance checks** gate every delivery. Outputs a DESIGN.md token system, a reusable prompt, and a single-file HTML page with GSAP motion and a graceful no-CDN fallback.
-
-Supports PC web, mobile H5, WeChat mini-programs, and apps.
