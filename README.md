@@ -35,6 +35,7 @@ website-ui-designer/
 ├── README.md
 ├── LICENSE                         # MIT
 ├── references/
+│   ├── design-system-spec.md       # 主规范：八要素分析框架 + 九段式提示词框架 + 视觉意图→技术参数对照表
 │   ├── prompt-anatomy.md           # 参考图 5 行式提示词解剖（含 4 张原图 prompt 存档）
 │   ├── style-library.md            # 6+ 风格提示词模板（填空即用）
 │   ├── design-md-template.md       # DESIGN.md 设计系统模板（Google 规范）
@@ -52,7 +53,8 @@ website-ui-designer/
     ├── test4-banmu-h5.html         # 模式A · H5 移动端 · 吸底操作栏 + 安全区
     ├── test5-clone-prompt-glass.md # 模式B · 复刻提示词真实样例
     ├── test6-yunshang-dashboard.html # 数据工作台 · 经营总览仪表盘（侧边栏/KPI/图表/表格/待办/AI卡）
-    └── test7-workbuddy-creator-home.html # 创作工作台 · 自媒体首页（待办C位/爆款列表/sparkline/快捷入口/策划流）
+    ├── test7-workbuddy-creator-home.html # 创作工作台 · 自媒体首页（待办C位/爆款列表/sparkline/快捷入口/策划流）
+    └── test8-medical-workbench-home.html # 服务型工作台 · 医疗首页（Hero问候横幅/3D吉祥物/时间轴预约/待办/趋势图）
 ```
 
 ## 风格库

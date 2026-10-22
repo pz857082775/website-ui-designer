@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkBuddy 医疗工作台 — 工作台首页</title>
+<style>
+  :root{
+    --bg:#F5F7FB; --card:#FFFFFF; --line:#ECEEF3;
+    --ink:#1A1D26; --ink-2:#8A90A2; --ink-3:#B6BCCB;
+    --primary:#2E7CF6; --primary-soft:rgba(46,124,246,.10); --primary-tint:#EAF2FF;
+    --mint:#22B07D; --mint-soft:rgba(34,176,125,.12);
+    --orange:#FF9A3D; --orange-soft:rgba(255,154,61,.14);
+    --red:#F04438; --red-soft:rgba(240,68,56,.12);
+    --purple:#8B7CF6; --purple-soft:rgba(139,124,246,.14);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    --shadow:0 1px 2px rgba(26,29,38,.03),0 4px 16px rgba(26,29,38,.05);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:13.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .num{font-variant-numeric:tabular-nums}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .app{display:grid;grid-template-columns:200px 1fr;min-height:100vh}
+  /* ===== 侧栏 ===== */
+  .side{background:var(--card);border-right:1px solid var(--line);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:16px 10px}
+  .brand{display:flex;align-items:center;gap:9px;padding:2px 8px 18px}
+  .brand .mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#22B07D,#2E7CF6);display:flex;align-items:center;justify-content:center}
+  .brand b{font-size:15px;letter-spacing:-.01em;display:block;line-height:1.2}
+  .brand small{font-size:10px;color:var(--ink-3);display:block}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;color:#4A5162;font-size:13.5px;text-decoration:none;margin-bottom:3px;transition:background .15s,color .15s}
+  .nav-item svg{width:18px;height:18px;flex:none}
+  .nav-item:hover{background:#F5F7FB;color:var(--ink)}
+  .nav-item.active{background:var(--primary-tint);color:var(--primary);font-weight:600}
+  .side-foot{margin-top:auto}
+  /* ===== 顶栏 ===== */
+  .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:16px;height:60px;padding:0 24px;background:var(--card);border-bottom:1px solid var(--line)}
+  .search{flex:1;max-width:560px;display:flex;align-items:center;gap:9px;background:#F5F7FB;border-radius:999px;padding:9px 16px;color:var(--ink-2)}
+  .search input{border:none;outline:none;background:none;font-size:13px;width:100%;color:var(--ink)}
+  .bell{position:relative;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--ink-2)}
+  .bell:hover{background:#F5F7FB}
+  .bell i{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #fff}
+  .me{display:flex;align-items:center;gap:9px;margin-left:auto;padding-left:16px;border-left:1px solid var(--line)}
+  .me .av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#BBD7FF,#8EC5FC);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#2B4C7E}
+  .me .who b{font-size:13px;display:block;line-height:1.3}
+  .me .who small{font-size:10.5px;color:var(--ink-2)}
+  /* ===== 内容 ===== */
+  .content{padding:20px 24px 32px;display:flex;flex-direction:column;gap:16px}
+  /* Hero 问候横幅 */
+  .hero{position:relative;border-radius:20px;padding:26px 28px;min-height:186px;overflow:hidden;
+    background:linear-gradient(120deg,#F0F6FF 0%,#E6F0FF 55%,#E9F4FF 100%);display:flex;align-items:center;gap:24px}
+  .hero::after{content:"";position:absolute;right:-60px;bottom:-90px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(46,124,246,.12),transparent 70%)}
+  .hero-left{position:relative;z-index:2;max-width:560px}
+  .hero h1{font-size:28px;font-weight:750;letter-spacing:-.015em;line-height:1.3}
+  .hero p.sub{color:#5A6C88;font-size:13.5px;margin-top:4px}
+  .quote{margin-top:16px;background:rgba(255,255,255,.86);border-radius:12px;padding:12px 16px;font-size:13px;color:#5A6C88;max-width:430px;display:flex;gap:8px}
+  .quote::before{content:"“";font-size:22px;line-height:1;color:var(--primary);opacity:.55}
+  .hero-art{position:relative;z-index:2;margin-left:auto;display:flex;align-items:flex-end;gap:10px}
+  .bubble{background:#fff;border-radius:12px;padding:9px 14px;font-size:11.5px;color:#4A5162;box-shadow:0 4px 14px rgba(46,124,246,.12);margin-bottom:52px;position:relative}
+  .bubble b{color:var(--primary);font-weight:700;display:block;font-size:12px}
+  .bubble::after{content:"";position:absolute;right:16px;bottom:-6px;width:12px;height:12px;background:#fff;transform:rotate(45deg);border-radius:2px}
+  /* KPI */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:18px 20px}
+  .kpi-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .chip{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+  .kpi .label{font-size:13px;color:var(--ink-2)}
+  .kpi .val{font-size:27px;font-weight:750;letter-spacing:-.02em;line-height:1.15;font-variant-numeric:tabular-nums}
+  .kpi .val small{font-size:13px;font-weight:500;color:var(--ink-2);margin-left:3px}
+  .kpi .trend{margin-top:4px;font-size:11.5px;color:var(--ink-2)}
+  .trend b.up{color:var(--mint);font-weight:600}
+  .trend b.down{color:var(--red);font-weight:600}
+  /* 行布局 */
+  .row{display:grid;gap:16px}
+  .row.main{grid-template-columns:1.55fr 1fr}
+  .row.bottom{grid-template-columns:1.6fr 1fr}
+  .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .card-head h3{font-size:16px;font-weight:700;letter-spacing:-.01em}
+  .card-head h3 span{font-size:13px;font-weight:500;color:var(--ink-2);margin-left:4px}
+  .more{font-size:12px;color:var(--ink-2);text-decoration:none}
+  .more:hover{color:var(--primary)}
+  /* 时间轴列表 */
+  .tl{position:relative;padding-left:64px}
+  .tl::before{content:"";position:absolute;left:56px;top:12px;bottom:16px;width:1px;background:#E6EBF3}
+  .tl-item{position:relative;display:flex;align-items:center;gap:12px;padding:11px 0}
+  .tl-item::before{content:"";position:absolute;left:-12px;top:26px;width:8px;height:8px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 3px #EAF2FF}
+  .tl-time{position:absolute;left:-64px;top:22px;width:44px;font-size:13px;font-weight:600;color:#3D4B63;font-variant-numeric:tabular-nums}
+  .av40{width:40px;height:40px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#3D5A80;background:linear-gradient(135deg,#E8F0FE,#D3E3FD)}
+  .tl-info{flex:1;min-width:0}
+  .pname{font-size:14px;font-weight:600}
+  .pname span{font-size:11.5px;color:var(--ink-2);font-weight:400;margin-left:6px}
+  .pdesc{font-size:12px;color:var(--ink-2);margin-top:1px}
+  .badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;flex:none}
+  .b-blue{background:var(--primary-soft);color:#1F5FCB}
+  .b-green{background:var(--mint-soft);color:#148A61}
+  .b-orange{background:var(--orange-soft);color:#C46A11}
+  .b-red{background:var(--red-soft);color:#C0342B}
+  .b-purple{background:var(--purple-soft);color:#5E4CD0}
+  .chev{color:var(--ink-3);font-size:14px}
+  .expand{margin-top:12px;width:100%;background:#F7F9FC;border-radius:10px;padding:14px;font-size:13px;color:var(--ink-2);display:flex;align-items:center;justify-content:center;gap:6px}
+  .expand:hover{background:#F1F5FB;color:var(--primary)}
+  /* 待办 */
+  .todo{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F2F4F8}
+  .todo:last-child{border-bottom:none}
+  .todo .t-ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+  .todo .t-info{flex:1;min-width:0}
+  .todo .t-t{font-size:13.5px;font-weight:600}
+  .todo .t-d{font-size:11.5px;color:var(--ink-2)}
+  .todo .t-badge{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:5px;flex:none}
+  .urgent{background:var(--red-soft);color:#C0342B}
+  .important{background:var(--orange-soft);color:#C46A11}
+  .normal{background:var(--primary-soft);color:#1F5FCB}
+  /* 快速操作 */
+  .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+  .qa{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px;border-radius:12px;background:#F7F9FC;text-decoration:none;color:#3D4B63;font-size:12px;font-weight:500;transition:background .15s,transform .15s}
+  .qa:hover{background:#EFF4FD;transform:translateY(-2px)}
+  .qa .qi{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center}
+  /* 近期患者 */
+  .prow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F2F4F8}
+  .prow:last-child{border-bottom:none}
+  .prow .p-info{flex:1;min-width:0}
+  .prow .p-meta{font-size:11.5px;color:var(--ink-2);margin-top:1px}
+  /* 图表 */
+  .chart-legend{display:flex;gap:14px;font-size:11.5px;color:var(--ink-2)}
+  .chart-legend i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
+  .sel{font-size:11.5px;color:var(--ink-2);background:#F5F7FB;border-radius:8px;padding:4px 10px}
+  .bars{margin-top:6px}
+  .chart-foot{display:flex;gap:12px;margin-top:14px}
+  .cf{flex:1;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+  .cf .cf-ic{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center}
+  .cf b{font-size:18px;font-weight:750;font-variant-numeric:tabular-nums;display:block;line-height:1.2}
+  .cf span{font-size:11px;opacity:.78}
+  .js-anim .anim{opacity:0}
+  @media (prefers-reduced-motion:reduce){.js-anim .anim{opacity:1}}
+  @media (max-width:1240px){.row.main,.row.bottom{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:900px){.app{grid-template-columns:1fr}.side{display:none}.kpis{grid-template-columns:1fr}.hero-art{display:none}.content{padding:16px}}
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js-anim')</script>
+<div class="app">
+
+  <!-- 侧栏 -->
+  <aside class="side">
+    <div class="brand">
+      <span class="mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M4 13h3l2-5 3 10 2-5h6"/></svg></span>
+      <span><b>WorkBuddy</b><small>让医疗工作更轻松</small></span>
+    </div>
+    <a class="nav-item active" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6.5h5V21"/></svg>工作台首页</a>
+    <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 21c0-3.8 3.4-6.2 7.5-6.2s7.5 2.4 7.5 6.2"/></svg>患者档案管理</a>
+    <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2.4"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>预约排班中心</a>
+    <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9.5 12h5M9.5 16h4"/></svg>AI病历助手</a>
+    <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M21 12a8 8 0 11-3.2-6.4"/><path d="M3 5v5h5"/></svg>复诊随访中心</a>
+    <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 5.5c0-1 1-1.5 2-1.5h4v16H6c-1 0-2-.5-2-1.5z"/><path d="M20 5.5c0-1-1-1.5-2-1.5h-4v16h4c1 0 2-.5 2-1.5z"/></svg>医学知识库</a>
+    <div class="side-foot">
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.55V21a2 2 0 11-4 0v-.09A1.7 1.7 0 008.93 19.4a1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.6 15a1.7 1.7 0 00-1.55-1H3a2 2 0 110-4h.09A1.7 1.7 0 004.6 8.93a1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06A1.7 1.7 0 009 4.6h.08a1.7 1.7 0 001-1.55V3a2 2 0 114 0v.09a1.7 1.7 0 001 1.55h.08a1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06a1.7 1.7 0 00-.34 1.87v.08a1.7 1.7 0 001.55 1H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.56 1z"/></svg>系统设置</a>
+    </div>
+  </aside>
+
+  <!-- 主区 -->
+  <div class="main">
+    <header class="topbar">
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input placeholder="搜索患者、病历、预约、疾病或医学知识...">
+      </div>
+      <button class="bell" aria-label="通知"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg><i></i></button>
+      <div class="me">
+        <span class="av">张</span>
+        <span class="who"><b>张医生</b><small>呼吸内科 · 主治医师</small></span>
+      </div>
+    </header>
+
+    <main class="content">
+      <!-- Hero 问候横幅 -->
+      <section class="hero anim">
+        <div class="hero-left">
+          <h1>上午好，张医生！</h1>
+          <p class="sub">新的一天，从关爱每一位患者开始。</p>
+          <div class="quote">医学的温度，来自每一次认真的倾听。</div>
+        </div>
+        <div class="hero-art">
+          <div class="bubble"><b>WorkBuddy</b>与您一起，<br>让医疗工作更高效！</div>
+          <svg width="150" height="150" viewBox="0 0 150 150" aria-hidden="true">
+            <ellipse cx="75" cy="132" rx="42" ry="7" fill="#2E7CF6" opacity=".08"/>
+            <rect x="46" y="40" width="58" height="52" rx="18" fill="#fff" stroke="#C9DDFB" stroke-width="2"/>
+            <rect x="56" y="54" width="38" height="22" rx="11" fill="#1F3A5F" opacity=".9"/>
+            <circle cx="66" cy="65" r="4" fill="#7FE0FF"/><circle cx="84" cy="65" r="4" fill="#7FE0FF"/>
+            <path d="M46 62c-8 0-10 10-3 13" stroke="#BBD7FF" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M104 62c8 0 10 10 3 13" stroke="#BBD7FF" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <rect x="64" y="30" width="22" height="8" rx="4" fill="#DCE9FB"/>
+            <circle cx="75" cy="24" r="4" fill="#7FE0FF"/>
+            <path d="M60 92v10a15 15 0 0030 0V92" fill="#fff" stroke="#C9DDFB" stroke-width="2"/>
+            <rect x="58" y="96" width="34" height="26" rx="10" fill="#F5F9FF" stroke="#C9DDFB" stroke-width="2"/>
+            <path d="M75 100v14M70 105h10" stroke="#2E7CF6" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="105" cy="104" r="9" fill="#E9F4FF" stroke="#BBD7FF" stroke-width="2"/>
+            <path d="M105 104l4 4" stroke="#2E7CF6" stroke-width="2" stroke-linecap="round"/>
+            <path d="M120 66l4-4M124 78l5-1M28 70l-4-3" stroke="#BBD7FF" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- KPI -->
+      <section class="kpis">
+        <div class="card kpi anim">
+          <div class="kpi-top">
+            <span class="chip" style="background:rgba(34,176,125,.12)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#22B07D" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2.4"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+            <span class="label">今日预约</span>
+          </div>
+          <div class="val"><span class="cnt" data-to="12">0</span><small>人</small></div>
+          <div class="trend">较昨日 <b class="up">+3 ↑</b></div>
+        </div>
+        <div class="card kpi anim">
+          <div class="kpi-top">
+            <span class="chip" style="background:rgba(46,124,246,.10)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2E7CF6" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20c0-3.4 2.9-5.6 6.5-5.6s6.5 2.2 6.5 5.6"/><path d="M17 11h5M19.5 8.5v5"/></svg></span>
+            <span class="label">患者总数</span>
+          </div>
+          <div class="val"><span class="cnt" data-to="892">0</span><small>人</small></div>
+          <div class="trend">较上月 <b class="up">+12% ↑</b></div>
+        </div>
+        <div class="card kpi anim">
+          <div class="kpi-top">
+            <span class="chip" style="background:rgba(255,154,61,.14)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#FF9A3D" stroke-width="2" stroke-linecap="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9.5 11h5M9.5 15h3.5"/></svg></span>
+            <span class="label">待处理任务</span>
+          </div>
+          <div class="val"><span class="cnt" data-to="8">0</span><small>项</small></div>
+          <div class="trend">较昨日 <b class="down">-2 ↓</b></div>
+        </div>
+        <div class="card kpi anim">
+          <div class="kpi-top">
+            <span class="chip" style="background:rgba(139,124,246,.14)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#8B7CF6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+            <span class="label">本周接诊</span>
+          </div>
+          <div class="val"><span class="cnt" data-to="56">0</span><small>人</small></div>
+          <div class="trend">较上周 <b class="up">+16% ↑</b></div>
+        </div>
+      </section>
+
+      <!-- 主从双栏 -->
+      <div class="row main">
+        <section class="card anim">
+          <div class="card-head"><h3>今日预约<span>（12 人）</span></h3><a class="more" href="#">查看全部 ›</a></div>
+          <div class="tl">
+            <div class="tl-item"><span class="tl-time">08:30</span><span class="av40">王</span><div class="tl-info"><div class="pname">王小明<span>男 · 28岁</span></div><div class="pdesc">咳嗽 3 天，伴有低热</div></div><span class="badge b-blue">待接诊</span><span class="chev">›</span></div>
+            <div class="tl-item"><span class="tl-time">09:00</span><span class="av40">李</span><div class="tl-info"><div class="pname">李欣怡<span>女 · 34岁</span></div><div class="pdesc">反复咳嗽，复诊</div></div><span class="badge b-blue">待接诊</span><span class="chev">›</span></div>
+            <div class="tl-item"><span class="tl-time">09:30</span><span class="av40">陈</span><div class="tl-info"><div class="pname">陈建国<span>男 · 62岁</span></div><div class="pdesc">高血压随访</div></div><span class="badge b-blue">待接诊</span><span class="chev">›</span></div>
+            <div class="tl-item"><span class="tl-time">10:00</span><span class="av40">刘</span><div class="tl-info"><div class="pname">刘雨桐<span>女 · 25岁</span></div><div class="pdesc">发热，咽痛 1 天</div></div><span class="badge b-blue">待接诊</span><span class="chev">›</span></div>
+            <div class="tl-item"><span class="tl-time">10:30</span><span class="av40">张</span><div class="tl-info"><div class="pname">张伟<span>男 · 45岁</span></div><div class="pdesc">胸闷气促，复诊</div></div><span class="badge b-blue">待接诊</span><span class="chev">›</span></div>
+          </div>
+          <button class="expand" type="button">展开更多预约
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+        </section>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <section class="card anim">
+            <div class="card-head"><h3>待办事项<span>（8）</span></h3><a class="more" href="#">查看全部 ›</a></div>
+            <div class="todo">
+              <span class="t-ic" style="background:var(--orange-soft)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF9A3D" stroke-width="2" stroke-linecap="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9.5 12h5"/></svg></span>
+              <div class="t-info"><div class="t-t">3 份病历待完善</div><div class="t-d">今日接诊的病历需补充病程记录</div></div>
+              <span class="t-badge urgent">紧急</span><span class="chev">›</span>
+            </div>
+            <div class="todo">
+              <span class="t-ic" style="background:var(--primary-soft)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E7CF6" stroke-width="2" stroke-linecap="round"><path d="M21 12a8 8 0 11-3.2-6.4"/><path d="M3 5v5h5"/></svg></span>
+              <div class="t-info"><div class="t-t">5 位患者待随访</div><div class="t-d">上周就诊的患者需进行复诊随访</div></div>
+              <span class="t-badge important">重要</span><span class="chev">›</span>
+            </div>
+            <div class="todo">
+              <span class="t-ic" style="background:var(--purple-soft)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B7CF6" stroke-width="2" stroke-linecap="round"><path d="M9 3h6v6l4 9a2 2 0 01-1.8 3H6.8A2 2 0 015 18l4-9z"/><path d="M9.5 14h5"/></svg></span>
+              <div class="t-info"><div class="t-t">2 条检验结果待查看</div><div class="t-d">有新的检验报告已生成</div></div>
+              <span class="t-badge important">重要</span><span class="chev">›</span>
+            </div>
+            <div class="todo">
+              <span class="t-ic" style="background:var(--mint-soft)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22B07D" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.4 8.4 0 01-9 8.4 9 9 0 01-4-1L3 20l1.1-4.5A8.4 8.4 0 019 4.1a8.4 8.4 0 0112 7.4z"/></svg></span>
+              <div class="t-info"><div class="t-t">1 条患者咨询待回复</div><div class="t-d">来自在线问诊的患者消息</div></div>
+              <span class="t-badge normal">普通</span><span class="chev">›</span>
+            </div>
+          </section>
+
+          <section class="card anim">
+            <div class="card-head"><h3>快速操作</h3></div>
+            <div class="quick">
+              <a class="qa" href="#"><span class="qi" style="background:var(--primary-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2E7CF6" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>新建病历</a>
+              <a class="qa" href="#"><span class="qi" style="background:var(--mint-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22B07D" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="8" r="3.4"/><path d="M3.5 20c0-3.4 2.9-5.6 6.5-5.6"/><path d="M18 10v8M14 14h8"/></svg></span>添加患者</a>
+              <a class="qa" href="#"><span class="qi" style="background:var(--orange-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF9A3D" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2.4"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M9 15l2 2 4-4"/></svg></span>预约登记</a>
+              <a class="qa" href="#"><span class="qi" style="background:var(--purple-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8B7CF6" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.4 8.4 0 01-9 8.4 9 9 0 01-4-1L3 20l1.1-4.5A8.4 8.4 0 019 4.1a8.4 8.4 0 0112 7.4z"/></svg></span>发送随访</a>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- 底部：近期患者 + 趋势 -->
+      <div class="row bottom">
+        <section class="card anim">
+          <div class="card-head"><h3>近期患者</h3><a class="more" href="#">查看全部 ›</a></div>
+          <div class="prow"><span class="av40">王</span><div class="p-info"><div class="pname">王小明<span>男 · 28岁</span></div><div class="p-meta">2024-04-22 ｜ 急性上呼吸道感染</div></div><span class="badge b-blue">复诊</span></div>
+          <div class="prow"><span class="av40">李</span><div class="p-info"><div class="pname">李欣怡<span>女 · 34岁</span></div><div class="p-meta">2024-04-21 ｜ 慢性咳嗽</div></div><span class="badge b-purple">随访</span></div>
+          <div class="prow"><span class="av40">陈</span><div class="p-info"><div class="pname">陈建国<span>男 · 62岁</span></div><div class="p-meta">2024-04-20 ｜ 高血压</div></div><span class="badge b-blue">复诊</span></div>
+          <div class="prow"><span class="av40">刘</span><div class="p-info"><div class="pname">刘雨桐<span>女 · 25岁</span></div><div class="p-meta">2024-04-20 ｜ 扁桃体炎</div></div><span class="badge b-purple">随访</span></div>
+          <div class="prow"><span class="av40">张</span><div class="p-info"><div class="pname">张伟<span>男 · 45岁</span></div><div class="p-meta">2024-04-19 ｜ 支气管炎</div></div><span class="badge b-blue">复诊</span></div>
+        </section>
+
+        <section class="card anim">
+          <div class="card-head">
+            <h3>本周接诊趋势</h3>
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="chart-legend"><span><i style="background:#2E7CF6"></i>接诊人数</span><span><i style="background:#22B07D"></i>较上周</span></div>
+              <button class="sel" type="button">本周 ▾</button>
+            </div>
+          </div>
+          <svg viewBox="0 0 420 210" width="100%" height="210" aria-label="本周接诊趋势柱状图">
+            <g stroke="#EEF0F4" stroke-dasharray="4 4"><line x1="30" y1="20" x2="410" y2="20"/><line x1="30" y1="70" x2="410" y2="70"/><line x1="30" y1="120" x2="410" y2="120"/><line x1="30" y1="170" x2="410" y2="170"/></g>
+            <g font-size="10" fill="#8A90A2" text-anchor="end"><text x="24" y="24">40</text><text x="24" y="74">30</text><text x="24" y="124">20</text><text x="24" y="174">10</text></g>
+            <g class="bars">
+              <rect x="52" y="80" width="26" height="90" rx="6" fill="#2E7CF6" opacity=".85"/>
+              <rect x="108" y="50" width="26" height="120" rx="6" fill="#2E7CF6" opacity=".85"/>
+              <rect x="164" y="30" width="26" height="140" rx="6" fill="#2E7CF6" opacity=".85"/>
+              <rect x="220" y="10" width="26" height="160" rx="6" fill="#2E7CF6" opacity=".85"/>
+              <rect x="276" y="40" width="26" height="130" rx="6" fill="#2E7CF6" opacity=".85"/>
+              <rect x="332" y="80" width="26" height="90" rx="6" fill="#2E7CF6" opacity=".85"/>
+              <rect x="388" y="110" width="26" height="60" rx="6" fill="#2E7CF6" opacity=".85"/>
+            </g>
+            <g font-size="10" fill="#1A1D26" text-anchor="middle" font-weight="600"><text x="65" y="74">18</text><text x="121" y="44">24</text><text x="177" y="24">28</text><text x="233" y="4">32</text><text x="289" y="34">26</text><text x="345" y="74">18</text><text x="401" y="104">12</text></g>
+            <path d="M65,90 C90,80 100,70 121,66 C145,62 155,52 177,52 C200,52 210,42 233,38 C256,34 266,44 289,46 C312,48 322,60 345,62 C368,64 380,72 401,74" fill="none" stroke="#22B07D" stroke-width="2" stroke-linecap="round"/>
+            <g font-size="10" fill="#8A90A2" text-anchor="middle"><text x="65" y="192">周一</text><text x="121" y="192">周二</text><text x="177" y="192">周三</text><text x="233" y="192">周四</text><text x="289" y="192">周五</text><text x="345" y="192">周六</text><text x="401" y="192">周日</text></g>
+          </svg>
+          <div class="chart-foot">
+            <div class="cf" style="background:linear-gradient(135deg,#EEF5FF,#E4EFFF)">
+              <span class="cf-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E7CF6" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V10M12 20V4M19 20v-7"/></svg></span>
+              <div><b class="num"><span class="cnt" data-to="56">0</span> 人</b><span>本周接诊总数</span></div>
+            </div>
+            <div class="cf" style="background:linear-gradient(135deg,#EDFBF5,#E4F8EF)">
+              <span class="cf-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22B07D" stroke-width="2.2" stroke-linecap="round"><path d="M3 17l6-6 4 3 7-8"/><path d="M14 6h6v6"/></svg></span>
+              <div><b class="num" style="color:#148A61">+16%</b><span style="color:#5A8B78">较上周增长</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!window.gsap || reduced) return;
+  gsap.registerPlugin(ScrollTrigger);
+  /* 入场：hero → KPI → 双栏，stagger 0.055，0.4s */
+  gsap.from(".content .anim", { y:14, autoAlpha:0, duration:.4, ease:"power3.out", stagger:.055 });
+  /* 数字 count-up 1.2s */
+  document.querySelectorAll(".cnt").forEach(function(el){
+    var to = parseFloat(el.dataset.to), obj = {v:0};
+    gsap.to(obj, { v:to, duration:1.2, ease:"power2.out", snap:{v:1},
+      onUpdate:function(){ el.textContent = Math.round(obj.v).toLocaleString("zh-CN"); },
+      scrollTrigger:{ trigger:el, start:"top 95%", once:true } });
+  });
+  /* 柱状图从基线生长 0.7s */
+  gsap.from(".bars rect", { scaleY:0, transformOrigin:"bottom", duration:.7, ease:"power2.out", stagger:.03,
+    scrollTrigger:{ trigger:".bars", start:"top 92%", once:true } });
+})();
+</script>
+</body>
+</html>
