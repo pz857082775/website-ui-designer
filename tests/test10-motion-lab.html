@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  if (matchMedia("(prefers-color-scheme: dark)").matches) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+})();
+</script>
+<title>动效实验室 — 弹簧 / 呼吸 / 编排 / 性能</title>
+<style>
+  :root{
+    --bg:#F6F7FB; --surface:#FFFFFF; --surface-2:#F1F3F8;
+    --ink:#1A1D26; --ink-2:#4E5764; --ink-3:#5F6A7D;
+    --border:#E3E7EF; --accent:#2E6BE6; --accent-ink:#FFFFFF;
+    --success:#17845B; --success-ink:#FFFFFF;
+    --shadow-1:0 1px 2px rgba(16,24,40,.04), 0 2px 8px rgba(16,24,40,.06);
+    --shadow-2:0 10px 28px rgba(16,24,40,.12);
+    /* 只用三条缓动 */
+    --ease-quart:cubic-bezier(.25,1,.5,1);
+    --ease-quint:cubic-bezier(.22,1,.36,1);
+    --ease-expo:cubic-bezier(.16,1,.3,1);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  [data-theme="dark"]{
+    --bg:#0E1116; --surface:#151A22; --surface-2:#1C222C;
+    --ink:#F2F4F8; --ink-2:#B7BECB; --ink-3:#98A1B0;
+    --border:#2A323F; --accent:#7EA6FF; --accent-ink:#0B0E13;
+    --success:#4FD1A5; --success-ink:#06231A;
+    --shadow-1:0 1px 2px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.3);
+    --shadow-2:0 10px 30px rgba(0,0,0,.5);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.65;
+    font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  header{padding:48px 0 8px}
+  .eyebrow{font-size:12px;letter-spacing:.14em;color:var(--ink-3);margin-bottom:12px}
+  h1{font-size:40px;line-height:1.15;letter-spacing:-.025em}
+  .lede{margin-top:14px;color:var(--ink-2);max-width:56ch}
+  .params{display:flex;gap:28px;flex-wrap:wrap;margin-top:26px}
+  .param b{display:block;font-size:22px;font-weight:750;letter-spacing:-.02em}
+  .param span{font-size:12px;color:var(--ink-3)}
+
+  section{margin-top:44px}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+  .sec-head h2{font-size:20px;letter-spacing:-.01em}
+  .sec-head code{font-size:11.5px;color:var(--ink-3);background:var(--surface-2);padding:3px 8px;border-radius:6px}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+    padding:22px;box-shadow:var(--shadow-1)}
+
+  /* ===== 1. 弹簧按压（400/28 的 CSS 近似） ===== */
+  .press-row{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{height:44px;padding:0 20px;border-radius:10px;font-size:13px;font-weight:600;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:transform .18s var(--ease-quint), box-shadow .2s var(--ease-quart), background .2s}
+  .btn-primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 2px 8px rgba(46,107,230,.28)}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(46,107,230,.32)}
+  .btn-primary:active{transform:scale(.97);box-shadow:0 1px 4px rgba(46,107,230,.24)}
+  .btn-ghost{border:1px solid var(--border);color:var(--ink)}
+  .btn-ghost:hover{background:var(--surface-2)}
+  .btn-ghost:active{transform:scale(.97)}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  /* 回弹：松手后用 overshoot 曲线回来（cubic-bezier(.34,1.3,.64,1) 属"轻微回弹"，非禁用 bounce） */
+  .btn.spring:active{transform:scale(.94)}
+  .btn.spring{transition:transform .42s cubic-bezier(.34,1.3,.64,1), box-shadow .2s var(--ease-quart)}
+  .btn.spring:active{transition:transform .09s ease-out}
+
+  /* ===== 2. 呼吸（2.8-4s / 振幅 ≤3%） ===== */
+  .breath-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .halo{position:relative;height:132px;border-radius:16px;border:1px solid var(--border);
+    background:var(--surface);display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .halo::before{content:"";position:absolute;width:78px;height:78px;border-radius:50%;
+    background:radial-gradient(circle, rgba(46,107,230,.42), rgba(46,107,230,0) 70%);
+    animation:breathe 3.6s ease-in-out infinite}
+  .halo .dot{position:relative;width:34px;height:34px;border-radius:50%;background:var(--accent);
+    animation:dot 3.6s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.03);opacity:.85}}
+  @keyframes dot{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+  .halo-label{position:absolute;bottom:10px;font-size:11px;color:var(--ink-3)}
+  .halo.slow::before{animation-duration:6.5s}
+  .halo.slow .dot{animation-duration:6.5s}
+  .halo.aurora{background:linear-gradient(120deg,#EEF4FF,#F7F1FF,#EAF7F3,#EEF4FF);
+    background-size:220% 220%;animation:drift 8s ease-in-out infinite}
+  .halo.aurora::before{display:none}
+  @keyframes drift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+  /* ===== 3. 交错入场（40-80ms） ===== */
+  .stagger{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .st-item{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;
+    box-shadow:var(--shadow-1);animation:rise .5s var(--ease-quint) both}
+  .st-item:nth-child(1){animation-delay:0ms}
+  .st-item:nth-child(2){animation-delay:60ms}
+  .st-item:nth-child(3){animation-delay:120ms}
+  .st-item:nth-child(4){animation-delay:180ms}
+  .st-item b{display:block;font-size:20px;font-weight:750;letter-spacing:-.02em;margin-top:6px}
+  .st-item span{font-size:12px;color:var(--ink-3)}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  /* ===== 4. 展开（300-400ms）+ 微缩放 ===== */
+  .expand{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  .ex{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;
+    box-shadow:var(--shadow-1);cursor:pointer;
+    transition:transform .34s var(--ease-quint), box-shadow .34s var(--ease-quart), border-color .2s}
+  .ex:hover{transform:translateY(-2px);box-shadow:var(--shadow-2)}
+  .ex:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .ex.open{transform:translateY(-2px) scale(1.01);border-color:var(--accent);box-shadow:var(--shadow-2)}
+  .ex h3{font-size:16px}
+  .ex p{font-size:13px;color:var(--ink-2);margin-top:4px}
+  .ex .body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .34s var(--ease-quint)}
+  .ex.open .body{grid-template-rows:1fr}
+  .ex .body>div{overflow:hidden}
+  .ex .body ul{list-style:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+  .ex .body li{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-2);padding:4px 0}
+  .ex .body li b{color:var(--ink)}
+
+  /* ===== 5. 水波纹（纯 CSS，点击生成） ===== */
+  .ripple-host{position:relative;overflow:hidden;isolation:isolate}
+  .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);
+    transform:scale(0);animation:rip .55s var(--ease-expo) forwards;pointer-events:none}
+  @keyframes rip{to{transform:scale(2.6);opacity:0}}
+
+  .note{margin-top:10px;font-size:12px;color:var(--ink-3)}
+  footer{padding:44px 0 56px;color:var(--ink-3);font-size:12.5px}
+
+  @media (max-width:860px){
+    .breath-grid,.stagger{grid-template-columns:repeat(2,1fr)}
+    .expand{grid-template-columns:1fr}
+    h1{font-size:32px}
+  }
+  @media (max-width:520px){.breath-grid,.stagger{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+    .halo::before{opacity:.6}
+    .st-item{opacity:1}
+    .ripple{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">动效规范 · 实测页</p>
+    <h1>动效应该被感觉到，<br>而不是被看见。</h1>
+    <p class="lede">这一页只演示四件事：弹簧按压、呼吸、交错入场、展开。全部纯 CSS，不依赖任何 CDN；参数与 `references/motion-spec.md` 一一对应。</p>
+    <div class="params">
+      <div class="param"><b>4 档</b><span>时长区间 100-600ms</span></div>
+      <div class="param"><b>40-80ms</b><span>子元素交错</span></div>
+      <div class="param"><b>0.75×</b><span>退场 / 入场</span></div>
+      <div class="param"><b>≤3%</b><span>呼吸振幅</span></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head">
+      <h2>一 · 弹簧按压</h2>
+      <code>stiffness 400 / damping 28 · 90ms 压下</code>
+    </div>
+    <div class="card">
+      <div class="press-row">
+        <button class="btn btn-primary ripple-host" type="button" data-ripple>主操作（带涟漪）</button>
+        <button class="btn btn-ghost" type="button">次操作</button>
+        <button class="btn btn-ghost spring" type="button">轻回弹（.34,1.3,.64,1）</button>
+      </div>
+      <p class="note">按下 90ms 到 0.94-0.97；松开用 quint 曲线回位。回弹只允许"轻微过冲"，禁用 bounce / elastic。</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>二 · 呼吸三档</h2>
+      <code>C 端 3.6s / B 端 6.5s / 渐变 8s · 振幅 ≤3%</code>
+    </div>
+    <div class="breath-grid">
+      <div class="halo"><span class="dot"></span><span class="halo-label">C 端柔和 · 3.6s</span></div>
+      <div class="halo slow"><span class="dot"></span><span class="halo-label">B 端低动效 · 6.5s</span></div>
+      <div class="halo aurora"><span class="halo-label">渐变位移 · 8s</span></div>
+    </div>
+    <p class="note">呼吸只给 AI / 实时 / 紧急元素，一屏不超过 2 个；渐变只动 background-position，不动颜色。</p>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>三 · 交错入场</h2>
+      <code>60ms 间隔 · 0.5s quint · 主元素先动</code>
+    </div>
+    <div class="stagger">
+      <div class="st-item"><span>播放量</span><b>86.4 万</b></div>
+      <div class="st-item"><span>点赞量</span><b>4.8 万</b></div>
+      <div class="st-item"><span>评论量</span><b>6,821</b></div>
+      <div class="st-item"><span>收藏量</span><b>1.9 万</b></div>
+    </div>
+    <p class="note">四个元素按 0 / 60 / 120 / 180ms 依次出现。超过 100ms 会显得"排队"，低于 40ms 又看不出层次。</p>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>四 · 展开与微缩放</h2>
+      <code>340ms quint · grid-rows 0fr → 1fr</code>
+    </div>
+    <div class="expand">
+      <article class="ex" tabindex="0" role="button" aria-expanded="false">
+        <h3>内容表现</h3>
+        <p>点击展开本周数据</p>
+        <div class="body"><div><ul>
+          <li><span>周环比</span><b>+12.5%</b></li>
+          <li><span>完播率</span><b>38.2%</b></li>
+          <li><span>互动率</span><b>5.6%</b></li>
+        </ul></div></div>
+      </article>
+      <article class="ex" tabindex="0" role="button" aria-expanded="false">
+        <h3>发布节奏</h3>
+        <p>点击展开排期细节</p>
+        <div class="body"><div><ul>
+          <li><span>本周待发</span><b>5 条</b></li>
+          <li><span>已完成</span><b>3 条</b></li>
+          <li><span>待复盘</span><b>2 条</b></li>
+        </ul></div></div>
+      </article>
+    </div>
+    <p class="note">展开只改 <code>grid-template-rows</code> 与 transform，不推挤相邻元素；键盘 Enter / Space 同样可展开。</p>
+  </section>
+
+  <footer>
+    © 2026 米乐 · 动效实验室 · 全部动画可在 <code>prefers-reduced-motion</code> 下自动关闭
+  </footer>
+</div>
+
+<script>
+(function(){
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* 水波纹：只做视觉反馈，不阻塞交互 */
+  document.querySelectorAll("[data-ripple]").forEach(function(host){
+    host.addEventListener("pointerdown", function(e){
+      if (reduced) return;
+      var r = host.getBoundingClientRect();
+      var size = Math.max(r.width, r.height) * 0.6;
+      var span = document.createElement("span");
+      span.className = "ripple";
+      span.style.width = span.style.height = size + "px";
+      span.style.left = (e.clientX - r.left - size / 2) + "px";
+      span.style.top = (e.clientY - r.top - size / 2) + "px";
+      host.appendChild(span);
+      setTimeout(function(){ span.remove(); }, 560);
+    });
+  });
+
+  /* 展开：点击 / Enter / Space，互斥展开 */
+  var items = Array.prototype.slice.call(document.querySelectorAll(".ex"));
+  function toggle(el){
+    var open = el.classList.contains("open");
+    items.forEach(function(i){ i.classList.remove("open"); i.setAttribute("aria-expanded","false"); });
+    if (!open) { el.classList.add("open"); el.setAttribute("aria-expanded","true"); }
+  }
+  items.forEach(function(el){
+    el.addEventListener("click", function(){ toggle(el); });
+    el.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(el); }
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -12,6 +12,26 @@
 
 ---
 
+## v1.2.0 — 2026-10-22
+
+**新增：动效体系（库选型 + 参数 + 性能 + 验收）**
+
+### 来源核实
+- `curiositech/windags-skills · motion-design-web` ✅ 真实（**Apache-2.0**，非 MIT）；采纳其库选型决策树、四档时长、五档弹簧、五类翻车与 10 项质量门槛
+- `bouclem/animate` ✅ 真实（SkillMD，7 star）；采纳其"禁 bounce/elastic"、三条缓动曲线、GPU 属性纪律、reduced-motion 片段
+- `motiondivision/motion` ✅ 34.4k、`nandorojo/moti` ✅ 4.5k、`greensock/GSAP` ✅ 29.6k、`magicuidesign/magicui` ✅ 22.8k、`pmndrs/react-spring` ✅ 29.2k
+- `aceternity/aceternity-ui`、`aceternity/ui` ❌ GitHub 404；实际分发方式为 shadcn registry（`ui.aceternity.com/registry/<组件>.json`，依赖 motion）
+- `robb0wen/folex-fx` ❌ 不存在；纯 CSS 呼吸/涟漪改用本文内置配方
+
+### 新增
+- `references/motion-spec.md`：库选型决策树、时长与缓动、弹簧参数库、呼吸三档、编排（stagger/FLIP/手势）、性能红线与五大翻车、四端差异、集成示例、10 条验收
+- `tests/test10-motion-lab.html`：纯 CSS 动效实验室（弹簧按压 + 涟漪、三档呼吸、交错入场、展开），含深色令牌，离线可运行
+- SKILL.md 通用纪律扩充为 8 条动效硬规则；质量清单增加动效验收项
+
+### 校准
+- 明确"B 端低动效 / C 端柔和 / 小程序轻量"三档呼吸，替代此前笼统的 6-8s
+- 明确退场 = 入场 ×0.75、子元素 40-80ms 交错（此前未量化）
+
 ## v1.1.0 — 2026-10-22
 
 **新增：三层视觉与交互标准（可自动验收）**

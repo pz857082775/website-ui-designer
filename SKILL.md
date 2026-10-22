@@ -1,13 +1,13 @@
 ---
 name: website-ui-designer
-version: 1.1.0
+version: 1.2.0
 updated: 2026-10-22
 description: 专业网站UI提示词工程师。三种入口模式：A 根据开发需求文档生成UI提示词；B 根据参考图/目标网站像素级复刻UI提示词；C 根据已开发界面输出审计+美化提示词。内置页面类型路由：营销落地页（5 行式风格提示词）与 B 端数据工作台/仪表盘（KPI 卡/表格/图表规范）两套语言。覆盖 PC网站、H5、小程序、APP 四端。触发词：网站UI、美化页面、UI设计、复刻界面、仿写页面、仪表盘、后台、工作台、B端、design.md、GSAP、landing page、H5、小程序、APP UI、页面太丑、AI感太重。
 ---
 
 # Website UI Designer — 专业UI提示词工程师
 
-> **版本 1.1.0** · 2026-10-22 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
+> **版本 1.2.0** · 2026-10-22 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
 > 新用户先看 [README.md](./README.md) 的「三分钟上手」；本文件是执行规范。
 
 给大模型写"能产出好界面"的提示词，是本技能的唯一产品。
@@ -184,9 +184,16 @@ python scripts/rag.py query "<用户原话或需求要点>" --top 5 --format pro
 - 令牌精确到 hex/px；标题字号跨度 ≥3 倍；区块留白 ≥96px；正文对比度 ≥4.5:1
 - 主按钮全页唯一高强调；强调色只用于一个 CTA
 
-**动效（`references/gsap-prompts.md`）**
-- GSAP 3 语法（禁 TweenMax 等）；registerPlugin；只动 transform/opacity
-- UI 动效 0.2-0.6s；必须 prefers-reduced-motion 降级
+**动效（`references/motion-spec.md` 全参数 + `references/gsap-prompts.md` 兜底）**
+- **先选库再写参数**：简单过渡用纯 CSS；React 的布局/手势用 Motion；非 React 或精细时序用 GSAP；
+  滚动效果优先 CSS scroll-driven；跨页共享元素用 View Transitions；RN/Taro 用 moti
+- **时长四档**：即时反馈 100-150ms / 状态变化 200-250ms / 展开 300-400ms / 页面级 400-600ms；退场 = 入场 ×0.75
+- **缓动只用三条**：out-quart / out-quint / out-expo；**禁 bounce、禁 elastic**（显廉价）
+- **弹簧五档**：灵敏 400/28 · 面板 200/24 · 愉悦 300/15 · 重物 120/20/1.5 · 手势 300/20+velocity；
+  交互元素 damping ≥20，收敛 ≤600ms，过冲 ≤10%
+- **呼吸三档**：B 端 6-8s / 振幅 ≤1.5%｜C 端 2.8-4s / ≤3%｜小程序 4-6s / 纯 CSS；一屏 ≤2 个
+- **编排**：子元素 40-80ms 交错，主元素先动，并发 ≤2 组；禁止逐区块 fade-up
+- **性能红线**：只动 transform/opacity/filter/clip-path；中端设备 60fps 无 Layout 块；库按需懒加载
 - **兜底：内容默认可见，禁 CSS 预隐藏；CDN 失败 = 无动画但页面完整**（曾因预隐藏导致整页空白）
 
 **平台（`references/platform-matrix.md`）**
@@ -219,6 +226,7 @@ python scripts/rag.py query "<用户原话或需求要点>" --top 5 --format pro
 - [ ] `audit_contrast.py` 0 违规（浅色 + 深色）；无同色系低差；渐变上文字有 scrim
 - [ ] 一屏一个焦点；强调色 3-5 处；字号跨度 ≥2.4 倍
 - [ ] 按钮 8 态 + 成功动画；模块聚焦可 Esc 恢复；呼吸元素 ≤2；reduced-motion 有降级
+- [ ] 动效按 `motion-spec.md` 九条验收：时长分档、退场 0.75×、无 bounce/elastic、damping ≥20、60fps 无 Layout 块
 
 ## 参考文件索引
 
@@ -232,6 +240,7 @@ python scripts/rag.py query "<用户原话或需求要点>" --top 5 --format pro
 | 参数表（配色/字号/间距/动效） | `design-system-spec.md` |
 | 验收与评分 | `review-rubric.md` |
 | 可读性 / 美观 / 交互的硬标准 | `visual-interaction-spec.md` + `scripts/audit_contrast.py` |
+| 动效参数与库选型 | `motion-spec.md`（四档时长 / 五档弹簧 / 三档呼吸 / 性能红线） |
 | 生成前查依据（RAG） | `rag-retrieval.md` + `scripts/rag.py`（输入/范围/输出 + 防编造三道闸） |
 | 找灵感 / 查参考资源 | `inspiration-sources.md`（按"要解决什么"分类，含 2026 状态） |
 | 持续提升自己的提示词水平 | `learning-loop.md`（六步闭环 + 三库 + 30 天计划） |

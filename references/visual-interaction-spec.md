@@ -76,6 +76,8 @@ python scripts/audit_contrast.py page.html --verbose    # 输出全部组合的�
 [ ] 禁用态仍可辨认（≥2.5:1）
 ```
 
+> 动效参数（弹簧 stiffness/damping、四档时长、呼吸周期、库选型）见 `motion-spec.md`；本部分只定义「必须有什么反馈」。
+
 ---
 
 # 第二部分 · 视觉美观（Aesthetics）

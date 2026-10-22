@@ -2,7 +2,7 @@
 
 **让 AI 生成的界面，不再长得像 AI 生成的。**
 
-![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-1.1.0-2E7CF6?style=flat-square)
+![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-1.2.0-2E7CF6?style=flat-square)
 ![许可](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-%E5%BC%80%E6%BA%90-34A853?style=flat-square)
 ![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20H5%E9%A1%B5%E9%9D%A2%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20APP-8A90A2?style=flat-square)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
@@ -182,6 +182,35 @@ python scripts/audit_contrast.py tests/*.html       # 浅色 + 深色全组合�
 
 ---
 
+## 动效：先选库，再定参数
+
+**选库决策**（写代码前先判断，别默认上 GSAP）
+
+| 场景 | 用什么 | 备注 |
+|---|---|---|
+| hover / fade / 简单展开 | 纯 CSS | 体积 0，覆盖 80% |
+| React 布局动画、手势、共享元素 | Motion | `layoutId` 自动 FLIP |
+| 非 React / 精细时序 / SVG 绘制 | GSAP | 核心 70k，后台慎用 |
+| 只在滚动上做效果 | CSS scroll-driven（新）/ ScrollTrigger（旧浏览器） | 零 JS 优先 |
+| 跨页共享元素 | View Transitions API | 不支持则降级 |
+| RN / Taro 小程序 | moti | 原生弹簧、下拉回弹 |
+| 现成高级组件 | Magic UI / Aceternity（shadcn registry） | 引入后按本文参数校准 |
+
+**参数（可直接抄）**
+
+| 项目 | 值 |
+|---|---|
+| 时长四档 | 100-150 / 200-250 / 300-400 / 400-600ms；退场 = 入场 ×0.75 |
+| 缓动 | out-quart / out-quint / out-expo；**禁 bounce、禁 elastic** |
+| 弹簧五档 | 400/28 灵敏 · 200/24 面板 · 300/15 愉悦 · 120/20/1.5 重物 · 300/20 手势 |
+| 呼吸三档 | B 端 6-8s ≤1.5% · C 端 2.8-4s ≤3% · 小程序 4-6s 纯 CSS |
+| 编排 | 子元素 40-80ms 交错，主元素先动，并发 ≤2 组 |
+
+样例：[`tests/test10-motion-lab.html`](./tests/test10-motion-lab.html)（纯 CSS，离线可跑）。
+完整规则见 [`references/motion-spec.md`](./references/motion-spec.md)。
+
+---
+
 ## 核心规则速览
 
 **四个旋钮**（写在提示词最前面，决定"做到什么程度算完成"）
@@ -227,6 +256,7 @@ website-ui-designer/
 │   ├── inspiration-sources.md      # 灵感资源库（10 类，含 2026 状态）
 │   ├── learning-loop.md            # 持续提升方法：六步闭环 + 三库
 │   ├── visual-interaction-spec.md  # 三层硬标准：可读性 / 美观 / 交互（含代码配方与验收）
+│   ├── motion-spec.md              # 动效：库选型 / 四档时长 / 五档弹簧 / 三档呼吸 / 性能红线
 │   ├── rag-retrieval.md            # 知识检索：输入 / 检索范围 / 输出 / 防编造
 │   ├── design-md-template.md       # DESIGN.md 令牌模板
 │   └── open-source-integration.md  # 开源方法论映射 + 12 条新规则
@@ -243,18 +273,20 @@ website-ui-designer/
     ├── test6-yunshang-dashboard.html    数据工作台 · 经营总览
     ├── test7-workbuddy-creator-home.html 创作工作台 · 自媒体首页
     ├── test8-medical-workbench-home.html 服务型工作台 · 医疗首页
-    └── test9-interaction-lab.html        交互实验室 · 浅深双模式 / 模块聚焦 / 成功动画
+    ├── test9-interaction-lab.html        交互实验室 · 浅深双模式 / 模块聚焦 / 成功动画
+    └── test10-motion-lab.html           动效实验室 · 弹簧按压 / 三档呼吸 / 交错 / 展开（纯 CSS）
 ```
 
 ---
 
 ## 版本历史
 
-当前版本 **v1.1.0**（2026-10-22）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
+当前版本 **v1.2.0**（2026-10-22）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
-| **v1.1.0** | 2026-10-22 | 三层标准：对比度审计、视觉焦点、交互反馈（8 态 / 成功动画 / 模块聚焦） |
+| **v1.2.0** | 2026-10-22 | 动效体系：库选型决策树、五档弹簧、四档时长、三档呼吸、性能红线 |
+| v1.1.0 | 2026-10-22 | 三层标准：对比度审计、视觉焦点、交互反馈（8 态 / 成功动画 / 模块聚焦） |
 | v1.0.1 | 2026-10-22 | 徽章调整：平台改用「H5页面 / APP」，新增版权徽章「米乐」 |
 | v1.0.0 | 2026-10-22 | 首个正式版：三入口模式、四类页面、四端平台、知识检索、自检与验收体系 |
 
