@@ -2,7 +2,7 @@
 
 **会诊断、能解释、懂取舍。**
 
-![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-2.0.0-2E7CF6?style=flat-square)
+![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-2.1.0-2E7CF6?style=flat-square)
 ![许可](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-%E5%BC%80%E6%BA%90-34A853?style=flat-square)
 ![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20H5%E9%A1%B5%E9%9D%A2%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20APP-8A90A2?style=flat-square)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
@@ -76,6 +76,20 @@ npx skills add https://github.com/pz857082775/website-ui-designer --skill websit
 
 ---
 
+## 2.1 新增的三层能力（来自 finesse 系列）
+
+| 能力 | 解决什么 | 关键规则 |
+|---|---|---|
+| **品牌方向**（`brand-direction.md`） | 同一方法产出互不相关的页面，而不是十张同一张脸 | 三旋钮 `SOUL/SPECTACLE/DENSITY`；五正交轴组合（配色/字体/版式/引擎/材质）；新方案与上一条 **≥3 轴不同**；`SPECTACLE ≥7` 必须真的有引擎 |
+| **工作台蓝图**（`workbench-blueprint.md`） | 工作台做成"功能菜单 + 漂亮但没用的数字" | 五部件顺序不可换：**身份 → 钩子 → 数据地板 → 模块 → 收入缝**；五个问题（字段/写入/时机/第一天/断源）；**幸运饼干测试** |
+| **说法层**（`terminology-layer.md`） | 用户只说症状（"按钮被黑杠挡住"），说不出成因（安全区） | 三条门禁：指得出触发词 / 成对的坑一起给 / 结果在前术语在后；一次最多 1-3 条 |
+
+**"昂贵感"的物理层**（品牌页可用，后台不用）：颗粒噪点 `opacity .025-.05`、半透明描边、不用纯白纯黑（中性色朝品牌色相偏 2-6 点）、色彩锁定、字体张力（负字距 + 行高 .86-.95，**全大写行高下限 1.0**）。
+
+**移动端六条硬规则**：`overflow-x: clip` 不用 hidden / 含图轨道 `minmax(0,1fr)` / 可点文字不换行 / 标题 `overflow-wrap:anywhere` / 只一个 `top:0` sticky / 全大写标题行高 ≥1.0。
+
+---
+
 ## 内建的 UI 认知（12 条）
 
 | # | 认知 | 可执行的规则 |
@@ -98,6 +112,8 @@ npx skills add https://github.com/pz857082775/website-ui-designer --skill websit
 ## 12 条反模式红线
 
 默认禁止：通用渐变背景 · 圆角+左侧色块卡片 · 卡片套卡片 · 每段都变 pill · 发光暗色模式 · 默认字体裸用 · 无意义 hero 大数字 · 装饰性 SVG 插画 · 无功能动效 · 与主任务抢焦点的特效 · 降对比度来"弱化" · 全站同一圆角阴影。
+
+新增 6 条：正文长破折号 · 渐变文字 · 每节都挂 eyebrow · 完全相同的卡片栅格 · 假精确数字 · 该有图的位置没图。
 
 命中 **≥3 条** = 不是微调，而是换骨架 + 换签名手法。详见 [`references/anti-patterns.md`](./references/anti-patterns.md)。
 
@@ -139,6 +155,9 @@ website-ui-designer/
 ├── CHANGELOG.md                    # 版本记录
 ├── LICENSE                         # MIT（版权：米乐）
 ├── references/
+│   ├── brand-direction.md          # 品牌方向：SOUL/SPECTACLE/DENSITY、五轴组合、昂贵感、四骨架
+│   ├── workbench-blueprint.md      # 工作台：五部件顺序、数据地板五问、四类写入者、时刻
+│   ├── terminology-layer.md        # 说法层：症状→术语、三条门禁、成对坑、对齐表
 │   ├── diagnosis-protocol.md       # 灰度测试操作法、七项扫描表、处方库、优先级算式
 │   ├── token-architecture.md       # 三层令牌、oklch 色阶、语义映射、多端换算、迁移步骤
 │   ├── motion-decision-table.md    # 五类动效参数、编排、降级、映射模板
@@ -171,11 +190,12 @@ website-ui-designer/
 
 ## 版本历史
 
-当前 **v2.0.0**（2026-10-23），设计总监版重写。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
+当前 **v2.1.0**（2026-10-24）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
-| **v2.0.0** | 2026-10-23 | 重写为设计总监版：12 条 UI 认知、五步诊断、六段设计依据、12 条红线、冲突裁决 |
+| **v2.1.0** | 2026-10-24 | 整合 finesse 四技能：品牌方向三旋钮五轴、工作台五部件与数据地板、说法层、帧级动效 |
+| v2.0.0 | 2026-10-23 | 重写为设计总监版：12 条 UI 认知、五步诊断、六段设计依据、12 条红线、冲突裁决 |
 | v1.3.0 | 2026-10-23 | 需求澄清与迭代闭环 |
 | v1.2.0 | 2026-10-23 | 动效体系（库选型 / 弹簧 / 呼吸） |
 | v1.1.0 | 2026-10-22 | 三层标准（可读性 / 美观 / 交互） |
