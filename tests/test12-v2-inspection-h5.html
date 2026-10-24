@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>设备点检 · 今日</title>
+<style>
+  :root{
+    --bg:#EEF1F0; --surface:#FFFFFF; --surface-2:#F4F6F5;
+    --ink:#14171C; --ink-2:#454B54; --muted:#5E6670;
+    --line:#E2E7E4;
+    --brand:#14543F; --brand-2:#1B7A57; --brand-ink:#FFFFFF;
+    --warn-bg:#FBEFE3; --warn-ink:#8A4A05;
+    --danger-bg:#FBEAE8; --danger-ink:#9F2318;
+    --ok-bg:#E8F3EE; --ok-ink:#14543F;
+    --radius-panel:20px; --radius-card:14px; --radius-input:10px;
+    --fs-cap:12px; --fs-body:15px; --fs-title:17px; --fs-num:28px;
+    --ease:cubic-bezier(.22,1,.36,1);
+    --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  [data-theme="dark"]{
+    --bg:#0D1113; --surface:#151A1C; --surface-2:#1B2124;
+    --ink:#F1F4F2; --ink-2:#C2C9C5; --muted:#A3ABA7;
+    --line:#2A3235;
+    --brand:#7FCBAB; --brand-2:#4FA985; --brand-ink:#08120E;
+    --warn-bg:#2A1F12; --warn-ink:#F0B36B;
+    --danger-bg:#2A1614; --danger-ink:#F09A90;
+    --ok-bg:#12251D; --ok-ink:#8FD9BB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{overflow-x:clip}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--font);
+    font-size:var(--fs-body); line-height:1.55; overflow-x:clip;
+    font-variant-numeric:tabular-nums; -webkit-font-smoothing:antialiased;
+    max-width:430px; margin:0 auto; min-height:100dvh;
+    padding-bottom:calc(88px + env(safe-area-inset-bottom));
+  }
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  input{font-family:inherit}
+
+  /* ---------- 渐变头 200px ---------- */
+  .hero{
+    position:relative;height:200px;padding:calc(14px + env(safe-area-inset-top)) 20px 0;
+    background:linear-gradient(150deg,var(--brand) 0%,var(--brand-2) 100%);
+    color:#fff;overflow:hidden;
+  }
+  .hero::after{content:"";position:absolute;right:-40px;top:-30px;width:170px;height:170px;
+    border-radius:50%;background:rgba(255,255,255,.10)}
+  .hero-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2}
+  .who{font-size:13px;opacity:.9}
+  .who b{display:block;font-size:17px;font-weight:700;opacity:1;letter-spacing:-.01em}
+  .theme{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;
+    background:rgba(255,255,255,.14);color:#fff;transition:transform .1s}
+  .theme:active{transform:scale(.94)}
+  .search{position:relative;z-index:2;margin-top:16px;display:flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.24);
+    border-radius:999px;padding:0 14px;height:42px}
+  .search svg{flex:none;opacity:.85}
+  .search input{flex:1;background:none;border:none;outline:none;color:#fff;font-size:16px}
+  .search input::placeholder{color:rgba(255,255,255,.72)}
+
+  /* ---------- 白面板上浮 ---------- */
+  .panel{position:relative;z-index:3;margin-top:-24px;background:var(--surface);
+    border-radius:var(--radius-panel) var(--radius-panel) 0 0;padding:18px 16px 0;
+    min-height:calc(100dvh - 176px);animation:up .3s var(--ease) both}
+  @keyframes up{from{transform:translateY(10px);opacity:.6}to{transform:none;opacity:1}}
+
+  /* ---------- KPI 两张 ---------- */
+  .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .kpi{background:var(--surface-2);border-radius:var(--radius-card);padding:14px}
+  .kpi span{font-size:var(--fs-cap);color:var(--muted)}
+  .kpi b{display:block;font-size:var(--fs-num);font-weight:750;letter-spacing:-.02em;
+    line-height:1.15;margin-top:2px}
+  .kpi b i{font-style:normal;font-size:13px;font-weight:500;color:var(--muted);margin-left:2px}
+  .kpi .bad{color:var(--danger-ink)}
+  .kpi .bad i{color:var(--danger-ink);opacity:.7}
+
+  /* ---------- 图标宫格 5×2 ---------- */
+  .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px 6px;margin-top:20px}
+  .g{display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px 0;
+    min-height:68px;transition:transform .1s ease}
+  .g:active{transform:scale(.95)}
+  .g i{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+    background:var(--ok-bg);color:var(--brand)}
+  .g:nth-child(2) i{background:var(--warn-bg);color:var(--warn-ink)}
+  .g:nth-child(4) i{background:var(--danger-bg);color:var(--danger-ink)}
+  .g span{font-size:11.5px;color:var(--ink-2);white-space:nowrap}
+
+  /* ---------- 待点检列表 ---------- */
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin:24px 0 8px}
+  .sec-head h2{font-size:var(--fs-title);letter-spacing:-.01em}
+  .sec-head a{font-size:12.5px;color:var(--muted);text-decoration:none}
+  .row{border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:none}
+  .row-head{display:flex;align-items:center;gap:12px;min-height:64px;width:100%;
+    text-align:left;padding:10px 2px}
+  .row-head:active{background:var(--surface-2)}
+  .dev{flex:1;min-width:0}
+  .dev b{display:block;font-size:var(--fs-body);font-weight:600;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .dev span{font-size:12px;color:var(--muted)}
+  .badge{flex:none;font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px}
+  .b-warn{background:var(--warn-bg);color:var(--warn-ink)}
+  .b-ok{background:var(--ok-bg);color:var(--ok-ink)}
+  .b-danger{background:var(--danger-bg);color:var(--danger-ink);position:relative}
+  .b-danger::before{content:"";position:absolute;left:-5px;top:50%;width:5px;height:5px;
+    margin-top:-2.5px;border-radius:50%;background:var(--danger-ink);
+    animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.6);opacity:.25}}
+  .chev{flex:none;color:var(--muted);transition:transform .15s var(--ease)}
+  .row.open .chev{transform:rotate(90deg)}
+  .row-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .15s var(--ease)}
+  .row.open .row-body{grid-template-rows:1fr}
+  .row-body>div{overflow:hidden}
+  .row-body ul{list-style:none;padding:0 0 14px 2px;display:grid;gap:6px}
+  .row-body li{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-2)}
+  .row-body li b{color:var(--ink);font-weight:600}
+
+  /* ---------- 吸底栏 + 安全区 ---------- */
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:30;max-width:430px;margin:0 auto;
+    background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    display:flex;align-items:center;gap:12px}
+  .bar .sum{flex:1;min-width:0}
+  .bar .sum b{display:block;font-size:15px;letter-spacing:-.01em}
+  .bar .sum span{font-size:11.5px;color:var(--muted)}
+  .bar button{height:48px;padding:0 22px;border-radius:12px;background:var(--brand);
+    color:var(--brand-ink);font-size:15px;font-weight:600;
+    transition:transform .1s ease,background .18s}
+  .bar button:active{transform:scale(.97)}
+  .bar button:focus-visible{outline:2px solid var(--brand-2);outline-offset:2px}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+    .panel{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-top">
+    <div class="who">三号车间 · 早班<b>张师傅，早上好</b></div>
+    <button class="theme" id="themeBtn" type="button" aria-label="切换深浅色">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </div>
+  <div class="search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input type="search" placeholder="扫设备码 / 搜设备编号" inputmode="search">
+  </div>
+</section>
+
+<main class="panel">
+  <div class="kpis">
+    <div class="kpi"><span>今日待点检</span><b>14<i>台</i></b></div>
+    <div class="kpi"><span>异常待处理</span><b class="bad">2<i>台</i></b></div>
+  </div>
+
+  <nav class="grid" aria-label="常用操作">
+    <a class="g" href="#"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg></i><span>扫码点检</span></a>
+    <a class="g" href="#"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></i><span>点检计划</span></a>
+    <a class="g" href="#"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9.5 12h5M9.5 16h4"/></svg></i><span>点检记录</span></a>
+    <a class="g" href="#"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2.6 17a2 2 0 001.7 3h15.4a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></i><span>报修</span></a>
+    <a class="g" href="#"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></i><span>更多</span></a>
+
+    <a class="g" href="#"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 17l6-6 4 3 7-8"/></svg></i><span>产量</span></a>
+    <a class="g" href="#"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></i><span>保养</span></a>
+    <a class="g" href="#"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10v16H5.5A1.5 1.5 0 014 18.5z"/><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H14v16h4.5a1.5 1.5 0 001.5-1.5z"/></svg></i><span>手册</span></a>
+    <a class="g" href="#"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M21 11.5a8.4 8.4 0 01-9 8.4 9 9 0 01-4-1L3 20l1.1-4.5A8.4 8.4 0 019 4.1a8.4 8.4 0 0112 7.4z"/></svg></i><span>交接班</span></a>
+    <a class="g" href="#"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 3l1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z"/></svg></i><span>我的</span></a>
+  </nav>
+
+  <div class="sec-head"><h2>待点检设备</h2><a href="#">全部 14 台</a></div>
+
+  <div class="list">
+    <div class="row">
+      <button class="row-head" type="button" aria-expanded="false">
+        <span class="dev"><b>3# 压铸机 · DC-380</b><span>上次点检 昨天 16:20 · 张伟</span></span>
+        <span class="badge b-warn">今天到期</span>
+        <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <div class="row-body"><div><ul>
+        <li><span>点检项</span><b>润滑 / 压力 / 温控 · 共 9 项</b></li>
+        <li><span>上次异常</span><b>油温偏高（已处理）</b></li>
+        <li><span>预计用时</span><b>4 分钟</b></li>
+      </ul></div></div>
+    </div>
+
+    <div class="row open">
+      <button class="row-head" type="button" aria-expanded="true">
+        <span class="dev"><b>7# 空压机 · AC-110</b><span>压力波动 2 次 · 待确认</span></span>
+        <span class="badge b-danger">异常</span>
+        <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <div class="row-body"><div><ul>
+        <li><span>异常描述</span><b>出口压力 0.52→0.41MPa</b></li>
+        <li><span>发生时间</span><b>今天 08:12</b></li>
+        <li><span>建议动作</span><b>检查干燥机与管路</b></li>
+      </ul></div></div>
+    </div>
+
+    <div class="row">
+      <button class="row-head" type="button" aria-expanded="false">
+        <span class="dev"><b>12# 冷却塔 · CT-60</b><span>上次点检 今天 07:40 · 李强</span></span>
+        <span class="badge b-ok">已完成</span>
+        <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <div class="row-body"><div><ul>
+        <li><span>点检结论</span><b>正常</b></li>
+        <li><span>记录人</span><b>李强 · 07:40</b></li>
+      </ul></div></div>
+    </div>
+  </div>
+</main>
+
+<div class="bar">
+  <div class="sum"><b>还剩 14 台</b><span>预计 52 分钟 · 早班 12:00 前</span></div>
+  <button type="button">开始点检</button>
+</div>
+
+<script>
+(function(){
+  /* 深色：跟随系统，可手动切换 */
+  var root = document.documentElement;
+  if (matchMedia("(prefers-color-scheme: dark)").matches) root.setAttribute("data-theme","dark");
+  document.getElementById("themeBtn").addEventListener("click", function(){
+    root.setAttribute("data-theme", root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+
+  /* 行展开：一次只开一行；点击区域整行，触控 ≥44px */
+  var rows = Array.prototype.slice.call(document.querySelectorAll(".row"));
+  rows.forEach(function(row){
+    var head = row.querySelector(".row-head");
+    head.addEventListener("click", function(){
+      var open = row.classList.contains("open");
+      rows.forEach(function(r){
+        r.classList.remove("open");
+        r.querySelector(".row-head").setAttribute("aria-expanded","false");
+      });
+      if (!open) { row.classList.add("open"); head.setAttribute("aria-expanded","true"); }
+    });
+  });
+})();
+</script>
+</body>
+</html>

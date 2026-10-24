@@ -2,7 +2,7 @@
 
 **会诊断、能解释、懂取舍。**
 
-![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-2.1.0-2E7CF6?style=flat-square)
+![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-2.1.1-2E7CF6?style=flat-square)
 ![许可](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-%E5%BC%80%E6%BA%90-34A853?style=flat-square)
 ![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20H5%E9%A1%B5%E9%9D%A2%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20APP-8A90A2?style=flat-square)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
@@ -190,11 +190,12 @@ website-ui-designer/
 
 ## 版本历史
 
-当前 **v2.1.0**（2026-10-24）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
+当前 **v2.1.1**（2026-10-24）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
-| **v2.1.0** | 2026-10-24 | 整合 finesse 四技能：品牌方向三旋钮五轴、工作台五部件与数据地板、说法层、帧级动效 |
+| **v2.1.1** | 2026-10-24 | 审计工具修正（-ink 配对 + 显式配对）；新增两个能力验证页 |
+| v2.1.0 | 2026-10-24 | 整合 finesse 四技能：品牌方向三旋钮五轴、工作台五部件与数据地板、说法层、帧级动效 |
 | v2.0.0 | 2026-10-23 | 重写为设计总监版：12 条 UI 认知、五步诊断、六段设计依据、12 条红线、冲突裁决 |
 | v1.3.0 | 2026-10-23 | 需求澄清与迭代闭环 |
 | v1.2.0 | 2026-10-23 | 动效体系（库选型 / 弹簧 / 呼吸） |

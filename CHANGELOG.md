@@ -12,6 +12,19 @@
 
 ---
 
+## v2.1.1 — 2026-10-24
+
+**工具修正 + 能力验证**
+
+- `audit_contrast.py` 修正两处误判：`--*‑ink`（按钮上的文字）此前被当成正文色与页面底配对，导致"白字压白底"的假违规；现改为"任何 `X-ink` 只与 `X` 配对"
+- 新增 `--pairs` 参数，支持自定义命名令牌的显式校验：
+  `python scripts/audit_contrast.py page.html --pairs="--ink:--paper,--dark-ink:--dark"`
+- 新增两个验证页与一份验证说明：
+  - `tests/test11-v2-industrial-site.html` — PC 品牌站（SOUL 7 / SPECTACLE 6 / DENSITY 4，CSS-only 扫描引擎，颗粒质感）
+  - `tests/test12-v2-inspection-h5.html` — H5 点检页（渐变头 + 白面板 + 5×2 宫格 + 吸底安全区 + 深色模式）
+  - `examples/v2-validation.md` — 两个案例的输入、旋钮、五轴、六段依据、动效映射、审计结果，以及"能做到/做不到"的边界
+- 审计：11 个测试页 `preflight` 0/0、`contrast` 0 违规
+
 ## v2.1.0 — 2026-10-24
 
 **整合 finesse 系列四技能，补上"品牌方向 / 工作台架构 / 说法层 / 帧级动效"**

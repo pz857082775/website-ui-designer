@@ -78,7 +78,7 @@ def collect_vars(block_text):
     return out
 
 
-def audit_html(path: Path, min_text=4.5, min_ui=3.0, verbose=False):
+def audit_html(path: Path, min_text=4.5, min_ui=3.0, verbose=False, explicit=None):
     html = path.read_text(encoding="utf-8", errors="replace")
     styles = "\n".join(re.findall(r"<style[^>]*>(.*?)</style>", html, re.S))
     problems, notes, pairs = [], [], []
@@ -101,23 +101,21 @@ def audit_html(path: Path, min_text=4.5, min_ui=3.0, verbose=False):
     def check_theme(vs, label):
         if not vs:
             return
-        solid = ("accent", "primary", "success", "warning", "danger", "info")
-        # 彩色底与其专属前景（xxx-ink）单独配对
-        for name in solid:
-            if name in vs:
-                partner = f"{name}-ink"
-                if partner in vs:
-                    r = ratio(vs[name], vs[partner])
-                    pairs.append((label, f"--{name}", f"--{partner}", r))
-                    if r < min_text:
-                        problems.append(
-                            f"[{label}] --{partner} on --{name} = {r:.2f}:1 < {min_text}:1（按钮文字不可读）")
+        # 任何以 -ink 结尾的变量都是"压在某色底上的文字"，与它的底色单独配对
+        for name, val in list(vs.items()):
+            if not name.endswith("-ink"):
+                continue
+            base = name[:-4]
+            if base in vs:
+                r = ratio(vs[base], val)
+                pairs.append((label, f"--{base}", f"--{name}", r))
+                if r < min_text:
+                    problems.append(
+                        f"[{label}] --{name} on --{base} = {r:.2f}:1 < {min_text}:1（按钮文字不可读）")
         # 只把中性表面当作正文背景；彩色底只与其专属 -ink 配对（上面已处理）
         bgs = {k: v for k, v in vs.items() if is_bg(k)}
         fgs = {k: v for k, v in vs.items()
-               if is_fg(k)
-               and k not in bgs
-               and not re.match(r"^(accent|primary|success|warning|danger|info)-ink$", k)}
+               if is_fg(k) and k not in bgs and not k.endswith("-ink")}
         for bn, bv in bgs.items():
             for fn, fv in fgs.items():
                 r = ratio(bv, fv)
@@ -128,6 +126,19 @@ def audit_html(path: Path, min_text=4.5, min_ui=3.0, verbose=False):
 
     check_theme(root_vars, "浅色")
     check_theme(dark_vars, "深色")
+
+    # 显式配对：用于自定义命名的令牌（如 --paper / --dark-ink）
+    if explicit:
+        merged = dict(root_vars); merged.update(dark_vars)
+        for fg_name, bg_name in explicit:
+            fv, bv = merged.get(fg_name), merged.get(bg_name)
+            if not (fv and bv):
+                notes.append(f"[显式配对] 找不到 {fg_name} 或 {bg_name}")
+                continue
+            r = ratio(bv, fv)
+            pairs.append(("显式", f"--{bg_name}", f"--{fg_name}", r))
+            if r < min_text:
+                problems.append(f"[显式] --{fg_name} on --{bg_name} = {r:.2f}:1 < {min_text}:1")
 
     # --- 2. 同规则内的字面 color + background ---
     for sel, body in blocks(styles):
@@ -163,6 +174,7 @@ def main():
     ap.add_argument("--min", type=float, default=4.5, help="正文阈值，默认 4.5")
     ap.add_argument("--ui-min", type=float, default=3.0, help="UI 元素阈值，默认 3.0")
     ap.add_argument("--verbose", action="store_true")
+    ap.add_argument("--pairs", default="", help='显式配对，如 "--ink:--paper,--dark-ink:--dark"')
     args = ap.parse_args()
 
     files = []
@@ -170,12 +182,19 @@ def main():
         p = Path(f)
         files.extend(sorted(Path().glob(f)) if any(c in f for c in "*?") else [p])
 
+    explicit = []
+    for chunk in args.pairs.split(","):
+        chunk = chunk.strip()
+        if ":" in chunk:
+            fg, bg = chunk.split(":", 1)
+            explicit.append((fg.strip().lstrip("-"), bg.strip().lstrip("-")))
+
     total_bad = 0
     for f in files:
         if not f.exists():
             print(f"[跳过] {f} 不存在")
             continue
-        problems, notes, pairs, _ = audit_html(f, args.min, args.ui_min, args.verbose)
+        problems, notes, pairs, _ = audit_html(f, args.min, args.ui_min, args.verbose, explicit)
         total_bad += len(problems)
         status = "FAIL" if problems else "PASS"
         print(f"\n[{status}] {f}")
