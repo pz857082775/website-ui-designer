@@ -12,6 +12,26 @@
 
 ---
 
+## v2.3.0 — 2026-10-25
+
+**治理版：把 29 份参考文件收成一套可执行的架构**
+
+### 新增
+- `references/skill-architecture.md`：七层结构（宪法/输入/方向/结构/系统/表现/交付）、29 份文件的唯一职责表、
+  SSOT 与冻结清单、**12 组重叠的裁决**、P0-P6 调用顺序与决策树、三种场景的组合示例、
+  跨 SKILL 的 15 条统一规范、2026 趋势立场（共识 8 项 / 高危 8 项 / 5 条使用判据）、演进规则（≤32 份）
+- `scripts/audit_all.py`：统一闸门，一条命令跑 preflight + contrast，输出单一 PASS/FAIL 与前三条必修
+
+### 冲突清理（打状态标记，不删历史）
+- 冻结：`anti-slop`（并入 anti-patterns）、`style-library`（选模板→五轴组合）、`redesign-mode`（并入 diagnosis-protocol）、
+  `prompt-anatomy`（被五轴 + 六段契约取代）
+- 降级为实现层参考：`gsap-prompts`（只给片段）、`design-system-spec`（只给数值）、`dashboard-style`（只给行业细节）
+- 明确边界：`prompt-master` 仅作输出格式；`clone-mode` 仅作输入路径且必须过五轴改造；`open-source-integration` 存为溯源
+
+### 主文件
+- 顶部加入"冲突先看架构图"的指针；§12 索引把 skill-architecture 置顶
+- S5 验证改为"一条命令过闸"（audit_all）+ 闸门 0
+
 ## v2.2.0 — 2026-10-25
 
 **组件库、字体、品牌规范三块能力补齐**

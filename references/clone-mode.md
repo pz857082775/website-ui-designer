@@ -1,5 +1,7 @@
 # 模式 B：参考图 / 目标网站 → 复刻提示词（完整流程）
 
+> **状态（v2.3.0）：保留为输入路径。** 取样方法仍有效，但直出复刻会违反反同质化——必须先过 **brand-direction 五轴改造**。
+
 参考方法论：`JCodesMore/ai-website-cloner-template`（Map → Observe → Build → Compare）+ taste-skill 的真实素材纪律。
 
 ## 路径选择

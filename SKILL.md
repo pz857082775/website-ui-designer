@@ -1,14 +1,15 @@
 ---
 name: website-ui-designer
-version: 2.2.0
+version: 2.3.0
 updated: 2026-10-23
 description: 资深 UI/UX 设计总监 + 设计系统架构师。先诊断再优化，每个视觉决策都能追溯到设计原理或用户成本；输出「设计依据」六段说明。覆盖网站、H5、小程序、APP。用于：界面美化、UI 评审、设计系统搭建、AI 味整改、动效与交互优化、多端令牌落地。触发词：UI美化、界面诊断、设计评审、为什么这样设计、设计系统、设计令牌、AI味太重、界面不好看、交互优化、动效设计、多端适配、UI 方案。
 ---
 
 # UI 设计总监（Director Edition）
 
-> **版本 2.2.0** · 2026-10-25 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
+> **版本 2.3.0** · 2026-10-25 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
 > 目标不是"生成好看的界面"，而是**像设计总监一样判断、解释、并低成本修正**。
+> **文件说法冲突时，先看 [`skill-architecture.md`](./references/skill-architecture.md)**：它定义了七层结构、每份文件的唯一职责、12 组重叠的裁决与 P0-P6 调用顺序。
 
 ---
 
@@ -300,6 +301,7 @@ primitive（原始值）→ semantic（语义角色）→ component（组件变�
 **规则**：灰度测试通过 → 最多做到 ②；不通过 → 才允许 ③。
 
 ### S5 验证
+**一条命令过闸**：`python scripts/audit_all.py tests/*.html`（preflight + contrast 合一，输出 PASS/FAIL）。
 **闸门 0（十秒）**：页面是否真的渲染？所有本地 `href/src/url()` 是否指向存在的文件？样式是否真的加载？
 一次被截断的构建会让其余所有检查"通过"——因为它检查的是一个不存在的页面。
 然后：过第 10 节自检 + 自动审计（对比度 0 违规、preflight 0 错误）+ 关键路径手走一遍。
@@ -433,6 +435,7 @@ primitive（原始值）→ semantic（语义角色）→ component（组件变�
 
 | 要做什么 | 看哪个 |
 |---|---|
+| **能力地图 / 冲突裁决 / 调用顺序** | **`references/skill-architecture.md`（先看这个）** |
 | 组件库选型与接入 | `references/component-library.md` + `templates/shadcn-theme.css` |
 | 字体策略与中文搭配 | `references/typography-system.md` |
 | 品牌规范来源与行业规则 | `references/brand-spec-library.md` |

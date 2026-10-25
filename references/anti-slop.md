@@ -1,5 +1,7 @@
 # 反 slop 清单（Anti-Slop Rules）
 
+> **状态（v2.3.0）：已冻结。** 与 `anti-patterns.md` 重复且条目更旧，仅作历史参考。现行为：**anti-patterns（20 条红线）**。
+
 来源：taste-skill v2 对 247 个精选站点（One Page Love、Awwwards SOTD）的研究结论。
 **AI 生成页面的默认病**：所有页面趋同于"平均值"——没有错，但没有任何决定。
 

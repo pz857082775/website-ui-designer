@@ -2,7 +2,7 @@
 
 **会诊断、能解释、懂取舍。**
 
-![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-2.2.0-2E7CF6?style=flat-square)
+![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-2.3.0-2E7CF6?style=flat-square)
 ![许可](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-%E5%BC%80%E6%BA%90-34A853?style=flat-square)
 ![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20H5%E9%A1%B5%E9%9D%A2%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20APP-8A90A2?style=flat-square)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
@@ -105,6 +105,48 @@ npx skills add https://github.com/pz857082775/website-ui-designer --skill websit
 
 ---
 
+## 2.3 治理：29 份文件谁负责什么
+
+**七层，每层只有一个负责人；跨层冲突时下层服从上层。**
+
+```
+L0 宪法    SKILL.md + skill-architecture.md
+L1 输入    design-intake · terminology-layer · rag
+L2 方向    brand-direction · brand-spec-library
+L3 结构    workbench-blueprint（+ dashboard-style 行业细节）
+L4 系统    token-architecture · typography-system · component-library
+L5 表现    motion-decision-table（决策）· motion-spec（参数）· visual-interaction-spec（可读性）
+L6 交付    review-rubric · audit_all.py · examples
+```
+
+**已冻结（保留但不再作为依据）**：`anti-slop`（并入 anti-patterns）、`style-library`（选模板=同质化）、
+`redesign-mode`（并入 diagnosis-protocol）、`prompt-anatomy`（被五轴+六段契约取代）。
+`gsap-prompts` / `design-system-spec` / `dashboard-style` 降为"实现层参考"；`prompt-master` 只作输出格式。
+
+**调用顺序（P0-P6）**
+```
+P0 灰度测试 + 对比度/触控/焦点  →  不过就停，先修结构
+P1 三问 + 术语翻译 + 检索
+P2 旋钮 + 五轴（≥3 轴不同）+ 品牌规范
+P3 骨架 / 工作台五部件 + 数据地板
+P4 令牌 → 字体 → 组件
+P5 动效决策 → 参数 → 8 态与成功动画
+P6 六段依据 → 评分 → 一条命令过闸 → 七问自检
+```
+唯一不可跳过的是 **六段设计依据**；其余按条件可省（详见 `skill-architecture.md` §4.2）。
+
+**一条命令过闸**
+```bash
+python scripts/audit_all.py tests/*.html
+# 1. preflight（7 类硬伤）  2. contrast（浅/深全配对）→ PASS / FAIL + 前三条必修
+```
+
+**趋势立场**：趋势只提供默认值，不提供正确性。当下的共识是低饱和静奢、编辑式栅格、质感物理层、
+克制动效、语义令牌、AI 原生界面、表格回归、无障碍默认；满屏玻璃拟态、紫蓝发光、每段 pill、
+假大数字、装饰 3D、组件库默认皮肤属于高危项。
+
+---
+
 ## 内建的 UI 认知（12 条）
 
 | # | 认知 | 可执行的规则 |
@@ -170,6 +212,7 @@ website-ui-designer/
 ├── CHANGELOG.md                    # 版本记录
 ├── LICENSE                         # MIT（版权：米乐）
 ├── references/
+│   ├── skill-architecture.md       # 治理：七层结构、职责表、冲突裁决、P0-P6 调用顺序、趋势立场
 │   ├── component-library.md        # 组件库：shadcn/MWC/DS 模板选型、接入纪律、消费三层
 │   ├── typography-system.md        # 字体：字族关系、Geist、中文搭配、字阶、性能
 │   ├── brand-spec-library.md       # 品牌规范来源：getdesign/open-design/ui-ux-pro-max + 行业规则
@@ -211,11 +254,12 @@ website-ui-designer/
 
 ## 版本历史
 
-当前 **v2.2.0**（2026-10-25）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
+当前 **v2.3.0**（2026-10-25）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
-| **v2.2.0** | 2026-10-25 | 组件库接入（shadcn/MWC/DS 模板）、字体系统、品牌规范库、shadcn 主题模板 |
+| **v2.3.0** | 2026-10-25 | 治理版：七层架构、职责边界、12 组冲突裁决、P0-P6 调用顺序、统一闸门 |
+| v2.2.0 | 2026-10-25 | 组件库接入（shadcn/MWC/DS 模板）、字体系统、品牌规范库、shadcn 主题模板 |
 | v2.1.1 | 2026-10-24 | 审计工具修正（-ink 配对 + 显式配对）；新增两个能力验证页 |
 | v2.1.0 | 2026-10-24 | 整合 finesse 四技能：品牌方向三旋钮五轴、工作台五部件与数据地板、说法层、帧级动效 |
 | v2.0.0 | 2026-10-23 | 重写为设计总监版：12 条 UI 认知、五步诊断、六段设计依据、12 条红线、冲突裁决 |
