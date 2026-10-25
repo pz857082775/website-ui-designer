@@ -2,7 +2,7 @@
 
 **会诊断、能解释、懂取舍。**
 
-![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-2.1.1-2E7CF6?style=flat-square)
+![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-2.2.0-2E7CF6?style=flat-square)
 ![许可](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-%E5%BC%80%E6%BA%90-34A853?style=flat-square)
 ![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20H5%E9%A1%B5%E9%9D%A2%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20APP-8A90A2?style=flat-square)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
@@ -90,6 +90,21 @@ npx skills add https://github.com/pz857082775/website-ui-designer --skill websit
 
 ---
 
+## 2.2 新增：组件库 / 字体 / 品牌规范
+
+| 能力 | 解决什么 | 关键规则 |
+|---|---|---|
+| **组件库接入**（`component-library.md`） | 有零件，但装出来还是一眼模板 | shadcn 源码归你 → 升级要 diff；**必须重做圆角/边框/阴影/字阶四件事**；只允许用 variant 控制，禁止 `!important`；Radix 的无障碍不要重造 |
+| **字体系统**（`typography-system.md`） | 换个字体就"高级"，但常踩中文与授权坑 | 字族 ≤2、字重 ≤3、woff2 ≤4 个 ≤300KB；中英分别声明；中文层级靠字号不靠 300 字重；数字等宽 |
+| **品牌规范库**（`brand-spec-library.md`） | 从零猜配色，或直接抄成山寨 | 只提取四件事（色阶/字阶/组件契约/栅格）+ 品牌禁忌；映射到 12 令牌后**必须跑对比度**；不复制 logo/字体 |
+
+主题落地文件：`templates/shadcn-theme.css`（`--background/--foreground/--primary/--ring` 四个关键映射 + 圆角/间距/字阶）。
+
+**一个关键判断**：shadcn 的默认皮肤本身就是新的"AI 脸"——它让你快速得到"合格的默认"，
+不重做四件事，你的页面会和几十万个 shadcn 项目长得一样。
+
+---
+
 ## 内建的 UI 认知（12 条）
 
 | # | 认知 | 可执行的规则 |
@@ -155,6 +170,9 @@ website-ui-designer/
 ├── CHANGELOG.md                    # 版本记录
 ├── LICENSE                         # MIT（版权：米乐）
 ├── references/
+│   ├── component-library.md        # 组件库：shadcn/MWC/DS 模板选型、接入纪律、消费三层
+│   ├── typography-system.md        # 字体：字族关系、Geist、中文搭配、字阶、性能
+│   ├── brand-spec-library.md       # 品牌规范来源：getdesign/open-design/ui-ux-pro-max + 行业规则
 │   ├── brand-direction.md          # 品牌方向：SOUL/SPECTACLE/DENSITY、五轴组合、昂贵感、四骨架
 │   ├── workbench-blueprint.md      # 工作台：五部件顺序、数据地板五问、四类写入者、时刻
 │   ├── terminology-layer.md        # 说法层：症状→术语、三条门禁、成对坑、对齐表
@@ -178,7 +196,10 @@ website-ui-designer/
 │   ├── learning-loop.md            # 持续迭代方法
 │   └── open-source-integration.md  # 方法论来源
 ├── examples/
-│   └── design-rationale-demo.md    # 六段设计依据完整示范
+│   ├── design-rationale-demo.md    # 六段设计依据完整示范
+│   └── v2-validation.md            # 两个真实验证案例（PC 站 + H5）与能力边界
+├── templates/
+│   └── shadcn-theme.css            # 把本技能令牌接到 shadcn/ui 的主题文件（含 Tailwind v3 转换说明）
 ├── scripts/
 │   ├── audit_contrast.py           # 对比度审计（浅/深全组合）
 │   ├── preflight.py                # 交付前硬伤扫描
@@ -190,11 +211,12 @@ website-ui-designer/
 
 ## 版本历史
 
-当前 **v2.1.1**（2026-10-24）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
+当前 **v2.2.0**（2026-10-25）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
-| **v2.1.1** | 2026-10-24 | 审计工具修正（-ink 配对 + 显式配对）；新增两个能力验证页 |
+| **v2.2.0** | 2026-10-25 | 组件库接入（shadcn/MWC/DS 模板）、字体系统、品牌规范库、shadcn 主题模板 |
+| v2.1.1 | 2026-10-24 | 审计工具修正（-ink 配对 + 显式配对）；新增两个能力验证页 |
 | v2.1.0 | 2026-10-24 | 整合 finesse 四技能：品牌方向三旋钮五轴、工作台五部件与数据地板、说法层、帧级动效 |
 | v2.0.0 | 2026-10-23 | 重写为设计总监版：12 条 UI 认知、五步诊断、六段设计依据、12 条红线、冲突裁决 |
 | v1.3.0 | 2026-10-23 | 需求澄清与迭代闭环 |

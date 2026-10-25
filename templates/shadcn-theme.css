@@ -1,0 +1,151 @@
+/* ============================================================
+ * shadcn-theme.css — 把本技能的语义令牌接到 shadcn/ui
+ * ------------------------------------------------------------
+ * 用法：
+ *   1) npx shadcn@latest init 生成 components.json
+ *   2) 用本文件替换默认的 :root / .dark 变量块
+ *   3) 组件里只允许出现 var(--color-*) 或 shadcn 变量，
+ *      不允许写死 #hex
+ * 说明：
+ *   - 色值以 oklch 表达（Tailwind v4 直接支持）
+ *   - 若用 Tailwind v3，见文件末尾的 HSL 转换说明
+ *   - 这些值是起点，落到项目后必须跑：
+ *     python scripts/audit_contrast.py page.html \
+ *       --pairs="--foreground:--background,--muted-foreground:--background,--primary-foreground:--primary"
+ * ============================================================ */
+
+@layer base {
+  :root {
+    /* ---- 我们自己的语义层（唯一决策点） ---- */
+    --color-bg:            oklch(97.5% 0.004 265);
+    --color-surface:       oklch(100% 0 0);
+    --color-surface-raised:oklch(100% 0 0);
+    --color-ink:           oklch(22% 0.015 265);
+    --color-ink-muted:     oklch(42% 0.020 260);
+    --color-border:        oklch(92% 0.008 260);
+    --color-accent:        oklch(56% 0.170 262);
+    --color-accent-ink:    oklch(100% 0 0);
+    --color-success:       oklch(52% 0.110 160);
+    --color-warning:       oklch(54% 0.130 70);
+    --color-danger:        oklch(50% 0.170 27);
+    --color-focus:         oklch(48% 0.160 262);
+
+    /* ---- 间距 / 圆角 / 字阶 ---- */
+    --space-1: .25rem; --space-2: .5rem;  --space-3: .75rem; --space-4: 1rem;
+    --space-6: 1.5rem; --space-8: 2rem;   --space-12: 3rem;  --space-16: 4rem;
+
+    --radius-input: .5rem;      /* 8px  */
+    --radius: .875rem;          /* 14px 卡片（shadcn 的 --radius 走这一档） */
+    --radius-overlay: 1.25rem;  /* 20px 弹层 */
+
+    --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    /* ---- shadcn 变量：只做映射，不新造语义 ---- */
+    --background: var(--color-bg);
+    --foreground: var(--color-ink);
+
+    --card: var(--color-surface);
+    --card-foreground: var(--color-ink);
+    --popover: var(--color-surface-raised);
+    --popover-foreground: var(--color-ink);
+
+    --primary: var(--color-accent);
+    --primary-foreground: var(--color-accent-ink);
+    --secondary: var(--color-surface-2, oklch(95% 0.006 260));
+    --secondary-foreground: var(--color-ink);
+    --muted: oklch(95% 0.006 260);
+    --muted-foreground: var(--color-ink-muted);
+    --accent: oklch(94% 0.012 262);
+    --accent-foreground: var(--color-ink);
+    --destructive: var(--color-danger);
+    --destructive-foreground: oklch(100% 0 0);
+
+    --border: var(--color-border);
+    --input: var(--color-border);
+    --ring: var(--color-focus);
+
+    /* 语义状态色（我们自己的组件用） */
+    --success: var(--color-success);
+    --warning: var(--color-warning);
+    --danger: var(--color-danger);
+  }
+
+  .dark {
+    --color-bg:            oklch(17% 0.010 260);
+    --color-surface:       oklch(21% 0.012 260);
+    --color-surface-raised:oklch(24% 0.013 260);
+    --color-ink:           oklch(96% 0.004 260);
+    --color-ink-muted:     oklch(79% 0.012 260);
+    --color-border:        oklch(29% 0.015 260);
+    --color-accent:        oklch(73% 0.120 262);
+    --color-accent-ink:    oklch(17% 0.010 260);
+    --color-success:       oklch(78% 0.110 165);
+    --color-warning:       oklch(80% 0.130 80);
+    --color-danger:        oklch(72% 0.140 25);
+    --color-focus:         oklch(78% 0.100 262);
+  }
+}
+
+/* ============================================================
+ * 组件层：只做"分级"，不覆盖内部
+ * ============================================================ */
+@layer components {
+  .card {
+    background: var(--card);
+    color: var(--card-foreground);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-6);
+    box-shadow: 0 1px 2px rgb(16 24 40 / .04), 0 2px 8px rgb(16 24 40 / .06);
+  }
+
+  .card-raised {
+    border-radius: var(--radius-overlay);
+    box-shadow: 0 8px 28px rgb(16 24 40 / .12);
+  }
+
+  .btn {
+    min-height: 44px;                 /* 可访问性下限，不是审美偏好 */
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-input);
+    transition: transform 100ms cubic-bezier(.22,1,.36,1),
+                background 150ms ease, border-color 150ms ease;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+  .btn[disabled] { opacity: .45; pointer-events: none; }
+
+  .input {
+    min-height: 44px;
+    font-size: 16px;                  /* 避免 iOS 聚焦缩放 */
+    border: 1px solid var(--input);
+    border-radius: var(--radius-input);
+  }
+  .input:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
+
+  .badge {
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    /* 软底深字：底色用 12% 主色，文字用同色深档（不要用浅档） */
+    background: color-mix(in oklch, var(--color-accent) 12%, var(--color-surface));
+    color: color-mix(in oklch, var(--color-accent) 70%, black);
+  }
+}
+
+/* ============================================================
+ * Tailwind v3 转换说明
+ * ------------------------------------------------------------
+ * v3 期望 HSL 三元组，例如：
+ *   --background: 220 33% 98%;
+ *   --foreground: 222 15% 12%;
+ *   --primary: 224 79% 54%;
+ *   --primary-foreground: 0 0% 100%;
+ *   --border: 220 20% 91%;
+ *   --ring: 224 73% 44%;
+ * 并在 tailwind.config.js 里用：
+ *   colors: { background: "hsl(var(--background))", ... }
+ * 若不确定换算，用 https://oklch.com 逐个转，转换后务必重跑对比度审计。
+ * ============================================================ */

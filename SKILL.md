@@ -1,13 +1,13 @@
 ---
 name: website-ui-designer
-version: 2.1.1
+version: 2.2.0
 updated: 2026-10-23
 description: 资深 UI/UX 设计总监 + 设计系统架构师。先诊断再优化，每个视觉决策都能追溯到设计原理或用户成本；输出「设计依据」六段说明。覆盖网站、H5、小程序、APP。用于：界面美化、UI 评审、设计系统搭建、AI 味整改、动效与交互优化、多端令牌落地。触发词：UI美化、界面诊断、设计评审、为什么这样设计、设计系统、设计令牌、AI味太重、界面不好看、交互优化、动效设计、多端适配、UI 方案。
 ---
 
 # UI 设计总监（Director Edition）
 
-> **版本 2.1.1** · 2026-10-24 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
+> **版本 2.2.0** · 2026-10-25 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
 > 目标不是"生成好看的界面"，而是**像设计总监一样判断、解释、并低成本修正**。
 
 ---
@@ -203,6 +203,41 @@ caption   12-13 / 400 / 1.4          元信息、单位、时间
 
 详见 `references/terminology-layer.md`。
 
+### 3.16 组件库：零件归库，组装归你
+
+| 需求 | 选什么 | 关键纪律 |
+|---|---|---|
+| React 产品、要深度定制 | **shadcn/ui**（源码复制进仓库，Radix + Tailwind） | 代码归你 = 升级要 diff，不要删了重装 |
+| 已有设计语言、只缺交互 | Radix / Ark（headless） | 样式全自写 |
+| 跨框架 / 无构建 / 品牌即 Material | Material Web（Web Components） | 维护模式，长期风险要评估 |
+| 多产品共用一套系统 | Vercel Turborepo DS 模板 | `packages/ui` 只消费语义令牌 |
+
+**用 shadcn 必须重做四件事**（否则就是"默认 shadcn 脸"）：圆角分级、边框改半透明、阴影两级、字阶 5 档。
+**无障碍不要重造**：Radix 已处理焦点捕获/键盘/`aria-*`；改样式时不要删 `data-state`。
+**组件只允许用 variant / size / state 控制**，禁止 `!important` 覆盖内部。
+详见 `references/component-library.md`，主题映射见 `templates/shadcn-theme.css`。
+
+### 3.17 字体：最便宜的品牌差异
+
+- 字族 ≤2、字重 ≤3（400/500/700）、woff2 ≤4 个且 ≤300KB
+- 品牌/编辑页可"衬线 display + 无衬线正文"；产品页用"单一无衬线 + 等宽数字"
+- **中英分别声明**：`"Geist", "PingFang SC", "Microsoft YaHei", sans-serif`
+- 中文没有真细体：层级靠字号与色档，不靠 300 字重
+- 数字一律 `tabular-nums`；大标题负字距、正文不设负字距；全大写行高 ≥1.0
+- Geist Sans / Mono / Pixel（OFL-1.1，可商用）是"Vercel 质感"的主要来源，但**必须配自己的字阶与字距**，否则只是换了个默认
+- 商业字体必须确认 Web 授权；不确定就用 OFL 字体
+
+详见 `references/typography-system.md`。
+
+### 3.18 品牌规范来源：拿起点，不抄皮肤
+
+`getdesign`（`npx getdesign@latest add vercel`）、`open-design`（151 个品牌包，`DESIGN.md` + `tokens.css`）、
+`ui-ux-pro-max`（192 套配色 + 行业推理规则）都能给一个"有依据的起点"。
+
+**只提取四件事**：色阶结构 / 字阶关系 / 组件契约 / 布局栅格，外加**品牌禁忌**。
+映射到 12 个语义令牌 → 跑对比度审计 → 再用五轴组合改 ≥2 个轴形成差异。
+**合规**：不复制 logo/图形，字体单独授权，不宣称关联。详见 `references/brand-spec-library.md`。
+
 ---
 
 ## 4. 三层设计系统
@@ -347,6 +382,8 @@ primitive（原始值）→ semantic（语义角色）→ component（组件变�
 | 16 | 完全相同的卡片栅格（图标+标题+文案 ×6） | 组内无差异 = 无层级 | 一张主卡 + 2-3 张辅卡 |
 | 17 | 假精确数字（92%、4.1×）无来源 | 信任成本最高 | 给真实来源或删掉 |
 | 18 | 该有图的位置没有图（hero/画廊/空态） | 是 bug 不是极简 | 补真实图或数据可视化 |
+| 19 | 组件库默认皮肤直接用（shadcn/antd 原样上线） | 换 logo 后与任何项目雷同 | 重做圆角/边框/阴影/字阶四件事 |
+| 20 | 三个以上字族混用 / 正文字体用 300 | 视觉噪音、中文发虚 | 字族 ≤2、字重 ≤3 |
 
 **例外流程**：用户坚持 → 要求写明"服务于什么"，记入交付说明；仍不成立就明说风险。
 
@@ -396,6 +433,9 @@ primitive（原始值）→ semantic（语义角色）→ component（组件变�
 
 | 要做什么 | 看哪个 |
 |---|---|
+| 组件库选型与接入 | `references/component-library.md` + `templates/shadcn-theme.css` |
+| 字体策略与中文搭配 | `references/typography-system.md` |
+| 品牌规范来源与行业规则 | `references/brand-spec-library.md` |
 | 品牌方向/旋钮/五轴/昂贵感/四骨架 | `references/brand-direction.md` |
 | 工作台五部件与数据地板 | `references/workbench-blueprint.md` |
 | 说法层（症状→术语） | `references/terminology-layer.md` |

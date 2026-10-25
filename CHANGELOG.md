@@ -12,6 +12,32 @@
 
 ---
 
+## v2.2.0 — 2026-10-25
+
+**组件库、字体、品牌规范三块能力补齐**
+
+### 来源核实（2026-10-25）
+| 来源 | 状态 | 采用 |
+|---|---|---|
+| `shadcn-ui/ui` | 126.5k★ MIT | 源码复制式接入、Radix 无障碍契约、主题映射、升级 diff 策略 |
+| `material-components/material-web` | 11.4k★ Apache-2.0（npm 2.5.0） | Web Components 选型与"维护模式"风险提示 |
+| `vercel/turborepo` DS 模板 | 页面 HTTP 200 | monorepo + Storybook 适用场景与包边界纪律 |
+| `vercel/geist-font` | 3.7k★ OFL-1.1（npm `geist` 1.8.2） | Geist Sans/Mono/Pixel 用法、许可、自托管与回退栈 |
+| `nextlevelbuilder/ui-ux-pro-max-skill` | 140k★ MIT | 行业→配色/字体推理（v2 为 192 套配色），作为"起点"而非结论 |
+| `nexu-io/open-design` | 104k★ Apache-2.0 | 151 个设计系统包、`DESIGN.md` 作为品牌契约的用法 |
+| `getdesign` npm | 0.6.26 | `npx getdesign add <brand>` 装 DESIGN.md 的流程 |
+
+### 新增
+- `references/component-library.md`：选型矩阵、shadcn 接入四件必改之事、令牌映射、无障碍契约、MWC 注意事项、Turborepo DS 适用边界、组件消费三层、组件库解决不了的五件事
+- `references/typography-system.md`：字族关系表、Geist 家族、中文搭配五种坑、字阶参数、性能预算与 `size-adjust` 回退、八条验收
+- `references/brand-spec-library.md`：三个品牌规范来源的用法、只提取四件事、12 令牌映射表、八行业规则速查、五条合规红线、半天落地流程
+- `templates/shadcn-theme.css`：本技能令牌 → shadcn CSS 变量（oklch），含圆角/间距/字阶、组件分级与 Tailwind v3 转换说明
+
+### 主文件
+- 新增 3.16 组件库（含"shadcn 必须重做四件事"）、3.17 字体、3.18 品牌规范来源
+- 反模式 18 → 20 条（组件库默认皮肤直接上线、三族混用/正文 300 字重）
+- 索引补四行
+
 ## v2.1.1 — 2026-10-24
 
 **工具修正 + 能力验证**
