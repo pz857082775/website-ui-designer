@@ -2,7 +2,7 @@
 
 **会诊断、能解释、懂取舍。**
 
-![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-3.2.0-2E7CF6?style=flat-square)
+![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-3.3.0-2E7CF6?style=flat-square)
 ![许可](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-%E5%BC%80%E6%BA%90-34A853?style=flat-square)
 ![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20H5%E9%A1%B5%E9%9D%A2%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20APP-8A90A2?style=flat-square)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
@@ -102,6 +102,24 @@ npx skills add https://github.com/pz857082775/website-ui-designer --skill websit
 
 **一个关键判断**：shadcn 的默认皮肤本身就是新的"AI 脸"——它让你快速得到"合格的默认"，
 不重做四件事，你的页面会和几十万个 shadcn 项目长得一样。
+
+---
+
+## 2.6 真实渲染审查（v3.3）
+
+用 Edge 无头截图 + iframe 390 实测三页，发现并修掉 6 类**只有渲染后才看得见**的缺陷：
+
+| 缺陷 | 现象 | 修法 |
+|---|---|---|
+| 首屏预隐藏 | 整块内容半透明（`.rise{opacity:0}` 等 JS 加类） | 入场改 CSS `@keyframes ... both`，默认可见 |
+| 截图假象 | Windows Chrome 最小窗口宽 478，`--window-size=390` 会渲染 478 再裁 390 | 用 iframe 390 / 设备模拟，只认 `scrollWidth === clientWidth` |
+| CJK 大字裁顶 | 「陈月华」字形上沿被切 | 行高 ≥1.3 + 4px 上内边距；折叠改 `grid-rows`，不用 `max-height` |
+| 头像 `1fr` 撑大 | 头像高过文字块一倍 | 固定 72px，信息块 `minmax(0,1fr)`，`align-items:start` |
+| 链接污染标题 | 整卡 `<a>` 让标题变蓝带下划线 | `color:inherit;text-decoration:none` |
+| 图表中间态 | 风险环停在「3」 | HTML 写终值，CSS 动画只做增强；轨道要有可见色 |
+
+**新增验收方法（§5.7）**：结构（去色 25%）→ 溢出（scrollWidth 实测）→ 文字（计算样式跑 runtime）。
+截图只能证明"这一帧长这样"，不能作为验收结论。
 
 ---
 
@@ -292,11 +310,12 @@ website-ui-designer/
 
 ## 版本历史
 
-当前 **v3.2.0**（2026-10-26）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
+当前 **v3.3.0**（2026-10-26）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
-| **v3.2.0** | 2026-10-26 | 修三类真实事故：特异性覆盖致隐形文字、双 sticky 遮挡、系统蓝+正红配色；补配色配方与运行时检查 |
+| **v3.3.0** | 2026-10-26 | 真实渲染审查：识别截图假象、CJK 裁顶、链接污染、图表中间态；检查项 15→17 |
+| v3.2.0 | 2026-10-26 | 修三类真实事故：特异性覆盖致隐形文字、双 sticky 遮挡、系统蓝+正红配色；补配色配方与运行时检查 |
 | v3.1.0 | 2026-10-26 | 补齐 F–L：反 AI 味 20 条、五端矩阵、资源注册表、技能路由、7 步工作流、评分卡、8 段交付模板 |
 | v3.0.0 | 2026-10-26 | 设计工程师版重写：A 角色与审美基准、B 设计宪法、C 视觉表现、D 排版布局、E 动效交互，全部参数化 |
 | v2.4.0 | 2026-10-26 | 组件能力库：五个来源的语义原语映射（AI 原语 21 个）、33 条语义→组件、检索顺序与五道闸门 |
