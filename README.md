@@ -2,7 +2,7 @@
 
 **会诊断、能解释、懂取舍。**
 
-![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-2.4.0-2E7CF6?style=flat-square)
+![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-3.0.0-2E7CF6?style=flat-square)
 ![许可](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-%E5%BC%80%E6%BA%90-34A853?style=flat-square)
 ![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20H5%E9%A1%B5%E9%9D%A2%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20APP-8A90A2?style=flat-square)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
@@ -279,11 +279,12 @@ website-ui-designer/
 
 ## 版本历史
 
-当前 **v2.4.0**（2026-10-26）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
+当前 **v3.0.0**（2026-10-26）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
-| **v2.4.0** | 2026-10-26 | 组件能力库：五个来源的语义原语映射（AI 原语 21 个）、33 条语义→组件、检索顺序与五道闸门 |
+| **v3.0.0** | 2026-10-26 | 设计工程师版重写：A 角色与审美基准、B 设计宪法、C 视觉表现、D 排版布局、E 动效交互，全部参数化 |
+| v2.4.0 | 2026-10-26 | 组件能力库：五个来源的语义原语映射（AI 原语 21 个）、33 条语义→组件、检索顺序与五道闸门 |
 | v2.3.0 | 2026-10-25 | 治理版：七层架构、职责边界、12 组冲突裁决、P0-P6 调用顺序、统一闸门 |
 | v2.2.0 | 2026-10-25 | 组件库接入（shadcn/MWC/DS 模板）、字体系统、品牌规范库、shadcn 主题模板 |
 | v2.1.1 | 2026-10-24 | 审计工具修正（-ink 配对 + 显式配对）；新增两个能力验证页 |
