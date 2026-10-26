@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>用户详情 · 随访档案</title>
+<style>
+/* Cupertino（iOS）令牌；不与 Material 混用 */
+:root{
+  --bg:#F2F2F7; --surface:#FFFFFF; --surface-2:#EDEDF2;
+  --ink:#1C1C1E; --ink-2:#3A3A3C; --muted:#6C6C70;
+  --line:rgba(60,60,67,.14); --line-strong:rgba(60,60,67,.24);
+  --accent:#0A4BCC; --accent-ink:#FFFFFF;
+  --success:#1B7F4B; --danger:#C0392B; --warn:#8A5A00;
+  --r-1:10px; --r-2:14px; --r-3:20px;
+  --shadow-1:0 1px 2px rgba(0,0,0,.04),0 1px 3px rgba(0,0,0,.05);
+  --shadow-2:0 8px 24px -6px rgba(0,0,0,.12);
+  --dur-1:120ms; --dur-2:180ms; --dur-3:240ms;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0B0B0D; --surface:#1C1C1E; --surface-2:#242426;
+    --ink:#F2F2F7; --ink-2:#D8D8DC; --muted:#A1A1A6;
+    --line:rgba(255,255,255,.12); --line-strong:rgba(255,255,255,.20);
+    --accent:#2B64F0;
+  }
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{overflow-x:clip}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.55;
+  font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;
+  max-width:430px;margin:0 auto;min-height:100dvh;overflow-x:clip;
+  padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+/* ===== 导航：大标题滚动折叠 ===== */
+.nav{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(16px);border-bottom:1px solid transparent;
+  padding-top:env(safe-area-inset-top);transition:border-color var(--dur-2) var(--ease)}
+.nav.scrolled{border-bottom-color:var(--line)}
+.nav-bar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+.back{display:inline-flex;align-items:center;gap:2px;color:var(--accent);font-size:17px;
+  min-height:44px;padding-right:8px}
+.back:active{opacity:.6}
+.nav-title{font-size:17px;font-weight:600;opacity:0;transform:translateY(4px);
+  transition:opacity var(--dur-2) var(--ease),transform var(--dur-2) var(--ease)}
+.nav.scrolled .nav-title{opacity:1;transform:none}
+.nav-more{width:44px;height:44px;display:grid;place-items:center;color:var(--accent)}
+.large{padding:0 16px;overflow:hidden;max-height:64px;opacity:1;
+  transition:max-height var(--dur-3) var(--ease),opacity var(--dur-2) var(--ease),padding var(--dur-3) var(--ease)}
+.nav.scrolled .large{max-height:0;opacity:0;padding-bottom:0}
+.large h1{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.15;padding-bottom:10px}
+
+main{padding:0 16px}
+
+/* ===== 头部：5:7 非对称 ===== */
+.profile{display:grid;grid-template-columns:5fr 7fr;gap:16px;align-items:center;
+  background:var(--surface);border-radius:var(--r-2);padding:16px;box-shadow:var(--shadow-1);
+  margin-top:12px}
+.avatar{width:100%;aspect-ratio:1;border-radius:var(--r-2);background:var(--surface-2);
+  display:grid;place-items:center;font-size:34px;font-weight:600;color:var(--muted);overflow:hidden}
+.profile .name{font-size:22px;font-weight:700;letter-spacing:-.01em;line-height:1.25}
+.profile .meta{font-size:13px;color:var(--muted);margin-top:4px}
+.tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tag{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;
+  background:rgba(10,75,204,.10);color:#0A3E9E}
+.tag.warn{background:rgba(138,90,0,.12);color:#7A5000}
+.tag.ok{background:rgba(27,127,75,.12);color:#14643B}
+
+/* ===== 记忆点：风险环（一次性绘制 600ms） ===== */
+.risk{margin-top:12px;background:var(--surface);border-radius:var(--r-2);padding:16px;
+  box-shadow:var(--shadow-1);display:grid;grid-template-columns:96px 1fr;gap:16px;align-items:center}
+.ring{position:relative;width:96px;height:96px}
+.ring svg{transform:rotate(-90deg)}
+.ring .track{stroke:var(--surface-2)}
+.ring .bar{stroke:var(--danger);stroke-linecap:round;
+  stroke-dasharray:264;stroke-dashoffset:264;
+  transition:stroke-dashoffset 600ms var(--ease)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;font-size:24px;font-weight:700;
+  letter-spacing:-.02em}
+.risk-copy b{display:block;font-size:16px;font-weight:600}
+.risk-copy p{font-size:13px;color:var(--muted);margin-top:4px}
+.delta{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:var(--success);margin-top:6px}
+.delta.down{color:var(--danger)}
+
+/* ===== KPI 2×2 ===== */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.kpi{background:var(--surface);border-radius:var(--r-2);padding:14px;box-shadow:var(--shadow-1)}
+.kpi span{font-size:12px;color:var(--muted)}
+.kpi b{display:block;font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-top:2px}
+.kpi b i{font-style:normal;font-size:12px;font-weight:500;color:var(--muted);margin-left:2px}
+
+/* ===== 分组 ===== */
+.group{margin-top:24px}
+.group h2{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.04em;
+  text-transform:uppercase;margin:0 4px 8px}
+.panel{background:var(--surface);border-radius:var(--r-2);box-shadow:var(--shadow-1);overflow:hidden}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 16px;border-bottom:1px solid var(--line);font-size:15px}
+.row:last-child{border-bottom:none}
+.row span{color:var(--muted);font-size:14px}
+.row b{font-weight:500;text-align:right}
+
+/* 时间轴：左轴右内容（编辑式） */
+.timeline{padding:4px 16px 8px}
+.tl{display:grid;grid-template-columns:14px 1fr;gap:12px;padding:12px 0;position:relative}
+.tl:not(:last-child)::before{content:"";position:absolute;left:6px;top:26px;bottom:-12px;width:1px;background:var(--line)}
+.tl .dot{width:9px;height:9px;border-radius:50%;background:var(--line-strong);margin-top:6px;z-index:1}
+.tl.done .dot{background:var(--success)}
+.tl .body b{font-size:15px;font-weight:600}
+.tl .body p{font-size:13px;color:var(--muted);margin-top:2px}
+.tl .time{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* ===== 吸底操作（安全区） ===== */
+.actions{position:fixed;left:0;right:0;bottom:0;z-index:40;max-width:430px;margin:0 auto;
+  background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);display:flex;gap:10px;
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.actions .ghost{flex:0 0 auto;height:48px;padding:0 18px;border-radius:12px;
+  border:1px solid var(--line-strong);color:var(--ink);font-size:16px;font-weight:500;
+  display:inline-flex;align-items:center;transition:transform var(--dur-1) var(--ease),background var(--dur-2)}
+.actions .ghost:active{transform:scale(.97);background:var(--surface-2)}
+.actions .primary{flex:1;height:48px;border-radius:12px;background:var(--accent);color:var(--accent-ink);
+  font-size:17px;font-weight:600;position:relative;overflow:hidden;
+  transition:transform var(--dur-1) var(--ease),background var(--dur-2)}
+.actions .primary:active{transform:scale(.98)}
+.actions .primary:focus-visible,.actions .ghost:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.actions .primary[disabled]{opacity:.5;pointer-events:none}
+.primary .label,.primary .done{transition:opacity var(--dur-1) var(--ease)}
+.primary .done{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;opacity:0}
+.primary.is-done .label{opacity:0}
+.primary.is-done .done{opacity:1}
+.primary .check path{stroke-dasharray:26;stroke-dashoffset:26}
+.primary.is-done .check path{animation:draw 220ms var(--ease) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.4);
+  border-top-color:#fff;animation:spin .7s linear infinite;display:none}
+.primary.is-loading .spin{display:block}
+.primary.is-loading .label{opacity:.6}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 状态演示（非产品 UI） */
+.demo{position:fixed;left:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:50;
+  display:flex;gap:4px;padding:4px;border:1px dashed var(--line-strong);border-radius:8px;
+  background:color-mix(in srgb,var(--surface) 92%,transparent);font-size:10px}
+.demo button{padding:3px 6px;border-radius:4px;color:var(--muted)}
+.demo button.on{background:var(--ink);color:var(--bg)}
+
+/* 空/错 */
+.state{padding:40px 20px;text-align:center}
+.state b{display:block;font-size:16px;margin-bottom:6px}
+.state p{font-size:13px;color:var(--muted);max-width:26ch;margin:0 auto 14px}
+.state button{height:40px;padding:0 18px;border-radius:10px;background:var(--accent);color:#fff;
+  font-size:15px;font-weight:600;transition:transform var(--dur-1) var(--ease)}
+.state button:active{transform:scale(.97)}
+
+/* 骨架 */
+.sk{background:var(--surface);border-radius:var(--r-2);box-shadow:var(--shadow-1);overflow:hidden}
+.sk-line{height:12px;border-radius:4px;background:linear-gradient(110deg,var(--surface-2) 30%,#F7F7FA 50%,var(--surface-2) 70%);
+  background-size:200% 100%;animation:shimmer 1.5s linear infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .ring .bar{transition:none}
+  .sk-line{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div class="nav" id="nav">
+  <div class="nav-bar">
+    <button class="back" type="button">
+      <svg width="12" height="20" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M10 2L2 10l8 8"/></svg>
+      用户
+    </button>
+    <span class="nav-title">陈月华</span>
+    <button class="nav-more" type="button" aria-label="更多操作">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
+    </button>
+  </div>
+  <div class="large"><h1>陈月华</h1></div>
+</div>
+
+<main>
+  <!-- 5:7 头部 -->
+  <section class="profile">
+    <div class="avatar" aria-hidden="true">陈</div>
+    <div>
+      <div class="name">陈月华 <span style="font-size:13px;font-weight:400;color:var(--muted)">68 岁 · 女</span></div>
+      <div class="meta">糖尿病 6 年 · 随访编号 F-2024-0871</div>
+      <div class="tags"><span class="tag warn">血压偏高</span><span class="tag ok">规律服药</span><span class="tag">独居</span></div>
+    </div>
+  </section>
+
+  <!-- 记忆点：风险环 -->
+  <section class="risk" id="risk">
+    <div class="ring">
+      <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true">
+        <circle class="track" cx="48" cy="48" r="42" fill="none" stroke-width="8"/>
+        <circle class="bar" id="ringBar" cx="48" cy="48" r="42" fill="none" stroke-width="8"/>
+      </svg>
+      <span class="val" id="ringVal">0</span>
+    </div>
+    <div class="risk-copy">
+      <b>心血管风险 62</b>
+      <p>基于近 90 天血压、血糖与用药依从性</p>
+      <span class="delta down">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 10L1 4h10z"/></svg>
+        较上次 +6
+      </span>
+    </div>
+  </section>
+
+  <div class="kpis">
+    <div class="kpi"><span>最近空腹血糖</span><b>8.2<i>mmol/L</i></b></div>
+    <div class="kpi"><span>最近血压</span><b>146<i>/92</i></b></div>
+    <div class="kpi"><span>随访次数</span><b>12<i>次</i></b></div>
+    <div class="kpi"><span>用药依从</span><b>86<i>%</i></b></div>
+  </div>
+
+  <div class="group">
+    <h2>基础信息</h2>
+    <div class="panel">
+      <div class="row"><span>联系电话</span><b>138 **** 2741</b></div>
+      <div class="row"><span>常住地址</span><b>杭州 · 拱墅区</b></div>
+      <div class="row"><span>紧急联系人</span><b>女儿 · 陈晓</b></div>
+      <div class="row"><span>建档时间</span><b>2024-03-12</b></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <h2>随访记录</h2>
+    <div class="panel" id="tlPanel">
+      <div class="timeline">
+        <div class="tl done"><span class="dot"></span><div class="body"><b>电话随访 · 已完成</b><p>主诉头晕，建议复测血压并调整用药时间</p><div class="time">10-24 15:20 · 王医生</div></div></div>
+        <div class="tl done"><span class="dot"></span><div class="body"><b>上门随访 · 已完成</b><p>血糖 8.2，饮食记录已拍照上传</p><div class="time">10-18 09:40 · 张护士</div></div></div>
+        <div class="tl"><span class="dot"></span><div class="body"><b>电话随访 · 待完成</b><p>计划 10-27 前完成本月第 3 次</p><div class="time">计划 10-27</div></div></div>
+      </div>
+    </div>
+    <div class="state" id="tlEmpty" hidden>
+      <b>还没有随访记录</b><p>建立第一条记录后，这里会按时间倒序显示。</p>
+      <button type="button">开始第一次随访</button>
+    </div>
+  </div>
+</main>
+
+<div class="actions">
+  <button class="ghost" type="button">拨打电话</button>
+  <button class="primary" type="button" id="startBtn">
+    <span class="label">发起随访</span>
+    <span class="spin"></span>
+    <span class="done">
+      <svg class="check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>
+      已发起
+    </span>
+  </button>
+</div>
+
+<div class="demo" id="demo">
+  <button class="on" data-s="list">详情</button>
+  <button data-s="empty">空态</button>
+</div>
+
+<script>
+(function(){
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var nav = document.getElementById("nav");
+  var bar = document.getElementById("ringBar");
+  var val = document.getElementById("ringVal");
+  var risk = document.getElementById("risk");
+  var played = false;
+
+  /* 大标题折叠：滚动 40pt 后收起（240ms） */
+  var onScroll = function(){
+    nav.classList.toggle("scrolled", window.scrollY > 40);
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  /* 记忆点：风险环一次性绘制 600ms + 数字滚动 */
+  function play(){
+    if (played) return; played = true;
+    var target = 62, C = 264;
+    if (reduced) {
+      bar.style.strokeDashoffset = String(C * (1 - target / 100));
+      val.textContent = target;
+      return;
+    }
+    requestAnimationFrame(function(){
+      bar.style.strokeDashoffset = String(C * (1 - target / 100));
+    });
+    var start = performance.now(), dur = 600;
+    (function tick(now){
+      var p = Math.min((now - start) / dur, 1);
+      val.textContent = Math.round(target * p);
+      if (p < 1) requestAnimationFrame(tick);
+    })(start);
+  }
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting) { play(); io.disconnect(); } });
+    }, { threshold: .4 });
+    io.observe(risk);
+  } else { play(); }
+
+  /* 主按钮：loading 400ms → success 220ms 勾线 → 1.4s 还原 */
+  var btn = document.getElementById("startBtn");
+  btn.addEventListener("click", function(){
+    if (btn.dataset.state) return;
+    btn.dataset.state = "loading";
+    btn.classList.add("is-loading");
+    btn.setAttribute("aria-busy", "true");
+    setTimeout(function(){
+      btn.classList.remove("is-loading");
+      btn.classList.add("is-done");
+      btn.dataset.state = "done";
+      btn.removeAttribute("aria-busy");
+      setTimeout(function(){
+        btn.classList.remove("is-done");
+        btn.dataset.state = "";
+      }, 1400);
+    }, 400);
+  });
+
+  /* 状态演示 */
+  document.querySelectorAll("#demo button").forEach(function(b){
+    b.addEventListener("click", function(){
+      var s = b.dataset.s;
+      document.querySelectorAll("#demo button").forEach(function(x){ x.classList.toggle("on", x === b); });
+      document.getElementById("tlPanel").hidden = s === "empty";
+      document.getElementById("tlEmpty").hidden = s !== "empty";
+    });
+  });
+})();
+</script>
+</body>
+</html>
