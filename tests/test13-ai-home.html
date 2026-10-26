@@ -47,6 +47,10 @@ header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper
   transform:scaleX(0);transform-origin:left;transition:transform var(--dur-2) var(--ease-out)}
 .nav a:hover{color:var(--ink)}
 .nav a:hover::after{transform:scaleX(1)}
+/* 按钮三色一体：背景与文字同属按钮，禁止被 .nav a 的字色覆盖 */
+.nav a.btn{color:var(--accent-ink);text-decoration:none}
+.nav a.btn:hover{color:var(--accent-ink)}
+.nav a.btn::after{display:none}
 .nav a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;
   border-radius:var(--r-1);font-size:14px;font-weight:600;
@@ -159,8 +163,10 @@ footer.site{border-top:1px solid var(--line);padding:24px 0 48px;display:flex;ju
   gap:24px;font-size:12.5px;color:var(--ink-3);flex-wrap:wrap}
 
 /* 入场：编排 420ms，位移 16px，stagger 60ms */
-.rise{opacity:0;transform:translateY(16px);transition:opacity var(--dur-5) var(--ease-out),transform var(--dur-5) var(--ease-out)}
-.rise.in{opacity:1;transform:none}
+/* 入场必须 CSS 驱动且默认可见：JS 失败/未执行时文字仍可读（不再依赖 .in 类） */
+@keyframes riseIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.rise{animation:riseIn var(--dur-5) var(--ease-out) both}
+.rise.d2{animation-delay:60ms}
 
 @media (max-width:1100px){
   .wrap{padding:0 48px}
@@ -338,24 +344,13 @@ footer.site{border-top:1px solid var(--line);padding:24px 0 48px;display:flex;ju
 
   replay.addEventListener("click", run);
 
-  /* 入场：一次性编排，主内容先、卡片 +60ms */
-  var items = document.querySelectorAll(".rise");
+  /* 入场由 CSS animation 完成（both），不依赖 JS；这里只负责记忆点播放 */
   if (reduced || !("IntersectionObserver" in window)) {
-    items.forEach(function(el){ el.classList.add("in"); });
     run();
   } else {
-    var io = new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        if (!e.isIntersecting) return;
-        e.target.classList.add("in");
-        io.unobserve(e.target);
-      });
-    }, { threshold: .2 });
-    items.forEach(function(el){ io.observe(el); });
-    /* 记忆点只在首屏可见时播一次 */
     var fixIO = new IntersectionObserver(function(es){
       es.forEach(function(e){ if (e.isIntersecting) { run(); fixIO.disconnect(); } });
-    }, { threshold: .4 });
+    }, { threshold: .3 });
     fixIO.observe(fix);
   }
 })();
