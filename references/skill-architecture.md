@@ -20,7 +20,7 @@ L1 输入层    design-intake（澄清/迭代） · terminology-layer（说法�
 L2 方向层    brand-direction（旋钮/五轴/昂贵感/骨架） · brand-spec-library（品牌与行业）
 L3 结构层    workbench-blueprint（工作台五部件/数据地板） · dashboard-style（行业细节）
 L4 系统层    token-architecture（令牌） · typography-system（字体） · component-library（组件）
-L5 表现层    motion-decision-table（决策） · motion-spec（参数） · visual-interaction-spec（可读性/交互态）
+L5 表现层    component-capability-library（语义原语） · motion-decision-table（决策） · motion-spec（参数） · visual-interaction-spec（可读性/交互态）
 L6 交付层    review-rubric（评分） · audit_contrast / preflight（机器闸门） · examples（范式）
 ```
 
@@ -45,6 +45,7 @@ L6 交付层    review-rubric（评分） · audit_contrast / preflight（机器
 | token-architecture | 三层令牌、oklch、多端换算、迁移 | 品牌色 | 令牌文件 | 组件长什么样 | **SSOT·令牌** |
 | typography-system | 字族关系、字阶、中文、性能 | 方向 | 字体方案 | 排版布局 | **SSOT·字体** |
 | component-library | 组件库选型与接入纪律 | 技术栈 | 接入方案 + 主题映射 | 页面结构 | **SSOT·组件** |
+| component-capability-library | 语义 → 原语映射（shadcn/Beautiful UI/beUI/Rare UI/Transitions） | 需求语义 | 原语 + 抽取内容 + 降级 | 工程接入 | **SSOT·语义原语** |
 | motion-decision-table | 动效**要不要做**、做哪类、多久 | 模块清单 | 动效决策表 | 具体库参数 | **SSOT·动效决策** |
 | motion-spec | 动效**怎么做**（库/弹簧/呼吸/性能） | 决策表 | 参数与代码 | 该不该做 | **SSOT·动效参数** |
 | visual-interaction-spec | 对比度、视觉焦点、8 态、成功动画 | 页面 | 硬指标 + 验收 | 方向与骨架 | **SSOT·可读性** |
@@ -78,6 +79,7 @@ L6 交付层    review-rubric（评分） · audit_contrast / preflight（机器
 
 | # | 重叠 | 冲突表现 | 裁决 |
 |---|---|---|---|
+| 0 | component-capability-library vs component-library | 都谈 shadcn，一个谈"该用哪种原语"、一个谈"怎么接进工程" | **语义选型看 capability，工程接入看 component-library**；两者都受 motion-decision-table 的时长约束 |
 | 1 | anti-slop vs anti-patterns | 两套禁令，条目数不同 | anti-patterns 为准（20 条）；anti-slop 冻结 |
 | 2 | motion-spec vs motion-decision-table | 一个讲参数、一个讲时机，常被混用 | **先决策后参数**：先查 decision-table 定"哪类/多久"，再查 motion-spec 定"用什么库/弹簧" |
 | 3 | gsap-prompts vs motion-spec | gsap 片段暗示"动效=GSAP" | 库选型以 motion-spec 的决策树为准；GSAP 只是五种引擎之一 |

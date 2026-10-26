@@ -2,7 +2,7 @@
 
 **会诊断、能解释、懂取舍。**
 
-![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-2.3.0-2E7CF6?style=flat-square)
+![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-2.4.0-2E7CF6?style=flat-square)
 ![许可](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-%E5%BC%80%E6%BA%90-34A853?style=flat-square)
 ![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20H5%E9%A1%B5%E9%9D%A2%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20APP-8A90A2?style=flat-square)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
@@ -102,6 +102,30 @@ npx skills add https://github.com/pz857082775/website-ui-designer --skill websit
 
 **一个关键判断**：shadcn 的默认皮肤本身就是新的"AI 脸"——它让你快速得到"合格的默认"，
 不重做四件事，你的页面会和几十万个 shadcn 项目长得一样。
+
+---
+
+## 2.4 组件能力库：先认语义，再挑原语
+
+| 来源 | 能力域 | 抓取实测 |
+|---|---|---|
+| **shadcn/ui** | 基座（可访问行为 + 可组合样式） | 50+ 组件 |
+| **Beautiful UI** | AI 原生原语（Loading/Thinking/Streaming/Approval/Tool Chips/Task Rows/Chat/Prompt Bar…） | **21 个**，每个带状态机 |
+| **beUI** | 精致交互（Dock/命令面板/形变弹层/数字动画） | **71 个**，Motion 驱动，走 shadcn registry |
+| **Rare UI** | 去模板化视觉（Fluid Orb/Gravity Letters/Folder） | **27 个**单文件组件 |
+| **Transitions** | 过渡与微交互（shared axis / origin-aware / card resize / number pop-in） | **43+** |
+
+**检索顺序**：`shadcn 基座 → beUI/Rare 定风格 → Transitions 加质感 → Beautiful UI 补 AI 原语`。
+顺序不可颠倒：基座决定可访问性与工程成本，AI 原语只在有 AI 过程时才启用。
+
+**语义映射（节选）**：AI 加载→Loading State｜AI 推理→Thinking trace｜流式→Streaming Text｜
+执行前确认→Approval Card｜工具调用→Tool Chips｜长任务→Task Rows｜批量编辑→Diff Table｜
+CRM→Records Table｜筛选→Filter Table｜知识来源→Context Cards｜洞察→Insight Cards。
+
+**落地铁律**：抽象语义，不照搬视觉。用项目自己的主色/圆角/字体重绘，但保留状态机、时序与可访问性。
+**五道闸门**：原语选对 / 基座可访问 / 动效有时长与降级 / 无模板味 / 标注来源与降级方案。
+
+完整版含 33 条映射与四个站点的抓取清单：[`references/component-capability-library.md`](./references/component-capability-library.md)。
 
 ---
 
@@ -213,6 +237,7 @@ website-ui-designer/
 ├── LICENSE                         # MIT（版权：米乐）
 ├── references/
 │   ├── skill-architecture.md       # 治理：七层结构、职责表、冲突裁决、P0-P6 调用顺序、趋势立场
+│   ├── component-capability-library.md # 语义原语库：shadcn/Beautiful UI/beUI/Rare UI/Transitions
 │   ├── component-library.md        # 组件库：shadcn/MWC/DS 模板选型、接入纪律、消费三层
 │   ├── typography-system.md        # 字体：字族关系、Geist、中文搭配、字阶、性能
 │   ├── brand-spec-library.md       # 品牌规范来源：getdesign/open-design/ui-ux-pro-max + 行业规则
@@ -254,11 +279,12 @@ website-ui-designer/
 
 ## 版本历史
 
-当前 **v2.3.0**（2026-10-25）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
+当前 **v2.4.0**（2026-10-26）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
-| **v2.3.0** | 2026-10-25 | 治理版：七层架构、职责边界、12 组冲突裁决、P0-P6 调用顺序、统一闸门 |
+| **v2.4.0** | 2026-10-26 | 组件能力库：五个来源的语义原语映射（AI 原语 21 个）、33 条语义→组件、检索顺序与五道闸门 |
+| v2.3.0 | 2026-10-25 | 治理版：七层架构、职责边界、12 组冲突裁决、P0-P6 调用顺序、统一闸门 |
 | v2.2.0 | 2026-10-25 | 组件库接入（shadcn/MWC/DS 模板）、字体系统、品牌规范库、shadcn 主题模板 |
 | v2.1.1 | 2026-10-24 | 审计工具修正（-ink 配对 + 显式配对）；新增两个能力验证页 |
 | v2.1.0 | 2026-10-24 | 整合 finesse 四技能：品牌方向三旋钮五轴、工作台五部件与数据地板、说法层、帧级动效 |

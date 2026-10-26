@@ -12,6 +12,30 @@
 
 ---
 
+## v2.4.0 — 2026-10-26
+
+**组件能力库：五个来源抽象为"语义原语 + 检索映射 + 落地规则"**
+
+### 抓取核实（2026-10-26，四个站点均成功）
+| 来源 | 实测 | 关键事实 |
+|---|---|---|
+| Beautiful UI | 21 个 AI 原语（01-21） | Loading/Thinking（四态 trace）/Streaming/Approval/Tool Chips/Task Rows/Chat/Prompt Bar/Recommendation/Context/Diff/Records/Filter/Search/Flowchart/Insight/Code/Fine-tune/Selection/Agent Screen |
+| beUI | 71 个组件（含 RN） | Motion + Tailwind，**shadcn registry 分发**（`bunx shadcn add @beui/timeline`） |
+| Rare UI | 27 个单文件组件 | shadcn CLI + MCP（`npx shadcn@latest add swamimalode07/rare-ui/fluid-orb`） |
+| Transitions | 43+ 过渡 | 分 Essential/AI Agents/Effects/Texts/Pro；含 card resize、number pop-in、text swap、origin-aware menu |
+
+### 新增
+- `references/component-capability-library.md`
+  - A 能力矩阵（来源/能力域/触发场景/提取内容）+ **检索顺序**：shadcn 基座 → beUI/Rare 定风格 → Transitions 加质感 → Beautiful UI 补 AI 原语
+  - B 五个来源的三段式（能力域 + 触发场景 + 落地规则），强调"抽象语义、用自己令牌重绘、保留状态机与时序"
+  - C **33 条语义 → 组件映射表**，每条含降级路径
+  - D 七步检索流程 + 输出模板（原语/来源/抽象了什么/如何重绘/保留的交互/降级）+ 五道质量闸门 + 与现有架构的接法
+  - 抓取失败时的降级：Rare UI → 至少一个维度非常规；Transitions → shared axis/120-200ms/骨架屏无缝/reduced-motion
+
+### 主文件与治理
+- 新增 3.19 组件能力库（含顺序、来源表、语义示例、铁律与降级）
+- `skill-architecture.md`：L5 表现层加入本文件；职责表新增"SSOT·语义原语"；新增第 0 组冲突裁决（语义选型 vs 工程接入）
+
 ## v2.3.0 — 2026-10-25
 
 **治理版：把 29 份参考文件收成一套可执行的架构**

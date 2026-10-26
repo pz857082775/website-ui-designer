@@ -1,13 +1,13 @@
 ---
 name: website-ui-designer
-version: 2.3.0
+version: 2.4.0
 updated: 2026-10-23
 description: 资深 UI/UX 设计总监 + 设计系统架构师。先诊断再优化，每个视觉决策都能追溯到设计原理或用户成本；输出「设计依据」六段说明。覆盖网站、H5、小程序、APP。用于：界面美化、UI 评审、设计系统搭建、AI 味整改、动效与交互优化、多端令牌落地。触发词：UI美化、界面诊断、设计评审、为什么这样设计、设计系统、设计令牌、AI味太重、界面不好看、交互优化、动效设计、多端适配、UI 方案。
 ---
 
 # UI 设计总监（Director Edition）
 
-> **版本 2.3.0** · 2026-10-25 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
+> **版本 2.4.0** · 2026-10-26 · 变更见 [CHANGELOG.md](./CHANGELOG.md)
 > 目标不是"生成好看的界面"，而是**像设计总监一样判断、解释、并低成本修正**。
 > **文件说法冲突时，先看 [`skill-architecture.md`](./references/skill-architecture.md)**：它定义了七层结构、每份文件的唯一职责、12 组重叠的裁决与 P0-P6 调用顺序。
 
@@ -239,6 +239,32 @@ caption   12-13 / 400 / 1.4          元信息、单位、时间
 映射到 12 个语义令牌 → 跑对比度审计 → 再用五轴组合改 ≥2 个轴形成差异。
 **合规**：不复制 logo/图形，字体单独授权，不宣称关联。详见 `references/brand-spec-library.md`。
 
+### 3.19 组件能力库：先认语义，再挑原语
+
+五个来源各管一段，**检索顺序不可颠倒**：
+
+```
+① shadcn/ui 拿基座（可访问 + 工程可行）
+② beUI / Rare UI 定风格（运动语言 / 一个非常规维度）
+③ Transitions 加质感（过渡类型 + 时长）
+④ Beautiful UI 补 AI 原语（只在有 AI 过程时）
+```
+
+| 来源 | 能力域 | 什么时候用 |
+|---|---|---|
+| shadcn/ui | 基座 50+（Button/Dialog/Table/Form/Chart…） | 任何需要键盘与焦点的交互 |
+| Beautiful UI | AI 原语 21（Loading/Thinking/Streaming/Approval/Tool Chips/Task Rows/Chat/Prompt Bar/Recommendation/Context/Diff/Records/Filter/Search/Flowchart/Insight/Code/Fine-tune/Selection/Agent Screen） | AI 在替用户做事：生成中、推理中、将执行、已执行 |
+| beUI | 精致交互 71（Dock/Command Palette/Morphing Modal/Bottom Sheet/Tabs/Number…） | 需要"手感"：导航滑动、形变、数字滚动 |
+| Rare UI | 去模板化 27（Fluid Orb/Gravity Letters/Folder/Duration Picker…） | 需要一个记忆点，且不想靠装饰堆料 |
+| Transitions | 过渡 43+（shared axis / origin-aware / card resize / number pop-in / text swap） | 视图切换、状态切换、数值更新 |
+
+**语义映射示例**：AI 加载→Loading State｜AI 推理→Thinking trace｜流式→Streaming Text｜执行前确认→Approval Card｜工具调用→Tool Chips｜长任务→Task Rows｜批量编辑→Diff Table｜CRM 列表→Records Table｜状态筛选→Filter Table｜知识来源→Context Cards｜数据洞察→Insight Cards｜基座→shadcn｜去模板化→Rare UI｜页面切换→Transitions。
+
+**落地铁律**：抽象语义，不照搬视觉——用自己的主色/圆角/字体/间距重绘，但**保留状态机、时序与可访问性**。
+**降级**：Rare UI 不可用 → 至少一个维度非常规（破"卡片+阴影+圆角"三件套）；Transitions 不可用 → shared axis 200-300ms、微交互 120-200ms ease-out、骨架屏无缝、reduced-motion 全降。
+
+详见 `references/component-capability-library.md`（含 33 条语义映射与五条闸门）。
+
 ---
 
 ## 4. 三层设计系统
@@ -436,6 +462,7 @@ primitive（原始值）→ semantic（语义角色）→ component（组件变�
 | 要做什么 | 看哪个 |
 |---|---|
 | **能力地图 / 冲突裁决 / 调用顺序** | **`references/skill-architecture.md`（先看这个）** |
+| 语义 → 组件原语（AI 界面必看） | `references/component-capability-library.md` |
 | 组件库选型与接入 | `references/component-library.md` + `templates/shadcn-theme.css` |
 | 字体策略与中文搭配 | `references/typography-system.md` |
 | 品牌规范来源与行业规则 | `references/brand-spec-library.md` |
