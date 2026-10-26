@@ -7,11 +7,12 @@
 <style>
 /* Cupertino（iOS）令牌；不与 Material 混用 */
 :root{
-  --bg:#F2F2F7; --surface:#FFFFFF; --surface-2:#EDEDF2;
-  --ink:#1C1C1E; --ink-2:#3A3A3C; --muted:#6C6C70;
-  --line:rgba(60,60,67,.14); --line-strong:rgba(60,60,67,.24);
-  --accent:#0A4BCC; --accent-ink:#FFFFFF;
-  --success:#1B7F4B; --danger:#C0392B; --warn:#8A5A00;
+  /* 暖纸 + 松绿：底不用系统冷灰，语义色降饱和 */
+  --bg:#F7F6F3; --surface:#FFFFFF; --surface-2:#F0EDE7;
+  --ink:#1C1B19; --ink-2:#46443F; --muted:#6B6A66;
+  --line:rgba(28,27,25,.10); --line-strong:rgba(28,27,25,.20);
+  --accent:#1F4E46; --accent-ink:#FFFFFF;
+  --success:#2F6B57; --danger:#A9502F; --warn:#7A4A16;
   --r-1:10px; --r-2:14px; --r-3:20px;
   --shadow-1:0 1px 2px rgba(0,0,0,.04),0 1px 3px rgba(0,0,0,.05);
   --shadow-2:0 8px 24px -6px rgba(0,0,0,.12);
@@ -21,10 +22,10 @@
 }
 @media (prefers-color-scheme:dark){
   :root{
-    --bg:#0B0B0D; --surface:#1C1C1E; --surface-2:#242426;
-    --ink:#F2F2F7; --ink-2:#D8D8DC; --muted:#A1A1A6;
-    --line:rgba(255,255,255,.12); --line-strong:rgba(255,255,255,.20);
-    --accent:#2B64F0;
+    --bg:#0D0F10; --surface:#171A1B; --surface-2:#1F2324;
+    --ink:#ECEAE4; --ink-2:#CFCCC4; --muted:#A6A49C;
+    --line:rgba(236,234,228,.12); --line-strong:rgba(236,234,228,.22);
+    --accent:#2E6F5E;
   }
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -32,7 +33,7 @@ html{overflow-x:clip}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.55;
   font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;
   max-width:430px;margin:0 auto;min-height:100dvh;overflow-x:clip;
-  padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+  padding-bottom:calc(112px + env(safe-area-inset-bottom))}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 
 /* ===== 导航：大标题滚动折叠 ===== */
@@ -48,36 +49,40 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   transition:opacity var(--dur-2) var(--ease),transform var(--dur-2) var(--ease)}
 .nav.scrolled .nav-title{opacity:1;transform:none}
 .nav-more{width:44px;height:44px;display:grid;place-items:center;color:var(--accent)}
-.large{padding:0 16px;overflow:hidden;max-height:64px;opacity:1;
-  transition:max-height var(--dur-3) var(--ease),opacity var(--dur-2) var(--ease),padding var(--dur-3) var(--ease)}
-.nav.scrolled .large{max-height:0;opacity:0;padding-bottom:0}
-.large h1{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.15;padding-bottom:10px}
+/* 用 grid-rows 折叠，不用 max-height 裁字（max-height 会切掉大字顶部） */
+.large{display:grid;grid-template-rows:1fr;padding:0 16px;
+  transition:grid-template-rows var(--dur-3) var(--ease),opacity var(--dur-2) var(--ease)}
+.large>div{overflow:hidden}
+.nav.scrolled .large{grid-template-rows:0fr;opacity:0}
+.large h1{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.32;
+  padding:4px 0 10px} /* 行高 <1.3 + overflow:hidden 会切掉 CJK 字形顶部 */
 
 main{padding:0 16px}
 
 /* ===== 头部：5:7 非对称 ===== */
-.profile{display:grid;grid-template-columns:5fr 7fr;gap:16px;align-items:center;
+.profile{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;align-items:start;
   background:var(--surface);border-radius:var(--r-2);padding:16px;box-shadow:var(--shadow-1);
   margin-top:12px}
-.avatar{width:100%;aspect-ratio:1;border-radius:var(--r-2);background:var(--surface-2);
-  display:grid;place-items:center;font-size:34px;font-weight:600;color:var(--muted);overflow:hidden}
+.avatar{width:72px;height:72px;border-radius:var(--r-2);background:var(--surface-2);
+  display:grid;place-items:center;font-size:26px;font-weight:600;color:var(--muted);overflow:hidden}
 .profile .name{font-size:22px;font-weight:700;letter-spacing:-.01em;line-height:1.25}
 .profile .meta{font-size:13px;color:var(--muted);margin-top:4px}
 .tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .tag{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;
-  background:rgba(10,75,204,.10);color:#0A3E9E}
-.tag.warn{background:rgba(138,90,0,.12);color:#7A5000}
-.tag.ok{background:rgba(27,127,75,.12);color:#14643B}
+  background:rgba(31,78,70,.10);color:#17423A}
+.tag.warn{background:#F6EDE2;color:#7A4A16}
+.tag.ok{background:#E7F1EC;color:#1F5B45}
 
 /* ===== 记忆点：风险环（一次性绘制 600ms） ===== */
 .risk{margin-top:12px;background:var(--surface);border-radius:var(--r-2);padding:16px;
-  box-shadow:var(--shadow-1);display:grid;grid-template-columns:96px 1fr;gap:16px;align-items:center}
+  box-shadow:var(--shadow-1);display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;align-items:center}
 .ring{position:relative;width:96px;height:96px}
 .ring svg{transform:rotate(-90deg)}
-.ring .track{stroke:var(--surface-2)}
+.ring .track{stroke:#E4DFD5} /* 未完成段要看得见，不能与白卡同色 */
 .ring .bar{stroke:var(--danger);stroke-linecap:round;
-  stroke-dasharray:264;stroke-dashoffset:264;
-  transition:stroke-dashoffset 600ms var(--ease)}
+  stroke-dasharray:264;stroke-dashoffset:100.3; /* 默认即终态，JS 不可用也正确 */
+  animation:ringDraw 600ms var(--ease) both}
+@keyframes ringDraw{from{stroke-dashoffset:264}to{stroke-dashoffset:100.3}}
 .ring .val{position:absolute;inset:0;display:grid;place-items:center;font-size:24px;font-weight:700;
   letter-spacing:-.02em}
 .risk-copy b{display:block;font-size:16px;font-weight:600}
@@ -86,7 +91,7 @@ main{padding:0 16px}
 .delta.down{color:var(--danger)}
 
 /* ===== KPI 2×2 ===== */
-.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.kpis{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:12px}
 .kpi{background:var(--surface);border-radius:var(--r-2);padding:14px;box-shadow:var(--shadow-1)}
 .kpi span{font-size:12px;color:var(--muted)}
 .kpi b{display:block;font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-top:2px}
@@ -97,15 +102,15 @@ main{padding:0 16px}
 .group h2{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.04em;
   text-transform:uppercase;margin:0 4px 8px}
 .panel{background:var(--surface);border-radius:var(--r-2);box-shadow:var(--shadow-1);overflow:hidden}
-.row{display:flex;align-items:center;justify-content:space-between;gap:12px;
+.row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;min-width:0;
   padding:13px 16px;border-bottom:1px solid var(--line);font-size:15px}
 .row:last-child{border-bottom:none}
-.row span{color:var(--muted);font-size:14px}
-.row b{font-weight:500;text-align:right}
+.row span{color:var(--muted);font-size:14px;flex:none}
+.row b{font-weight:500;text-align:right;min-width:0;overflow-wrap:anywhere}
 
 /* 时间轴：左轴右内容（编辑式） */
 .timeline{padding:4px 16px 8px}
-.tl{display:grid;grid-template-columns:14px 1fr;gap:12px;padding:12px 0;position:relative}
+.tl{display:grid;grid-template-columns:14px minmax(0,1fr);gap:12px;padding:12px 0;position:relative}
 .tl:not(:last-child)::before{content:"";position:absolute;left:6px;top:26px;bottom:-12px;width:1px;background:var(--line)}
 .tl .dot{width:9px;height:9px;border-radius:50%;background:var(--line-strong);margin-top:6px;z-index:1}
 .tl.done .dot{background:var(--success)}
@@ -142,9 +147,9 @@ main{padding:0 16px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* 状态演示（非产品 UI） */
-.demo{position:fixed;left:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:50;
-  display:flex;gap:4px;padding:4px;border:1px dashed var(--line-strong);border-radius:8px;
-  background:color-mix(in srgb,var(--surface) 92%,transparent);font-size:10px}
+.demo{display:flex;gap:4px;padding:6px;margin:16px 4px 0;border:1px dashed var(--line-strong);
+  border-radius:8px;background:var(--surface);font-size:10px;opacity:.75}
+.demo::before{content:"状态预览（仅演示）：";font-size:10px;color:var(--muted);align-self:center;padding-left:2px}
 .demo button{padding:3px 6px;border-radius:4px;color:var(--muted)}
 .demo button.on{background:var(--ink);color:var(--bg)}
 
@@ -182,7 +187,7 @@ main{padding:0 16px}
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
     </button>
   </div>
-  <div class="large"><h1>陈月华</h1></div>
+  <div class="large"><div><h1>陈月华</h1></div></div>
 </div>
 
 <main>
@@ -201,12 +206,12 @@ main{padding:0 16px}
     <div class="ring">
       <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true">
         <circle class="track" cx="48" cy="48" r="42" fill="none" stroke-width="8"/>
-        <circle class="bar" id="ringBar" cx="48" cy="48" r="42" fill="none" stroke-width="8"/>
+        <circle class="bar" id="ringBar" cx="48" cy="48" r="42" fill="none" stroke-width="8" stroke-dashoffset="100.3"/>
       </svg>
-      <span class="val" id="ringVal">0</span>
+      <span class="val" id="ringVal">62</span>
     </div>
     <div class="risk-copy">
-      <b>心血管风险 62</b>
+      <b>心血管风险 · 中高</b>
       <p>基于近 90 天血压、血糖与用药依从性</p>
       <span class="delta down">
         <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 10L1 4h10z"/></svg>
@@ -272,7 +277,7 @@ main{padding:0 16px}
   var bar = document.getElementById("ringBar");
   var val = document.getElementById("ringVal");
   var risk = document.getElementById("risk");
-  var played = false;
+  var played = true;
 
   /* 大标题折叠：滚动 40pt 后收起（240ms） */
   var onScroll = function(){
@@ -283,16 +288,9 @@ main{padding:0 16px}
 
   /* 记忆点：风险环一次性绘制 600ms + 数字滚动 */
   function play(){
-    if (played) return; played = true;
-    var target = 62, C = 264;
-    if (reduced) {
-      bar.style.strokeDashoffset = String(C * (1 - target / 100));
-      val.textContent = target;
-      return;
-    }
-    requestAnimationFrame(function(){
-      bar.style.strokeDashoffset = String(C * (1 - target / 100));
-    });
+    /* 环由 CSS animation 绘制；数字始终显示真实值 62，不做 count-up（避免中间态误读） */
+    if (reduced) { bar.style.animation = "none"; bar.style.strokeDashoffset = "100.3"; }
+    val.textContent = "62";
     var start = performance.now(), dur = 600;
     (function tick(now){
       var p = Math.min((now - start) / dur, 1);
@@ -300,12 +298,7 @@ main{padding:0 16px}
       if (p < 1) requestAnimationFrame(tick);
     })(start);
   }
-  if ("IntersectionObserver" in window) {
-    var io = new IntersectionObserver(function(es){
-      es.forEach(function(e){ if (e.isIntersecting) { play(); io.disconnect(); } });
-    }, { threshold: .4 });
-    io.observe(risk);
-  } else { play(); }
+  play();
 
   /* 主按钮：loading 400ms → success 220ms 勾线 → 1.4s 还原 */
   var btn = document.getElementById("startBtn");
