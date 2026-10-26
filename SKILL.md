@@ -1,13 +1,13 @@
 ---
 name: website-ui-designer
-version: 3.2.0
+version: 3.3.0
 updated: 2026-10-26
 description: 设计工程师（Design Engineer）。先出 Design Spec 与决策，再写代码；所有视觉规则以"必须/禁止 + 具体参数"表达（hex、px、ms、cubic-bezier）。覆盖 PC Web、H5、小程序、APP、游戏五端，可调用 shadcn/beUI/Rare UI/Transitions/Beautiful UI、Motion/GSAP、Lucide/Phosphor/Tabler、Geist 等资源。用于：UI 设计、界面美化、设计系统、AI 味整改、动效与交互实现、多端适配、组件选型。触发词：UI设计、界面美化、设计系统、设计令牌、AI味、动效、交互、H5、小程序、APP、游戏UI、组件库。
 ---
 
 # Design Engineer — 可执行的 UI 硬规则
 
-> **v3.2.0** · 2026-10-26 · 规则冲突见 §10；文件职责见 `references/skill-architecture.md`
+> **v3.3.0** · 2026-10-26 · 规则冲突见 §10；文件职责见 `references/skill-architecture.md`
 
 ---
 
@@ -29,7 +29,7 @@ description: 设计工程师（Design Engineer）。先出 Design Spec 与决策
 4 线框描述   每屏的区块列表、层级、焦点（不含颜色）
 5 组件选型   从注册表选（§8），逐项写"为什么选 / 替代方案"
 6 实现代码   动效 + 状态 + 响应式；只消费 token，禁止硬编码
-7 自检+评分  15 项检查 + 7 维评分（§12），任一维 <8 重写该部分
+7 自检+评分  17 项检查 + 7 维评分（§12），任一维 <8 重写该部分
 ```
 
 **门禁**：第 3 步未产出 Design Spec → 禁止进入第 6 步。第 7 步总分 <8 → 禁止交付。
@@ -336,6 +336,36 @@ Linear > Vercel > Stripe > OpenAI > Anthropic > Kimi > Perplexity > Raycast > Ar
 5. 吸底操作栏必须给内容区预留底部空间：`padding-bottom: 操作栏高 + env(safe-area-inset-bottom)`
 6. 交付前滚动一遍：**任何固定元素都不得遮挡可点内容**（点不到 = 遮挡，不是视觉问题）
 
+### 5.7 视觉验收：不要相信"目测截图"
+
+**先排除工具假象，再判缺陷。** 两个已踩过的坑：
+
+| 假象 | 真实情况 | 正确做法 |
+|---|---|---|
+| 截图右侧被切，像"横向溢出" | Windows 版 Chrome/Edge **最小窗口宽 478px**：`--window-size=390` 实际按 478 排版，再裁成 390 | 用 **iframe 390** 或 DevTools 设备模拟；判定只用 `scrollWidth === clientWidth` |
+| 截图里文字发灰、像"对比度不足" | 入场动画进行中（transition 未结束） | 等动画结束再截图；或先测 `reduced-motion` 终态 |
+
+**验收三步（每步有结论，不靠感觉）**
+1. 结构：去色 + 缩 25% → 能否说出唯一焦点与阅读顺序
+2. 溢出：`document.documentElement.scrollWidth === clientWidth`，并列出所有 `rect.right > clientWidth` 的元素
+3. 文字：真实计算样式跑 `contrast_runtime.js`，0 违规
+
+**禁止**用"我看截图没问题"作为验收结论；截图只能证明"这一帧长这样"。
+
+### 5.8 裁切与溢出（三个高频事故）
+
+1. **CJK 大字被裁顶**：`line-height < 1.3` + `overflow:hidden` 会切掉中文字形上沿（西文不明显，中文必现）。
+   → 大字容器行高 ≥1.3，或加 4px 上内边距；折叠动画用 `grid-template-rows:1fr→0fr`，**禁止用 `max-height` 折字**。
+2. **头像/图像块被 `1fr` 撑大**：头像用 `1fr` 会在宽卡里变成文字块的 1.5 倍高。
+   → 头像固定 64–72px（1:1），信息块 `minmax(0,1fr)`，`align-items:start`。
+3. **整卡是链接时标题被"链接化"**：`<a>` 默认蓝字 + 下划线会污染卡内标题。
+   → `a.card{color:inherit;text-decoration:none}`，并在卡内单独定义标题色。
+
+### 5.9 调试控件不得遮挡内容
+
+状态切换、主题切换、断点指示等**演示控件**：必须进文档流（列表末尾 / 页面底部），
+**禁止** `position:fixed` 悬浮在内容上——它们会遮住可点内容，且上线前最容易被忘掉。
+
 ---
 
 ## §6 动效与交互（E）
@@ -378,6 +408,14 @@ Linear > Vercel > Stripe > OpenAI > Anthropic > Kimi > Perplexity > Raycast > Ar
 - `will-change` 仅动画期间加，结束移除；同时动画元素 ≤3
 - 长列表（>100 项）必须虚拟滚动；图片必须有尺寸占位
 - 中端设备 60fps（DevTools CPU 4× 降速），出现 Layout 块即返工
+
+### 6.7 数据可视化：默认必须是真实值
+
+- 数字、环形进度、柱状图**首帧就要渲染真实值**（服务端/HTML 里写死终值），动画只做"从无到有"的增强
+- **禁止**让用户看到中间态（0 → 3 → 62 的 3 是错的读数，不是"加载动画"）
+- 实现：HTML 写终值 + CSS `@keyframes` 从 0 到终值（`animation-fill-mode:both`）；
+  JS 不可用时页面依然正确
+- 环形轨道的"未完成段"必须有可见颜色（与白卡至少差 6% 明度），否则用户读不出比例
 
 ### 6.6 可访问性
 - 键盘可遍历全部操作；焦点顺序 = 视觉顺序；`focus-visible` 可见
@@ -462,6 +500,9 @@ Linear > Vercel > Stripe > OpenAI > Anthropic > Kimi > Perplexity > Raycast > Ar
 | 15 | 无限循环动画干扰阅读 | 常驻循环 >2 处，或循环位于正文阅读区 |
 | 21 | 跨选择器覆盖文字色导致"字看不见" | 按钮/标签的 `color` 与 `background` 不在同一条规则；浏览器控制台跑 `contrast_runtime.js` 非 0 |
 | 22 | 固定层互相遮挡（sticky 压 sticky） | 滚动时任一可点元素被覆盖；同容器内 >1 个 `top:0` sticky |
+| 23 | 大字被 `overflow:hidden` 裁顶 | 中文字形上沿缺失；行高 <1.3 且容器 overflow 隐藏 |
+| 24 | 数值/图表默认 0，动画中途停在错误读数 | 首帧或动画中显示非真实值；JS 关闭时显示 0 |
+| 25 | 调试控件悬浮遮挡内容 | `position:fixed` 的状态切换条覆盖可点区域 |
 
 ### 9.2 必须（5 条）
 | # | 必须 | 判定 |
@@ -540,7 +581,7 @@ P1 可访问性（对比度/触控/键盘/降级） > P2 结构（分组/层级/
 
 ## §12 自检清单与评分卡（K）
 
-### 12.1 检查项（15 项，每项 0/1，全部为 1 才可交付）
+### 12.1 检查项（17 项，每项 0/1，全部为 1 才可交付）
 ```
 □ 1  有 Design Spec 且 8 组 token 完整
 □ 2  字号 ≥5 级且存在展示字体（与正文有对比）
@@ -557,6 +598,8 @@ P1 可访问性（对比度/触控/键盘/降级） > P2 结构（分组/层级/
 □ 13 只动画 transform / opacity（无 width/height/top/left）
 □ 14 图标统一（单库、16/20/24、无 emoji）
 □ 15 浏览器端 `contrast_runtime.js` 输出 0 违规（捕获特异性覆盖导致的隐形文字）
+□ 16 真实视口下 `scrollWidth === clientWidth`，且无元素越界（iframe 390 / 设备模拟，不看截图）
+□ 17 大字无裁顶、头像比例正常、整卡链接无默认蓝下划线
 ```
 
 ### 12.2 评分维度（每项 1–10 分）
