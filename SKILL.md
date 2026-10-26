@@ -1,13 +1,13 @@
 ---
 name: website-ui-designer
-version: 3.3.0
+version: 3.4.0
 updated: 2026-10-26
 description: 设计工程师（Design Engineer）。先出 Design Spec 与决策，再写代码；所有视觉规则以"必须/禁止 + 具体参数"表达（hex、px、ms、cubic-bezier）。覆盖 PC Web、H5、小程序、APP、游戏五端，可调用 shadcn/beUI/Rare UI/Transitions/Beautiful UI、Motion/GSAP、Lucide/Phosphor/Tabler、Geist 等资源。用于：UI 设计、界面美化、设计系统、AI 味整改、动效与交互实现、多端适配、组件选型。触发词：UI设计、界面美化、设计系统、设计令牌、AI味、动效、交互、H5、小程序、APP、游戏UI、组件库。
 ---
 
 # Design Engineer — 可执行的 UI 硬规则
 
-> **v3.3.0** · 2026-10-26 · 规则冲突见 §10；文件职责见 `references/skill-architecture.md`
+> **v3.4.0** · 2026-10-26 · 规则冲突见 §10；文件职责见 `references/skill-architecture.md`
 
 ---
 
@@ -82,6 +82,20 @@ Linear > Vercel > Stripe > OpenAI > Anthropic > Kimi > Perplexity > Raycast > Ar
 | Perplexity | 来源引用与脚注、答案分块 | 青色品牌色 |
 | Raycast | 命令面板、键位提示、聚焦态 | 深色玻璃皮肤 |
 | Arc | 侧栏组织、色彩分区 | 圆角与渐变 |
+
+### 2.4 术语翻译（先听懂，再动手）
+
+用户描述的是**症状**，术语描述的是**成因**。三步：
+
+```
+1 查      python scripts/term_lookup.py "<用户原话>"
+2 说      术语 + 一句人话（"这是安全区，不是'位置不对'"）
+3 落参数  直接用词库右侧的落地参数，不再追问第二轮
+```
+
+示例：`"按钮被底下那条黑杠挡住了"` → **安全区**（`env(safe-area-inset-bottom)`），
+不是"按钮位置不对"。**禁止**在没查术语的情况下直接改样式——那是在猜。
+词库 110 条（11 类），见 `library/ui-glossary.md`。
 
 ---
 
@@ -366,6 +380,27 @@ Linear > Vercel > Stripe > OpenAI > Anthropic > Kimi > Perplexity > Raycast > Ar
 状态切换、主题切换、断点指示等**演示控件**：必须进文档流（列表末尾 / 页面底部），
 **禁止** `position:fixed` 悬浮在内容上——它们会遮住可点内容，且上线前最容易被忘掉。
 
+### 5.10 模板库：没灵感时先选结构
+
+21 类页面模板（落地页/品牌首页/定价/功能页/文档/文章/案例/仪表盘/工作台/列表/详情/表单/设置/登录/搜索/AI 对话/移动列表/移动详情/个人中心/空状态/游戏 HUD），
+每个给：**骨架 + 参数 + 状态清单 + 记忆点建议 + 常见翻车**。见 `library/ui-templates.md`。
+
+**选型**（用户说什么 → 选哪类）
+| 用户说 | 模板 |
+|---|---|
+| 做个官网/介绍产品 | 落地页 / 品牌首页 |
+| 要能卖货 | 定价 / 商品详情 / 移动详情 |
+| 后台看数据 | 仪表盘 / 数据工作台 |
+| 管列表、审核 | 列表表格 |
+| 填表报名 | 表单向导 |
+| 登录会员 | 登录注册 |
+| AI 助手 | AI 对话 |
+| 手机上点单 | 移动列表 / 移动详情 |
+| 没数据很难看 | 空状态 |
+
+**铁律**：选模板 = 选**结构**，不是选皮肤。配色、字体、圆角、记忆点必须按 §3 重做；
+同一项目最多复用 2 个模板骨架，第 3 个开始要改结构。
+
 ---
 
 ## §6 动效与交互（E）
@@ -550,8 +585,9 @@ P1 可访问性（对比度/触控/键盘/降级） > P2 结构（分组/层级/
 参考 2：{对象} —— 借鉴「{手法}」
 情绪词：{词1} / {词2} / {词3}，各自映射：{参数}
 
-## 3 Design Spec
-（§3 的 8 组 token 全表，不得省略；参考 templates/design-spec.md）
+## 3 Design Spec + 落地五件套
+（§3 的 8 组 token 全表；加上：组件清单 / 状态矩阵 / 响应式表 / 代码骨架；
+模板见 `templates/design-spec.md`，骨架与六区块代码见 `library/design-spec-kit.md`）
 
 ## 4 线框（逐屏）
 {屏 1}：区块 A（层级 1，焦点）→ 区块 B → 区块 C；非对称点：{7:5}
@@ -641,6 +677,9 @@ python scripts/audit_contrast.py <页面> --pairs="--ink:--bg,--dark-ink:--dark"
 | 三场景落地验证 | `examples/v3-test-cases.md` |
 | 运行时对比度检查（浏览器） | `scripts/contrast_runtime.js` |
 | 令牌结构与多端换算 | `references/token-architecture.md` |
+| **术语库（110 条，含用户原话）** | `library/ui-glossary.md` + `scripts/term_lookup.py` |
+| **页面模板库（21 类）** | `library/ui-templates.md` |
+| **落地五件套 + 六区块代码** | `library/design-spec-kit.md` |
 | 配色配方（5 套色板 + 反例） | `references/palette-recipes.md` |
 | 字体与中文混排 | `references/typography-system.md` |
 | 组件库接入 | `references/component-library.md` + `templates/shadcn-theme.css` |
