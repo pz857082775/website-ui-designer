@@ -19,6 +19,7 @@ L0 宪法层    SKILL.md（原则/红线/自检） + skill-architecture.md（本
 L1 输入层    design-intake（澄清/迭代） · terminology-layer（说法翻译） · rag-retrieval（检索）
 L2 方向层    brand-direction（旋钮/五轴/昂贵感/骨架） · brand-spec-library（品牌与行业）
 L3 结构层    workbench-blueprint（工作台五部件/数据地板） · dashboard-style（行业细节）
+L0' 素材层    library/（ui-glossary 术语 · ui-templates 模板 · design-spec-kit 骨架代码）
 L4 系统层    token-architecture（令牌） · typography-system（字体） · component-library（组件）
 L5 表现层    component-capability-library（语义原语） · motion-decision-table（决策） · motion-spec（参数） · visual-interaction-spec（可读性/交互态）
 L6 交付层    review-rubric（评分） · audit_contrast / preflight（机器闸门） · examples（范式）
@@ -245,7 +246,8 @@ python scripts/audit_all.py tests/*.html
 2. **它和现有 SSOT 是"替代"还是"补充"？** 替代 → 冻结旧文件并在本表登记；补充 → 写进已有文件的新章节
 3. **它可被验证吗？** 不能验证的规则（"更有呼吸感"）不入规范，只入风格参考
 
-**文件数量上限**：参考文件 ≤32 份。超过说明在做"收藏"而不是"规范"。
+**文件数量上限**：**规则文件**（`references/`）≤32 份；`library/` 是**查询型素材库**（术语/模板/骨架代码），
+不计入上限，但每个文件必须有明确用途与调用入口（脚本或索引表）。超过上限说明在做"收藏"而不是"规范"。
 **每季度一次**：跑 `grep -l "冻结" references/*.md` 检查冻结文件是否仍在被引用；清理重复条目。
 
 
