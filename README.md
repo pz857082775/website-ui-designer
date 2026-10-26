@@ -2,7 +2,7 @@
 
 **会诊断、能解释、懂取舍。**
 
-![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-3.3.0-2E7CF6?style=flat-square)
+![版本](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-3.4.0-2E7CF6?style=flat-square)
 ![许可](https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-%E5%BC%80%E6%BA%90-34A853?style=flat-square)
 ![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-%E7%94%B5%E8%84%91%E7%AB%AF%20%C2%B7%20H5%E9%A1%B5%E9%9D%A2%20%C2%B7%20%E5%B0%8F%E7%A8%8B%E5%BA%8F%20%C2%B7%20APP-8A90A2?style=flat-square)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87-FF9A3D?style=flat-square)
@@ -102,6 +102,25 @@ npx skills add https://github.com/pz857082775/website-ui-designer --skill websit
 
 **一个关键判断**：shadcn 的默认皮肤本身就是新的"AI 脸"——它让你快速得到"合格的默认"，
 不重做四件事，你的页面会和几十万个 shadcn 项目长得一样。
+
+---
+
+## 2.7 三个中间层（v3.4）
+
+| 层 | 解决什么 | 入口 |
+|---|---|---|
+| **术语**（110 条 / 11 类） | 用户只说症状（"黑杠挡住按钮"），说不出成因（安全区） | `library/ui-glossary.md` + `python scripts/term_lookup.py "<原话>"` |
+| **模板**（21 类） | 用户没灵感，不知道这种页面该长什么样 | `library/ui-templates.md`（骨架 + 参数 + 状态 + 记忆点 + 翻车） |
+| **规范**（五件套） | 只有描述，写不出代码 | `library/design-spec-kit.md`（令牌 + 六区块代码 + 状态矩阵 + 响应式表） |
+
+**串成一条线**：`原话 → term_lookup（术语）→ ui-templates（结构）→ design-spec-kit（令牌+骨架）→ audit_all（验收）`
+
+实测反查：
+```
+"按钮被底下那条黑杠挡住了" → 安全区（env(safe-area-inset-bottom)）
+"页面太土了"               → 中性阶 / 饱和度
+"太挤了"                   → 间距系统
+```
 
 ---
 
@@ -310,11 +329,12 @@ website-ui-designer/
 
 ## 版本历史
 
-当前 **v3.3.0**（2026-10-26）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
+当前 **v3.4.0**（2026-10-26）。完整记录见 [CHANGELOG.md](./CHANGELOG.md)。
 
 | 版本 | 日期 | 说明 |
 |---|---|---|
-| **v3.3.0** | 2026-10-26 | 真实渲染审查：识别截图假象、CJK 裁顶、链接污染、图表中间态；检查项 15→17 |
+| **v3.4.0** | 2026-10-26 | 补齐中间层：110 条术语库（含用户原话反查）、21 类页面模板、落地五件套与六区块代码 |
+| v3.3.0 | 2026-10-26 | 真实渲染审查：识别截图假象、CJK 裁顶、链接污染、图表中间态；检查项 15→17 |
 | v3.2.0 | 2026-10-26 | 修三类真实事故：特异性覆盖致隐形文字、双 sticky 遮挡、系统蓝+正红配色；补配色配方与运行时检查 |
 | v3.1.0 | 2026-10-26 | 补齐 F–L：反 AI 味 20 条、五端矩阵、资源注册表、技能路由、7 步工作流、评分卡、8 段交付模板 |
 | v3.0.0 | 2026-10-26 | 设计工程师版重写：A 角色与审美基准、B 设计宪法、C 视觉表现、D 排版布局、E 动效交互，全部参数化 |
