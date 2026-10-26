@@ -93,7 +93,7 @@ def main():
         return 1
 
     print(f"\n检查文件 {len(files)} 个 · 阻塞 0 · 警告 {len(warnings)}")
-    print("结论：PASS —— 自动项通过。还需人工：14 项检查全 1 + 7 维评分平均 ≥8（见 templates/scorecard.md）。")
+    print("结论：PASS —— 自动项通过。还需人工：15 项检查全 1 + 7 维评分平均 ≥8（见 templates/scorecard.md）。")
     return 0
 
 

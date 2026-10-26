@@ -1,13 +1,13 @@
 ---
 name: website-ui-designer
-version: 3.1.0
+version: 3.2.0
 updated: 2026-10-26
 description: 设计工程师（Design Engineer）。先出 Design Spec 与决策，再写代码；所有视觉规则以"必须/禁止 + 具体参数"表达（hex、px、ms、cubic-bezier）。覆盖 PC Web、H5、小程序、APP、游戏五端，可调用 shadcn/beUI/Rare UI/Transitions/Beautiful UI、Motion/GSAP、Lucide/Phosphor/Tabler、Geist 等资源。用于：UI 设计、界面美化、设计系统、AI 味整改、动效与交互实现、多端适配、组件选型。触发词：UI设计、界面美化、设计系统、设计令牌、AI味、动效、交互、H5、小程序、APP、游戏UI、组件库。
 ---
 
 # Design Engineer — 可执行的 UI 硬规则
 
-> **v3.1.0** · 2026-10-26 · 规则冲突见 §10；文件职责见 `references/skill-architecture.md`
+> **v3.2.0** · 2026-10-26 · 规则冲突见 §10；文件职责见 `references/skill-architecture.md`
 
 ---
 
@@ -29,7 +29,7 @@ description: 设计工程师（Design Engineer）。先出 Design Spec 与决策
 4 线框描述   每屏的区块列表、层级、焦点（不含颜色）
 5 组件选型   从注册表选（§8），逐项写"为什么选 / 替代方案"
 6 实现代码   动效 + 状态 + 响应式；只消费 token，禁止硬编码
-7 自检+评分  14 项检查 + 7 维评分（§12），任一维 <8 重写该部分
+7 自检+评分  15 项检查 + 7 维评分（§12），任一维 <8 重写该部分
 ```
 
 **门禁**：第 3 步未产出 Design Spec → 禁止进入第 6 步。第 7 步总分 <8 → 禁止交付。
@@ -115,6 +115,21 @@ Linear > Vercel > Stripe > OpenAI > Anthropic > Kimi > Perplexity > Raycast > Ar
 - 角色固定：`--n-600` 次要文字；`--n-400` 只用于图标/描边，**禁止**做正文
 - **禁止**彩虹渐变、紫粉渐变（金融/医疗为硬禁止）
 - 明暗两套成对定义，各自跑对比度
+
+#### 3.2.1 配色配方（配得好看的方法，不是色值清单）
+
+**六条判据**
+1. 底不用纯白，也不用系统冷灰（`#F2F2F7`/`#F5F5F5`）——用带 2–4° 色温的纸色，卡片纯白形成 2–3% 明度差
+2. **主色必须是深主色（L\* 28–38%）**：`#0B5FFF` 这类标准蓝压白字只有 **3.16:1**，必然违规
+3. 语义色降饱和 8–12%：危险用 `#A9502F`，成功用 `#2F6B57`，禁用 `#FF0000`/`#00C853`
+4. 一页最多 **2 个有彩色系**（主 + 强调）；红/绿/蓝/黄四色同屏 = 廉价
+5. 中性 11 档带同一色相（暖 30° 或冷 250°），oklch 等距
+6. 深色不是反色：底 `#0B–0E` 带色黑，面 +6–8% 明度，主色提亮后必须重算白字对比
+
+**五套可直接用的色板**：暖纸松绿（医疗/专业）、冷灰靛蓝（SaaS/数据）、米墨（品牌/编辑）、
+石墨苔绿（开发者/深色）、明亮生鲜（电商/食品）。完整 hex 与反例解剖见 `references/palette-recipes.md`。
+
+**禁止**：把"系统蓝 + 正红 + 冷灰"当默认配色；四色标签同屏；正红与正绿相邻。
 
 ### 3.3 字体系统
 ```
@@ -264,6 +279,9 @@ Linear > Vercel > Stripe > OpenAI > Anthropic > Kimi > Perplexity > Raycast > Ar
 - `focus-visible` 必须 **2px ring + 2px offset**，颜色 `--primary`
 - 主按钮允许**单色微光**（`0 0 0 1px --primary inset, 0 2px 8px rgba(46,91,255,.3)`）或**同色系渐变**（色相差 ≤15°）
 - **禁止**彩虹渐变、彩色投影、无 hover 态
+- **三色一体（硬规则）**：同一个按钮的背景色与文字色**必须在同一条规则里声明**（或用同一个组件类）。
+  **禁止**用另一个选择器只覆盖 `color`——特异性会反噬（真实事故：`.nav a` 的 `color` 覆盖了 `.btn-primary` 的白字，
+  按钮变成"深绿底 + 深绿字"，完全不可读）。需要覆盖时，选择器必须同时包含 `.btn`（如 `.nav a.btn{color:...}`）
 
 ### 4.5 图标与图片
 - 图标库三选一，**禁止混用**：Lucide（默认）/ Phosphor / Tabler
@@ -308,6 +326,15 @@ Linear > Vercel > Stripe > OpenAI > Anthropic > Kimi > Perplexity > Raycast > Ar
 ### 5.5 禁止重复
 **禁止**连续 >3 个区块等高、等间距、同结构（三卡片墙、四图标列、连续 CTA 条）。
 同结构最多连续 2 次，第 3 次必须换结构。
+
+### 5.6 固定层与滚动层（sticky 规则）
+
+1. **同一滚动容器只允许一个 `top:0` 的 sticky 区域**；搜索、筛选、分段控件必须**合并进同一个 sticky 容器**
+2. 存在第二层 sticky 时：`top` 必须 = 第一层高度 + 间隙（用 CSS 变量 `--nav-h` 统一），且 `z-index` 严格递减
+3. **禁止**两个 sticky 元素各自独立定位后相互覆盖（真实事故：搜索框 sticky 后压住了筛选 chips）
+4. sticky 元素必须有实背景（或足够模糊），否则滚动内容会"透"上来
+5. 吸底操作栏必须给内容区预留底部空间：`padding-bottom: 操作栏高 + env(safe-area-inset-bottom)`
+6. 交付前滚动一遍：**任何固定元素都不得遮挡可点内容**（点不到 = 遮挡，不是视觉问题）
 
 ---
 
@@ -433,6 +460,8 @@ Linear > Vercel > Stripe > OpenAI > Anthropic > Kimi > Perplexity > Raycast > Ar
 | 13 | 对比度不足（正文 <4.5:1） | `audit_all` 报违规 |
 | 14 | 常规交互 >500ms、使用 linear | 检查 transition/animation 时长与 timing-function |
 | 15 | 无限循环动画干扰阅读 | 常驻循环 >2 处，或循环位于正文阅读区 |
+| 21 | 跨选择器覆盖文字色导致"字看不见" | 按钮/标签的 `color` 与 `background` 不在同一条规则；浏览器控制台跑 `contrast_runtime.js` 非 0 |
+| 22 | 固定层互相遮挡（sticky 压 sticky） | 滚动时任一可点元素被覆盖；同容器内 >1 个 `top:0` sticky |
 
 ### 9.2 必须（5 条）
 | # | 必须 | 判定 |
@@ -511,7 +540,7 @@ P1 可访问性（对比度/触控/键盘/降级） > P2 结构（分组/层级/
 
 ## §12 自检清单与评分卡（K）
 
-### 12.1 检查项（14 项，每项 0/1，全部为 1 才可交付）
+### 12.1 检查项（15 项，每项 0/1，全部为 1 才可交付）
 ```
 □ 1  有 Design Spec 且 8 组 token 完整
 □ 2  字号 ≥5 级且存在展示字体（与正文有对比）
@@ -527,6 +556,7 @@ P1 可访问性（对比度/触控/键盘/降级） > P2 结构（分组/层级/
 □ 12 无反 AI 味清单违规（§9 的 20 条）
 □ 13 只动画 transform / opacity（无 width/height/top/left）
 □ 14 图标统一（单库、16/20/24、无 emoji）
+□ 15 浏览器端 `contrast_runtime.js` 输出 0 违规（捕获特异性覆盖导致的隐形文字）
 ```
 
 ### 12.2 评分维度（每项 1–10 分）
@@ -547,6 +577,11 @@ P1 可访问性（对比度/触控/键盘/降级） > P2 结构（分组/层级/
 python scripts/audit_all.py <页面或目录>            # preflight + 对比度，输出 PASS/FAIL
 python scripts/audit_contrast.py <页面> --pairs="--ink:--bg,--dark-ink:--dark"
 ```
+**运行时检查（必须在浏览器里跑一次，token 审计查不出）**
+```js
+// 打开页面 → 控制台粘贴 scripts/contrast_runtime.js → 回车
+// 它读取真实计算样式，能抓到"背景与文字来自不同选择器"的覆盖问题
+```
 **自动只覆盖**：对比度、预隐藏、reduced-motion 缺失、emoji 图标、布局属性动画、等宽数字。
 **其余 8 项必须人工**（层级、排版比例、记忆点、非对称、状态完整、平台约束、动效编排、独特性）。
 
@@ -561,7 +596,9 @@ python scripts/audit_contrast.py <页面> --pairs="--ink:--bg,--dark-ink:--dark"
 | 交付模板（8 段） | `templates/delivery.md` |
 | 自检与评分卡（可填） | `templates/scorecard.md` |
 | 三场景落地验证 | `examples/v3-test-cases.md` |
+| 运行时对比度检查（浏览器） | `scripts/contrast_runtime.js` |
 | 令牌结构与多端换算 | `references/token-architecture.md` |
+| 配色配方（5 套色板 + 反例） | `references/palette-recipes.md` |
 | 字体与中文混排 | `references/typography-system.md` |
 | 组件库接入 | `references/component-library.md` + `templates/shadcn-theme.css` |
 | 语义→原语（AI 界面） | `references/component-capability-library.md` |
